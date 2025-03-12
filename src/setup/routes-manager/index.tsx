@@ -17,9 +17,7 @@ const RoutesManager: React.FC = () => {
         </Route>
 
         {/* Protected Routes */}
-        <Route element={<ProtectedRoute />}>
-          
-        </Route>
+        <Route element={<ProtectedRoute />}></Route>
       </Routes>
     </BrowserRouter>
   );
