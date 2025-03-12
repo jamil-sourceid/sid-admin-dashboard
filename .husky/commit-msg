@@ -1,0 +1,16 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+echo "Running commit-msg hook"
+
+
+commit_message=$(cat "$1")
+
+# Check for exact format: SIDT-<number> | <message>
+if ! echo "$commit_message" | grep -qE '^SIDT-[0-9]+\s*\|\s*.+$'; then
+
+  echo " Required format: SIDT-<number> | <message>"
+  echo ""
+  echo "❌ Your commit message: $commit_message"
+  exit 1
+fi

@@ -1,0 +1,134 @@
+@font-face {
+  font-family: 'Lato-Bold';
+  src:
+    url('Lato-Bold.woff2') format('woff2'),
+    url('Lato-Bold.woff') format('woff');
+  font-weight: bold;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Lato-Light';
+  src:
+    url('Lato-Light.woff2') format('woff2'),
+    url('Lato-Light.woff') format('woff');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Lato-Black';
+  src:
+    url('Lato-Black.woff2') format('woff2'),
+    url('Lato-Black.woff') format('woff');
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Lato-Regular';
+  src:
+    url('Lato-Regular.woff2') format('woff2'),
+    url('Lato-Regular.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Lato-Hairline';
+  src:
+    url('Lato-Hairline.woff2') format('woff2'),
+    url('Lato-Hairline.woff') format('woff');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Manrope-Bold';
+  src:
+    url('Manrope-Bold.woff2') format('woff2'),
+    url('Manrope-Bold.woff') format('woff');
+  font-weight: bold;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Manrope-Extra-Light';
+  src:
+    url('Manrope-ExtraLight.woff2') format('woff2'),
+    url('Manrope-ExtraLight.woff') format('woff');
+  font-weight: 200;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Manrope-Medium';
+  src:
+    url('Manrope-Medium.woff2') format('woff2'),
+    url('Manrope-Medium.woff') format('woff');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Manrope-Extra-Bold';
+  src:
+    url('Manrope-ExtraBold.woff2') format('woff2'),
+    url('Manrope-ExtraBold.woff') format('woff');
+  font-weight: bold;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Manrope-Regular';
+  src:
+    url('Manrope-Regular.woff2') format('woff2'),
+    url('Manrope-Regular.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Manrope-Light';
+  src:
+    url('Manrope-Light.woff2') format('woff2'),
+    url('Manrope-Light.woff') format('woff');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Manrope-Semi-Bold';
+  src:
+    url('Manrope-SemiBold.woff2') format('woff2'),
+    url('Manrope-SemiBold.woff') format('woff');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  --lato-bold: 'Lato-Bold', serif;
+  --lato-light: 'Lato-Light', serif;
+  --lato-black: 'Lato-Black', serif;
+  --lato-regular: 'Lato-Regular', serif;
+  --lato-hairline: 'Lato-Hairline', serif;
+  --manrope-bold: 'Manrope-Bold', serif;
+  --manrope-extra-light: 'Manrope-Extra-Light', serif;
+  --manrope-medium: 'Manrope-Medium', serif;
+  --manrope-extra-bold: 'Manrope-Extra-Bold', serif;
+  --manrope-regular: 'Manrope-Regular', serif;
+  --manrope-light: 'Manrope-Light', serif;
+  --manrope-semi-bold: 'Manrope-Semi-Bold', serif;
+}

@@ -1,0 +1,50 @@
+.source-id-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  cursor: pointer;
+  min-width: 100px;
+  padding: 0 20px;
+  height: 44px;
+  transition: all 0.3s;
+  .button-loader {
+    width: 25px;
+    height: 100%;
+    position: relative;
+    display: flex;
+    align-items: center;
+
+    .spinner {
+      display: block;
+      width: 22px;
+      height: 22px;
+      position: absolute;
+      left: calc(50% - 17px);
+      background: transparent;
+      box-sizing: border-box;
+      border-top: 2px solid white;
+      border-left: 2px solid transparent;
+      border-right: 2px solid transparent;
+      border-bottom: 2px solid transparent;
+      border-radius: 100%;
+      animation: spin 0.8s ease-out infinite;
+    }
+  }
+
+  &:disabled {
+    background-color: #231e54 !important;
+    border-color: #231e54 !important;
+    opacity: 0.7;
+  }
+
+  .icon {
+    width: 15px;
+  }
+}
+
+@keyframes spin {
+  100% {
+    transform: rotate(360deg);
+  }
+}

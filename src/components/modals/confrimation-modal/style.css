@@ -1,0 +1,117 @@
+.confirmation-modal {
+  border-radius: 8px;
+  width: 544px;
+  max-width: 100%;
+
+  .ant-modal-content {
+    background-image: url('../../../assets/images/modal-bg.png');
+    background-repeat: no-repeat;
+  }
+
+  .ant-modal-close {
+    display: none;
+  }
+
+  .confirmation-modal-header {
+    padding-bottom: 0;
+
+    .header-content {
+      display: flex;
+      align-items: flex-start;
+      width: 100%;
+      position: relative;
+    }
+
+    .header-content img:first-child {
+      margin-right: 12px;
+    }
+
+    .header-content .close-button {
+      position: absolute;
+      right: 0;
+      top: 0;
+      cursor: pointer;
+      width: 24px;
+      height: 24px;
+      flex-shrink: 0;
+      width: 20px;
+    }
+
+    .modal-content {
+      h2 {
+        color: rgba(89, 89, 89, 1);
+        font-family: var(--lato-black);
+        font-size: 16px;
+        width: 80%;
+        line-height: 1.4;
+      }
+      p {
+        color: rgba(140, 140, 140, 1);
+        font-family: var(--lato-regular);
+        line-height: 20px;
+        margin-top: 5px;
+      }
+    }
+  }
+
+  .confirmation-modal-footer {
+    margin-top: 50px;
+    .footer-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+    }
+
+    .button-group {
+      display: flex;
+      gap: 12px;
+      font-family: var(--lato-bold);
+    }
+
+    .btn-cancel {
+      padding: 8px 16px;
+      border: 1px solid #d1d5db;
+      background: white;
+      color: #6b7280;
+      font-size: 14px;
+      cursor: pointer;
+      border-radius: 6px;
+    }
+
+    .btn-confirm {
+      padding: 8px 16px;
+      border: none;
+      background: rgb(245, 158, 11);
+      color: white;
+      font-size: 14px;
+      cursor: pointer;
+      border-radius: 6px;
+    }
+  }
+
+  &.success {
+    .header-content h2 {
+      color: rgba(63, 184, 93, 1);
+    }
+    .btn-confirm {
+      background-color: rgba(63, 184, 93, 1);
+    }
+  }
+  &.warning {
+    .header-content h2 {
+      color: rgba(245, 158, 11, 1);
+    }
+    .btn-confirm {
+      background: rgba(245, 158, 11, 1);
+    }
+  }
+  &.delete {
+    .header-content h2 {
+      color: rgba(255, 77, 79, 1);
+    }
+    .btn-confirm {
+      background-color: rgba(255, 77, 79, 1);
+    }
+  }
+}

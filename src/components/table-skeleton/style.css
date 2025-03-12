@@ -1,0 +1,51 @@
+.table-skeleton {
+  width: 100%;
+}
+
+.table-skeleton table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table-skeleton thead th {
+  padding: 16px;
+  text-align: left;
+  font-weight: 500;
+  color: #344054;
+  border-bottom: 1px solid #eaecf0;
+}
+
+.skeleton-body td {
+  padding: 16px;
+  border-bottom: 1px solid #eaecf0;
+}
+
+.skeleton-body td:nth-child(1) {
+  width: 200px;
+}
+
+.skeleton-body td:nth-child(2) {
+  max-width: 400px;
+  padding-right: 20px;
+}
+
+.skeleton-body td:last-child {
+  width: 160px;
+}
+
+.skeleton-body .ant-skeleton-button {
+  width: 100%;
+  min-width: 120px;
+}
+
+td.empty-state {
+  padding: 48px 0;
+  text-align: center;
+  border-bottom: 1px solid #eaecf0;
+}
+
+.empty-text {
+  color: #667085;
+  font-size: 14px;
+  text-align: center;
+}

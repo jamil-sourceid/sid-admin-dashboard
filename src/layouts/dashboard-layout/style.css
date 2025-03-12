@@ -1,0 +1,113 @@
+.dashboard-layout-wrapper {
+  display: flex;
+
+  .dashboard-layout-wrapper__sidebar {
+    height: auto;
+    overflow-y: auto;
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    z-index: 2;
+    width: 300px;
+    background-color: rgba(255, 255, 255, 1);
+    border-right: 1px solid rgba(233, 234, 235, 1);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    transition: all 0.3s ease;
+
+    &.collapsed {
+      width: 70px;
+      margin: 10px;
+      border: 1px solid rgba(233, 234, 235, 1);
+      border-radius: 4px;
+      padding: 14px;
+      min-height: 0px;
+      height: calc(100vh - 20px);
+    }
+
+    .top-navigations {
+      flex-shrink: 0; /* Prevent shrinking */
+    }
+
+    /* Bottom navigation sticks to the bottom */
+    .bottom-navigations {
+      margin-top: auto; /* Pushes this element to the bottom */
+      flex-shrink: 0; /* Prevent shrinking */
+    }
+  }
+
+  .dashboard-layout-wrapper__content {
+    width: calc(100% - 300px);
+    min-height: 100vh;
+    position: absolute;
+    right: 0;
+    padding: 35px 25px;
+    background-color: rgba(255, 255, 255, 1);
+    transition: all 0.3s ease;
+
+    .page-topbar {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+
+      .pageTitle {
+        font-family: var(--lato-black);
+        font-size: clamp(1.5rem, 1.5vw, 1.5rem);
+        color: rgba(24, 29, 39, 1);
+      }
+
+      .pageDesc {
+        font-size: clamp(0.75rem, 1.5vw, 0.85rem);
+        color: rgba(83, 88, 98, 1);
+        font-weight: 500;
+        margin-top: 5px;
+      }
+
+      .page-title-container {
+        margin-top: 15px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .page-topbar__useraccount {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        .pageTag {
+          background-color: rgba(250, 250, 250, 1);
+          font-size: clamp(0.75rem, 1.5vw, 0.85rem);
+          color: rgba(65, 70, 81, 1);
+          border-radius: 6px;
+          font-weight: 500;
+          width: fit-content;
+          padding: 5px 10px;
+        }
+
+        .topbar-actions {
+          display: flex;
+          gap: 15px;
+          align-items: center;
+          a {
+            &:nth-child(2) {
+              height: 24px;
+            }
+          }
+          .ant-badge-count {
+            background-color: rgba(245, 102, 48, 1);
+          }
+        }
+      }
+    }
+
+    .page-content {
+      margin-top: 25px;
+    }
+
+    &.sidebar-collapsed {
+      width: calc(100% - 80px);
+    }
+  }
+}
