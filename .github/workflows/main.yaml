@@ -53,6 +53,5 @@ jobs:
           REPOSITORY: sid-admin-dashboard
           IMAGE_TAG: ${{ github.sha }}
         run: |
-          docker build -t $REGISTRY/$REPOSITORY:${{ steps.IMAGE_TAG.outputs.PACKAGE_VERSION }} -t $REGISTRY/$REPOSITORY:latest .
+          docker build -t $REGISTRY/$REPOSITORY:${{ steps.IMAGE_TAG.outputs.PACKAGE_VERSION }}
           docker push $REGISTRY/$REPOSITORY:${{ steps.IMAGE_TAG.outputs.PACKAGE_VERSION }}
-          docker push $REGISTRY/$REPOSITORY:latest
