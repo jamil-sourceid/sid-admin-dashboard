@@ -14,19 +14,21 @@ jobs:
     steps:
       - name: Checkout Repositiory
         uses: actions/checkout@v4
-
+        with:
+          repository: sourceidtechorg/sid-admin-dashboard
       - name: Build docker image
         id: build-image
         run: |
           docker build -t admin-dashboard:latest .
 
-  BUILD_AND_PUSH_PROD:
+  BUILD_AND_PUSH:
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
     steps:
       - name: Checkout Repositiory
         uses: actions/checkout@v4
-
+        with:
+          repository: sourceidtechorg/sid-admin-dashboard
       - name: Set Package Version
         id: IMAGE_TAG
         run: echo "PACKAGE_VERSION=$(date +'%Y.%m.%d').$GITHUB_RUN_NUMBER" >> $GITHUB_OUTPUT
@@ -51,5 +53,6 @@ jobs:
           REPOSITORY: sid-admin-dashboard
           IMAGE_TAG: ${{ github.sha }}
         run: |
-          docker build -t $REGISTRY/$REPOSITORY:${{ steps.IMAGE_TAG.outputs.PACKAGE_VERSION }}
+          docker build -t $REGISTRY/$REPOSITORY:${{ steps.IMAGE_TAG.outputs.PACKAGE_VERSION }} -t $REGISTRY/$REPOSITORY:latest .
           docker push $REGISTRY/$REPOSITORY:${{ steps.IMAGE_TAG.outputs.PACKAGE_VERSION }}
+          docker push $REGISTRY/$REPOSITORY:latest
