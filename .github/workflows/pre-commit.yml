@@ -1,0 +1,7 @@
+name: Running Pre Commit Checks
+
+on: [pull_request]
+
+jobs:
+  verify-jira-id:
+    uses: sourceidtechorg/sid-github-actions/.github/workflows/verify-jira-id.yml@main
