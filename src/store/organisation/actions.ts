@@ -121,7 +121,9 @@ export const toggleOrganisationMfaSuccess = (
   payload: data,
 });
 
-export const toggleOrganisationMfaFailure = (error: string): ToggleOrganisationMfaFailureAction => ({
+export const toggleOrganisationMfaFailure = (
+  error: string
+): ToggleOrganisationMfaFailureAction => ({
   type: TOGGLE_ORGANISATION_MFA_FAILURE,
   payload: { error },
 });

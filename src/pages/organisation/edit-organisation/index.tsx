@@ -5,17 +5,17 @@ import { Form, Input, Button, Select, InputNumber, Upload, Switch, Spin, Row, Co
 import { UploadOutlined, ArrowLeftOutlined } from '@ant-design/icons';
 import DashboardLayout from '../../../layouts/dashboard-layout';
 import { RootState } from '../../../store/rootReducer';
-import { 
-  updateOrganisationRequest, 
+import {
+  updateOrganisationRequest,
   resetUpdateOrganisationState,
   // Commenting out unused import
   // toggleOrganisationMfaRequest
 } from '../../../store/organisation/actions';
-import { 
+import {
   Organization,
-  UpdateOrganizationPayload, 
+  UpdateOrganizationPayload,
   // Commenting out unused type
-  // ToggleOrganizationMfaPayload 
+  // ToggleOrganizationMfaPayload
 } from '../../../store/organisation/types';
 import { AnyAction } from 'redux';
 import { UploadChangeParam, UploadFile } from 'antd/lib/upload/interface';
@@ -60,13 +60,19 @@ const EditOrganisation: React.FC = () => {
   const [showMfaSettings, setShowMfaSettings] = useState<boolean>(false);
 
   // Get organization data and loading states from Redux
-  const { data: organizations, loading: fetchLoading } = useSelector((state: RootState) => state.organisations);
-  const { loading: updateLoading, success: updateSuccess, error: updateError } = useSelector(
-    (state: RootState) => state.organisations.updateOrganization
+  const { data: organizations, loading: fetchLoading } = useSelector(
+    (state: RootState) => state.organisations
   );
+  const {
+    loading: updateLoading,
+    success: updateSuccess,
+    error: updateError,
+  } = useSelector((state: RootState) => state.organisations.updateOrganization);
 
   // Find the organization to edit and cast to extended type
-  const organizationToEdit = organizations.find((org) => org._id === id) as ExtendedOrganization | undefined;
+  const organizationToEdit = organizations.find((org) => org._id === id) as
+    | ExtendedOrganization
+    | undefined;
 
   // Country options
   const countryOptions = [
@@ -85,8 +91,9 @@ const EditOrganisation: React.FC = () => {
     if (organizationToEdit) {
       // Extract email and phone from keyContact if available, or use defaults
       const email = organizationToEdit.email || organizationToEdit.keyContact?.email || '';
-      const phoneNumber = organizationToEdit.phoneNumber || organizationToEdit.keyContact?.phoneNumber || '';
-      
+      const phoneNumber =
+        organizationToEdit.phoneNumber || organizationToEdit.keyContact?.phoneNumber || '';
+
       form.setFieldsValue({
         name: organizationToEdit.name,
         email,
@@ -159,7 +166,6 @@ const EditOrganisation: React.FC = () => {
   const handleMfaToggle = (_checked: boolean): void => {
     // Silently accept the toggle without making an API call
     // We're keeping the UI but not sending to the API since it's not supported yet
-    
     // Keep this commented out for now
     // if (!id) return;
     // const payload: ToggleOrganizationMfaPayload = {
@@ -202,15 +208,17 @@ const EditOrganisation: React.FC = () => {
             <span>Back</span>
           </div>
         </div>
-        
+
         <Form
           form={form}
           layout="vertical"
           onFinish={handleSubmit}
           className="edit-organisation-form"
-          initialValues={{
-            // Initial values set in useEffect
-          }}
+          initialValues={
+            {
+              // Initial values set in useEffect
+            }
+          }
         >
           <div className="section">
             <h2>Organization Information</h2>
@@ -377,21 +385,25 @@ const EditOrganisation: React.FC = () => {
             <div className="section">
               <h2>MFA Settings</h2>
               <Form.Item label="Enable MFA" name="mfaIsEnabled">
-                <Switch 
-                  defaultChecked={organizationToEdit?.mfaIsEnabled} 
+                <Switch
+                  defaultChecked={organizationToEdit?.mfaIsEnabled}
                   onChange={handleMfaToggle}
                 />
               </Form.Item>
               <p className="mfa-description">
-                Multi-Factor Authentication provides an additional layer of security for organization users.
+                Multi-Factor Authentication provides an additional layer of security for
+                organization users.
               </p>
             </div>
           )}
 
           <div className="form-actions">
-            <Button type="default" onClick={(): void => {
-              navigate('/dashboard/organisation');
-            }}>
+            <Button
+              type="default"
+              onClick={(): void => {
+                navigate('/dashboard/organisation');
+              }}
+            >
               Cancel
             </Button>
             <Button type="primary" htmlType="submit" loading={updateLoading}>
@@ -406,4 +418,4 @@ const EditOrganisation: React.FC = () => {
   );
 };
 
-export default EditOrganisation; 
+export default EditOrganisation;

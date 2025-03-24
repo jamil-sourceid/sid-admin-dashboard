@@ -121,24 +121,23 @@ export const organisationReducer = (
         },
       };
 
-    case UPDATE_ORGANISATION_SUCCESS:
-      {
-        const updatedOrganizations = state.data.map((org: Organization) => 
-          org._id === action.payload.data._id ? action.payload.data : org
-        );
-        
-        return {
-          ...state,
-          data: updatedOrganizations,
-          updateOrganization: {
-            loading: false,
-            success: true,
-            error: null,
-            data: action.payload.data,
-          },
-          selectedOrganization: action.payload.data,
-        };
-      }
+    case UPDATE_ORGANISATION_SUCCESS: {
+      const updatedOrganizations = state.data.map((org: Organization) =>
+        org._id === action.payload.data._id ? action.payload.data : org
+      );
+
+      return {
+        ...state,
+        data: updatedOrganizations,
+        updateOrganization: {
+          loading: false,
+          success: true,
+          error: null,
+          data: action.payload.data,
+        },
+        selectedOrganization: action.payload.data,
+      };
+    }
 
     case UPDATE_ORGANISATION_FAILURE:
       return {
@@ -173,24 +172,23 @@ export const organisationReducer = (
         },
       };
 
-    case TOGGLE_ORGANISATION_MFA_SUCCESS:
-      {
-        const mfaUpdatedOrganizations = state.data.map((org: Organization) => 
-          org._id === action.payload.data._id ? action.payload.data : org
-        );
-        
-        return {
-          ...state,
-          data: mfaUpdatedOrganizations,
-          updateOrganization: {
-            loading: false,
-            success: true,
-            error: null,
-            data: action.payload.data,
-          },
-          selectedOrganization: action.payload.data,
-        };
-      }
+    case TOGGLE_ORGANISATION_MFA_SUCCESS: {
+      const mfaUpdatedOrganizations = state.data.map((org: Organization) =>
+        org._id === action.payload.data._id ? action.payload.data : org
+      );
+
+      return {
+        ...state,
+        data: mfaUpdatedOrganizations,
+        updateOrganization: {
+          loading: false,
+          success: true,
+          error: null,
+          data: action.payload.data,
+        },
+        selectedOrganization: action.payload.data,
+      };
+    }
 
     case TOGGLE_ORGANISATION_MFA_FAILURE:
       return {

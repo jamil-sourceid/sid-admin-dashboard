@@ -9,9 +9,7 @@ const Settings: React.FC = () => {
       pageTitle="System Settings"
       pageDesc="Configure global settings for the SourceID platform"
     >
-      <div className="settings-content">
-        {/* Simple settings page with just a header */}
-      </div>
+      <div className="settings-content">{/* Simple settings page with just a header */}</div>
     </DashboardLayout>
   );
 };

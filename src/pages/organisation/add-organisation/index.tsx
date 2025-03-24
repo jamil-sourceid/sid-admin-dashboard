@@ -5,7 +5,10 @@ import DashboardLayout from '../../../layouts/dashboard-layout';
 import { Form, Input, Button, Select, InputNumber, Divider, Upload, message, Switch } from 'antd';
 import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
 import { RootState } from '../../../store/rootReducer';
-import { createOrganisationRequest, resetCreateOrganisationState } from '../../../store/organisation/actions';
+import {
+  createOrganisationRequest,
+  resetCreateOrganisationState,
+} from '../../../store/organisation/actions';
 import './style.css';
 import { AnyAction } from 'redux';
 import type { UploadChangeParam, UploadFile } from 'antd/es/upload';
@@ -59,7 +62,7 @@ const AddOrganisation: React.FC = () => {
   const [mfaEnabled, setMfaEnabled] = useState<boolean>(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  
+
   const { createOrganization } = useSelector((state: RootState) => state.organisations);
   const { loading, success } = createOrganization;
 
@@ -113,7 +116,7 @@ const AddOrganisation: React.FC = () => {
       setUploadLoading(true);
       return;
     }
-    
+
     if (info.file.status === 'done') {
       // Get a URL from the response
       // For now, we'll just use a mock URL
@@ -132,7 +135,7 @@ const AddOrganisation: React.FC = () => {
   const handleCancel = (): void => {
     navigate('/dashboard/organisation');
   };
-  
+
   const handleBack = (): void => {
     navigate('/dashboard/organisation');
   };
@@ -142,7 +145,7 @@ const AddOrganisation: React.FC = () => {
   const handleMfaToggle = (checked: boolean): void => {
     // Still update state to keep the UI toggle working
     setMfaEnabled(checked);
-    
+
     // Silently accept the toggle without notifying about API limitations
     // We're keeping the UI but not sending to the API since it's not supported yet
   };
@@ -162,7 +165,7 @@ const AddOrganisation: React.FC = () => {
             Back
           </div>
         </div>
-      
+
         <div className="add-organisation-content">
           <Form
             form={form}
@@ -175,7 +178,7 @@ const AddOrganisation: React.FC = () => {
           >
             <div className="form-section">
               <h3 className="section-title">Organisation Information</h3>
-              
+
               <div className="form-grid">
                 <div className="input-container">
                   <Form.Item
@@ -186,20 +189,20 @@ const AddOrganisation: React.FC = () => {
                     <Input placeholder="Enter organisation name" />
                   </Form.Item>
                 </div>
-                
+
                 <div className="input-container">
                   <Form.Item
                     name="email"
                     label="Email Address *"
                     rules={[
                       { required: true, message: 'Please enter email address' },
-                      { type: 'email', message: 'Please enter a valid email' }
+                      { type: 'email', message: 'Please enter a valid email' },
                     ]}
                   >
                     <Input placeholder="Enter email address" />
                   </Form.Item>
                 </div>
-                
+
                 <div className="input-container">
                   <Form.Item
                     name="phoneNumber"
@@ -209,19 +212,15 @@ const AddOrganisation: React.FC = () => {
                     <Input placeholder="Enter phone number" />
                   </Form.Item>
                 </div>
-              
+
                 <div className="input-container">
                   <Form.Item
                     name="country"
                     label="Country *"
                     rules={[{ required: true, message: 'Please select country' }]}
                   >
-                    <Select 
-                      placeholder="Select country"
-                      showSearch
-                      optionFilterProp="children"
-                    >
-                      {countryOptions.map(country => (
+                    <Select placeholder="Select country" showSearch optionFilterProp="children">
+                      {countryOptions.map((country) => (
                         <Option key={country.value} value={country.value}>
                           {country.label}
                         </Option>
@@ -229,7 +228,7 @@ const AddOrganisation: React.FC = () => {
                     </Select>
                   </Form.Item>
                 </div>
-                
+
                 <div className="input-container">
                   <Form.Item
                     name="distanceTolerance"
@@ -237,19 +236,16 @@ const AddOrganisation: React.FC = () => {
                     rules={[{ required: true, message: 'Please enter distance tolerance' }]}
                     tooltip="Maximum distance in meters allowed for location verification"
                   >
-                    <InputNumber 
-                      style={{ width: '100%' }} 
-                      min={1} 
+                    <InputNumber
+                      style={{ width: '100%' }}
+                      min={1}
                       placeholder="Enter distance tolerance"
                     />
                   </Form.Item>
                 </div>
-                
+
                 <div className="input-container">
-                  <Form.Item
-                    name="img"
-                    label="Organisation Logo"
-                  >
+                  <Form.Item name="img" label="Organisation Logo">
                     <Upload
                       name="avatar"
                       listType="picture-card"
@@ -268,30 +264,29 @@ const AddOrganisation: React.FC = () => {
                 </div>
               </div>
             </div>
-            
+
             <Divider />
-            
+
             <div className="form-section">
               <h3 className="section-title">Security Settings</h3>
               <div className="form-grid">
                 <div className="input-container">
-                  <Form.Item
-                    label="Enable Multi-Factor Authentication (MFA)"
-                  >
+                  <Form.Item label="Enable Multi-Factor Authentication (MFA)">
                     <Switch checked={mfaEnabled} onChange={handleMfaToggle} />
                     <p className="mfa-description">
-                      Multi-Factor Authentication provides an additional layer of security for organization users.
+                      Multi-Factor Authentication provides an additional layer of security for
+                      organization users.
                     </p>
                   </Form.Item>
                 </div>
               </div>
             </div>
-            
+
             <Divider />
-            
+
             <div className="form-section">
               <h3 className="section-title">Address Information</h3>
-              
+
               <div className="form-grid">
                 <div className="input-container">
                   <Form.Item
@@ -302,16 +297,13 @@ const AddOrganisation: React.FC = () => {
                     <Input placeholder="Enter address line 1" />
                   </Form.Item>
                 </div>
-                
+
                 <div className="input-container">
-                  <Form.Item
-                    name="addressLineTwo"
-                    label="Address Line 2"
-                  >
+                  <Form.Item name="addressLineTwo" label="Address Line 2">
                     <Input placeholder="Enter address line 2 (optional)" />
                   </Form.Item>
                 </div>
-                
+
                 <div className="input-container">
                   <Form.Item
                     name="city"
@@ -321,7 +313,7 @@ const AddOrganisation: React.FC = () => {
                     <Input placeholder="Enter city" />
                   </Form.Item>
                 </div>
-                
+
                 <div className="input-container">
                   <Form.Item
                     name="region"
@@ -331,7 +323,7 @@ const AddOrganisation: React.FC = () => {
                     <Input placeholder="Enter state/province/region" />
                   </Form.Item>
                 </div>
-                
+
                 <div className="input-container">
                   <Form.Item
                     name="zipCode"
@@ -341,7 +333,7 @@ const AddOrganisation: React.FC = () => {
                     <Input placeholder="Enter postal/zip code" />
                   </Form.Item>
                 </div>
-                
+
                 <div className="input-container">
                   <Form.Item
                     name="countryCode"
@@ -349,7 +341,7 @@ const AddOrganisation: React.FC = () => {
                     rules={[{ required: true, message: 'Please select country code' }]}
                   >
                     <Select placeholder="Select country code">
-                      {countryOptions.map(country => (
+                      {countryOptions.map((country) => (
                         <Option key={country.code} value={country.code}>
                           {country.code} - {country.label}
                         </Option>
@@ -357,42 +349,26 @@ const AddOrganisation: React.FC = () => {
                     </Select>
                   </Form.Item>
                 </div>
-                
+
                 <div className="input-container">
-                  <Form.Item
-                    name="latitude"
-                    label="Latitude"
-                    tooltip="Optional GPS coordinate"
-                  >
+                  <Form.Item name="latitude" label="Latitude" tooltip="Optional GPS coordinate">
                     <InputNumber style={{ width: '100%' }} placeholder="Enter latitude" />
                   </Form.Item>
                 </div>
-                
+
                 <div className="input-container">
-                  <Form.Item
-                    name="longitude"
-                    label="Longitude"
-                    tooltip="Optional GPS coordinate"
-                  >
+                  <Form.Item name="longitude" label="Longitude" tooltip="Optional GPS coordinate">
                     <InputNumber style={{ width: '100%' }} placeholder="Enter longitude" />
                   </Form.Item>
                 </div>
               </div>
             </div>
-            
+
             <div className="form-actions">
-              <Button 
-                onClick={handleCancel}
-                className="cancel-button"
-              >
+              <Button onClick={handleCancel} className="cancel-button">
                 Cancel
               </Button>
-              <Button 
-                type="primary" 
-                htmlType="submit"
-                loading={loading}
-                className="submit-button"
-              >
+              <Button type="primary" htmlType="submit" loading={loading} className="submit-button">
                 Create Organisation
               </Button>
             </div>
@@ -403,4 +379,4 @@ const AddOrganisation: React.FC = () => {
   );
 };
 
-export default AddOrganisation; 
+export default AddOrganisation;

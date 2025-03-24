@@ -9,9 +9,7 @@ const ApiLog: React.FC = () => {
       pageTitle="API Logs"
       pageDesc="Monitor API calls and responses across the platform"
     >
-      <div className="api-log-content">
-        {/* Simple API log page with just a header */}
-      </div>
+      <div className="api-log-content">{/* Simple API log page with just a header */}</div>
     </DashboardLayout>
   );
 };

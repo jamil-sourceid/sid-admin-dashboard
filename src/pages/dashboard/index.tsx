@@ -9,9 +9,7 @@ const Dashboard: React.FC = () => {
       pageTitle="Admin Dashboard"
       pageDesc="Welcome to the SourceID Admin Dashboard"
     >
-      <div className="dashboard-content">
-        {/* Simple dashboard with just a header */}
-      </div>
+      <div className="dashboard-content">{/* Simple dashboard with just a header */}</div>
     </DashboardLayout>
   );
 };

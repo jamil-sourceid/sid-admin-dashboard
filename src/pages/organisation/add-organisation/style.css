@@ -4,7 +4,6 @@
 
   .add-organisation-content {
     background-color: #fff;
-
   }
 
   .header-actions {
@@ -77,11 +76,11 @@
     border: 1px solid rgba(213, 215, 218, 1);
     font-size: 14px;
     color: #374151;
-    
+
     &::placeholder {
       color: #9ca3af;
     }
-    
+
     &:hover,
     &:focus {
       border-color: var(--color-primary);
@@ -122,16 +121,16 @@
 
   .ant-input-affix-wrapper {
     border-radius: 8px;
-    
+
     &:hover,
     &:focus {
       border-color: var(--color-primary);
     }
   }
 
-  .ant-form-item-has-error .ant-input, 
-  .ant-form-item-has-error .ant-input-affix-wrapper, 
-  .ant-form-item-has-error .ant-input:hover, 
+  .ant-form-item-has-error .ant-input,
+  .ant-form-item-has-error .ant-input-affix-wrapper,
+  .ant-form-item-has-error .ant-input:hover,
   .ant-form-item-has-error .ant-input-affix-wrapper:hover {
     border-color: #ff4d4f;
   }
@@ -145,7 +144,7 @@
       border: 1px dashed #d9d9d9;
       cursor: pointer;
       transition: border-color 0.3s;
-      
+
       &:hover {
         border-color: var(--color-primary);
       }
@@ -168,7 +167,7 @@
       font-size: 14px;
       font-weight: 500;
       cursor: pointer;
-      
+
       &:hover {
         color: #4b5563;
         border-color: #d1d5db;
@@ -185,7 +184,7 @@
       font-size: 14px;
       font-weight: 500;
       cursor: pointer;
-      
+
       &:hover {
         background-color: rgba(35, 30, 84, 0.9);
         opacity: 0.9;
@@ -235,4 +234,4 @@
 .add-organisation-module .ant-btn-primary:focus {
   background-color: rgba(35, 30, 84, 0.9) !important;
   border-color: rgba(35, 30, 84, 0.9) !important;
-} 
+}

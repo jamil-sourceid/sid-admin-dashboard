@@ -9,9 +9,7 @@ const AuditLog: React.FC = () => {
       pageTitle="Audit Logs"
       pageDesc="View and manage audit trails for all system operations"
     >
-      <div className="audit-log-content">
-        {/* Simple audit log page with just a header */}
-      </div>
+      <div className="audit-log-content">{/* Simple audit log page with just a header */}</div>
     </DashboardLayout>
   );
 };

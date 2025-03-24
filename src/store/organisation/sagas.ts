@@ -17,8 +17,8 @@ import {
   UpdateOrganizationResponse,
   ToggleOrganizationMfaResponse,
 } from './types';
-import { 
-  fetchOrganisationsSuccess, 
+import {
+  fetchOrganisationsSuccess,
   fetchOrganisationsFailure,
   createOrganisationSuccess,
   createOrganisationFailure,
@@ -30,21 +30,29 @@ import {
 
 function* handleFetchOrganisations(action: FetchOrganisationsRequestAction): SagaIterator {
   try {
-    const { page = 1, limit = 10, search, status, startDate, endDate, mfaIsEnabled } = action.payload || {};
-    
+    const {
+      page = 1,
+      limit = 10,
+      search,
+      status,
+      startDate,
+      endDate,
+      mfaIsEnabled,
+    } = action.payload || {};
+
     // Create query params object first
     const params: Record<string, string> = {
       page: String(page),
       limit: String(limit),
     };
-    
+
     // Add optional params only if they are defined
     if (search) params.search = search;
     if (status) params.status = status;
     if (startDate) params.startDate = startDate;
     if (endDate) params.endDate = endDate;
     if (mfaIsEnabled !== undefined) params.mfaIsEnabled = String(mfaIsEnabled);
-    
+
     // Convert to URLSearchParams
     const queryParams = new URLSearchParams(params).toString();
 
@@ -77,18 +85,19 @@ function* handleFetchOrganisations(action: FetchOrganisationsRequestAction): Sag
 
 function* handleCreateOrganisation(action: CreateOrganisationRequestAction): SagaIterator {
   try {
-    const response = (yield call(
-      postData,
-      '/organization',
-      action.payload
-    )) as { data: CreateOrganizationResponse };
+    const response = (yield call(postData, '/organization', action.payload)) as {
+      data: CreateOrganizationResponse;
+    };
 
     if (response?.data) {
       yield put(createOrganisationSuccess(response.data));
-      notify({ 
-        title: 'Success', 
-        text: 'Organization created successfully!' 
-      }, 'success');
+      notify(
+        {
+          title: 'Success',
+          text: 'Organization created successfully!',
+        },
+        'success'
+      );
       return;
     }
 
@@ -112,18 +121,19 @@ function* handleCreateOrganisation(action: CreateOrganisationRequestAction): Sag
 function* handleUpdateOrganisation(action: UpdateOrganisationRequestAction): SagaIterator {
   try {
     const { organizationId, ...updateData } = action.payload;
-    const response = (yield call(
-      patchData,
-      `/organization/${organizationId}`,
-      updateData
-    )) as { data: UpdateOrganizationResponse };
+    const response = (yield call(patchData, `/organization/${organizationId}`, updateData)) as {
+      data: UpdateOrganizationResponse;
+    };
 
     if (response?.data) {
       yield put(updateOrganisationSuccess(response.data));
-      notify({ 
-        title: 'Success', 
-        text: 'Organization updated successfully!' 
-      }, 'success');
+      notify(
+        {
+          title: 'Success',
+          text: 'Organization updated successfully!',
+        },
+        'success'
+      );
       return;
     }
 
@@ -147,18 +157,19 @@ function* handleUpdateOrganisation(action: UpdateOrganisationRequestAction): Sag
 function* handleToggleOrganisationMfa(action: ToggleOrganisationMfaRequestAction): SagaIterator {
   try {
     const { organizationId, mfaIsEnabled } = action.payload;
-    const response = (yield call(
-      patchData,
-      `/organization/toggle-settings/${organizationId}`,
-      { mfaIsEnabled }
-    )) as { data: ToggleOrganizationMfaResponse };
+    const response = (yield call(patchData, `/organization/toggle-settings/${organizationId}`, {
+      mfaIsEnabled,
+    })) as { data: ToggleOrganizationMfaResponse };
 
     if (response?.data) {
       yield put(toggleOrganisationMfaSuccess(response.data));
-      notify({ 
-        title: 'Success', 
-        text: `MFA ${mfaIsEnabled ? 'enabled' : 'disabled'} successfully!` 
-      }, 'success');
+      notify(
+        {
+          title: 'Success',
+          text: `MFA ${mfaIsEnabled ? 'enabled' : 'disabled'} successfully!`,
+        },
+        'success'
+      );
       return;
     }
 

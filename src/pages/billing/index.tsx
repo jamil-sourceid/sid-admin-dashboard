@@ -9,9 +9,7 @@ const Billing: React.FC = () => {
       pageTitle="Billing Management"
       pageDesc="Manage billing, invoices, and organization payments"
     >
-      <div className="billing-content">
-        {/* Simple billing page with just a header */}
-      </div>
+      <div className="billing-content">{/* Simple billing page with just a header */}</div>
     </DashboardLayout>
   );
 };

@@ -57,7 +57,10 @@ const Organisation: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [selectedStatus, setSelectedStatus] = useState<string>('');
-  const [dateRange, setDateRange] = useState<[string | undefined, string | undefined]>([undefined, undefined]);
+  const [dateRange, setDateRange] = useState<[string | undefined, string | undefined]>([
+    undefined,
+    undefined,
+  ]);
   const [mfaEnabled, setMfaEnabled] = useState<boolean | undefined>(undefined);
   const [filterVisible, setFilterVisible] = useState(false);
   const navigate = useNavigate();
@@ -66,33 +69,37 @@ const Organisation: React.FC = () => {
   const {
     data: organisations,
     loading,
-    meta
+    meta,
   } = useSelector((state: RootState) => state.organisations);
 
   useEffect(() => {
-    dispatch(fetchOrganisationsRequest({
-      page: currentPage,
-      limit: pageSize,
-      search: searchTerm,
-      status: selectedStatus || undefined,
-      startDate: dateRange[0],
-      endDate: dateRange[1],
-      mfaIsEnabled: mfaEnabled
-    }) as unknown as AnyAction);
-  }, [dispatch, currentPage, pageSize, selectedStatus, dateRange, mfaEnabled]);
-
-  // Debounce search to prevent too many API calls
-  useEffect(() => {
-    const handler = setTimeout(() => {
-      dispatch(fetchOrganisationsRequest({
+    dispatch(
+      fetchOrganisationsRequest({
         page: currentPage,
         limit: pageSize,
         search: searchTerm,
         status: selectedStatus || undefined,
         startDate: dateRange[0],
         endDate: dateRange[1],
-        mfaIsEnabled: mfaEnabled
-      }) as unknown as AnyAction);
+        mfaIsEnabled: mfaEnabled,
+      }) as unknown as AnyAction
+    );
+  }, [dispatch, currentPage, pageSize, selectedStatus, dateRange, mfaEnabled]);
+
+  // Debounce search to prevent too many API calls
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      dispatch(
+        fetchOrganisationsRequest({
+          page: currentPage,
+          limit: pageSize,
+          search: searchTerm,
+          status: selectedStatus || undefined,
+          startDate: dateRange[0],
+          endDate: dateRange[1],
+          mfaIsEnabled: mfaEnabled,
+        }) as unknown as AnyAction
+      );
     }, 500);
 
     return () => {
@@ -104,7 +111,7 @@ const Organisation: React.FC = () => {
     setActiveTab(key);
     // Reset the search and filters when changing tabs
     setCurrentPage(1);
-    
+
     let newStatus = '';
     // Set status based on tab
     switch (key) {
@@ -118,19 +125,21 @@ const Organisation: React.FC = () => {
         newStatus = '';
         break;
     }
-    
+
     setSelectedStatus(newStatus);
-    
+
     // Dispatch the action with the updated status
-    dispatch(fetchOrganisationsRequest({
-      page: 1,
-      limit: pageSize,
-      search: searchTerm,
-      status: newStatus || undefined,
-      startDate: dateRange[0],
-      endDate: dateRange[1],
-      mfaIsEnabled: mfaEnabled
-    }) as unknown as AnyAction);
+    dispatch(
+      fetchOrganisationsRequest({
+        page: 1,
+        limit: pageSize,
+        search: searchTerm,
+        status: newStatus || undefined,
+        startDate: dateRange[0],
+        endDate: dateRange[1],
+        mfaIsEnabled: mfaEnabled,
+      }) as unknown as AnyAction
+    );
   };
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>): void => {
@@ -147,7 +156,7 @@ const Organisation: React.FC = () => {
     if (dates && dates[0] && dates[1]) {
       setDateRange([
         dates[0] ? dayjs(dates[0]).format('YYYY-MM-DD') : undefined,
-        dates[1] ? dayjs(dates[1]).format('YYYY-MM-DD') : undefined
+        dates[1] ? dayjs(dates[1]).format('YYYY-MM-DD') : undefined,
       ]);
     } else {
       setDateRange([undefined, undefined]);
@@ -209,13 +218,12 @@ const Organisation: React.FC = () => {
       {filterVisible && (
         <div className="filter-section">
           <div className="filter-options">
-            <RangePicker 
+            <RangePicker
               onChange={handleDateRangeChange}
               placeholder={['Start Date', 'End Date']}
-              value={dateRange[0] && dateRange[1] ? [
-                dayjs(dateRange[0]),
-                dayjs(dateRange[1])
-              ] : null}
+              value={
+                dateRange[0] && dateRange[1] ? [dayjs(dateRange[0]), dayjs(dateRange[1])] : null
+              }
             />
             <Select
               placeholder="MFA Status"
@@ -225,7 +233,7 @@ const Organisation: React.FC = () => {
               style={{ width: 200 }}
               options={[
                 { value: true, label: 'MFA Enabled' },
-                { value: false, label: 'MFA Disabled' }
+                { value: false, label: 'MFA Disabled' },
               ]}
             />
             <button className="btn-clear" onClick={resetFilters}>
@@ -272,7 +280,9 @@ const Organisation: React.FC = () => {
                     <td>{org.country}</td>
                     <td>{formatDate(org.createdAt)}</td>
                     <td>
-                      <span className={`status-badge ${org.status.toLowerCase()}`}>{org.status}</span>
+                      <span className={`status-badge ${org.status.toLowerCase()}`}>
+                        {org.status}
+                      </span>
                     </td>
                     <td>
                       <span className={`status-badge ${org.mfaIsEnabled ? 'active' : 'inactive'}`}>
@@ -280,11 +290,11 @@ const Organisation: React.FC = () => {
                       </span>
                     </td>
                     <td>
-                      <img 
-                        src={View} 
-                        alt="View" 
+                      <img
+                        src={View}
+                        alt="View"
                         className="view-icon"
-                        onClick={(): void => handleViewOrganisation(org._id)} 
+                        onClick={(): void => handleViewOrganisation(org._id)}
                       />
                     </td>
                   </tr>
@@ -296,7 +306,10 @@ const Organisation: React.FC = () => {
 
         {!loading && meta && meta.total > 0 && (
           <div className="table-footer">
-            <div className="pagination-container" style={{ width: '100%', display: 'flex', justifyContent: 'flex-end' }}>
+            <div
+              className="pagination-container"
+              style={{ width: '100%', display: 'flex', justifyContent: 'flex-end' }}
+            >
               <SourceIdPagination
                 defaultCurrent={currentPage}
                 total={meta.total}

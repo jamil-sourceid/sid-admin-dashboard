@@ -4,11 +4,11 @@
   gap: 8px;
   width: 100%;
   justify-content: flex-end;
-  
+
   .ant-pagination-total-text {
     margin-right: auto;
   }
-  
+
   li {
     &:nth-child(1),
     &:last-child {
