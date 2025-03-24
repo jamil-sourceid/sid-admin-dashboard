@@ -10,11 +10,11 @@ import LogoMini from '../../../../assets/images/logo-mini.svg';
 import Search from '../../../../assets/icons/search.svg';
 
 import Dashboard from '../../../../assets/icons/dashboard.svg';
-import Module from '../../../../assets/icons/module.svg';
+import Organisation from '../../../../assets/icons/module.svg';
+import Customer from '../../../../assets/icons/user.svg';
 import RoleManagement from '../../../../assets/icons/role.svg';
 import Logs from '../../../../assets/icons/logs.svg';
-// import ConfigApi from '../../../../assets/icons/config.svg';
-// import Billing from '../../../../assets/icons/billing.svg';
+import Billing from '../../../../assets/icons/billing.svg';
 import Support from '../../../../assets/icons/support.svg';
 import Documentation from '../../../../assets/icons/documentation.svg';
 import Settings from '../../../../assets/icons/settings.svg';
@@ -22,7 +22,7 @@ import Arrow from '../../../../assets/icons/updown.svg';
 import ArrowDown from '../../../../assets/icons/arrow-down.svg';
 import Menu from '../../../../assets/icons/menu.svg';
 import Expand from '../../../../assets/icons/expand.svg';
-import { UserBoard, OnlineStatus, MinifiedUserBoard } from '../user-board';
+import { UserBoard, MinifiedUserBoard } from '../user-board';
 
 import { SideBarprops } from './models';
 
@@ -95,52 +95,25 @@ const SideBar: React.FC<SideBarprops> = ({ toggleSidebar, isCollapsed }) => {
             </li>
           </NavLink>
 
-          <li
-            title="Modules"
-            className={`dropdown ${dropdowns.modules && 'open'} ${
-              isDropdownActive([
-                '/dashboard/modules/kyc',
-                '/dashboard/modules/kyb',
-              ]) && 'active'
-            }`}
-            onClick={(): void => toggleDropdown('modules')}
+          <NavLink
+            to="/dashboard/organisation"
+            className={({ isActive }): string => (isActive ? 'active' : '')}
           >
-            <div className="dropdown-header">
-              <div className="dropdown-header-content">
-                <img src={Module} alt="" className="icon" />
-                {!isCollapsed && 'Modules'}
-              </div>
-              {!isCollapsed && (
-                <img
-                  src={ArrowDown}
-                  alt="Toggle dropdown"
-                  className={`dropdown-arrow ${
-                    dropdowns.logs ? 'rotated' : ''
-                  }`}
-                />
-              )}
-            </div>
-            {!isCollapsed && dropdowns.modules && (
-              <ul className="dropdown-menu">
-                <NavLink
-                  to="/dashboard/modules/kyc"
-                  className={({ isActive }): string =>
-                    isActive ? 'active' : ''
-                  }
-                >
-                  <li>KYC</li>
-                </NavLink>
-                <NavLink
-                  to="/dashboard/modules/kyb"
-                  className={({ isActive }): string =>
-                    isActive ? 'active' : ''
-                  }
-                >
-                  <li>KYB</li>
-                </NavLink>
-              </ul>
-            )}
-          </li>
+            <li className="menu-list" title="Organisation">
+              <img src={Organisation} alt="" className="icon" />
+              {!isCollapsed && 'Organisation'}
+            </li>
+          </NavLink>
+
+          <NavLink
+            to="/dashboard/customers"
+            className={({ isActive }): string => (isActive ? 'active' : '')}
+          >
+            <li className="menu-list" title="Customers">
+              <img src={Customer} alt="" className="icon" />
+              {!isCollapsed && 'Customers'}
+            </li>
+          </NavLink>
 
           <NavLink
             to="/dashboard/role-management"
@@ -199,54 +172,7 @@ const SideBar: React.FC<SideBarprops> = ({ toggleSidebar, isCollapsed }) => {
             )}
           </li>
 
-          {/* <li
-            title="Configuration"
-            className={`dropdown ${dropdowns.configs && 'open'} ${
-              isDropdownActive([
-                '/dashboard/configuration/verification-criteria-acceptance',
-                '/dashboard/configuration/default-weight',
-              ]) && 'active'
-            }`}
-            onClick={(): void => toggleDropdown('configs')}
-          >
-            <div className="dropdown-header">
-              <div className="dropdown-header-content">
-                <img src={ConfigApi} alt="" className="icon" />
-                {!isCollapsed && 'Configuration'}
-              </div>
-              {!isCollapsed && (
-                <img
-                  src={ArrowDown}
-                  alt="Toggle dropdown"
-                  className={`dropdown-arrow ${
-                    dropdowns.configs ? 'rotated' : ''
-                  }`}
-                />
-              )}
-            </div>
-            {!isCollapsed && dropdowns.configs && (
-              <ul className="dropdown-menu">
-                <NavLink
-                  to="/dashboard/configuration/verification-criteria-acceptance"
-                  className={({ isActive }): string =>
-                    isActive ? 'active' : ''
-                  }
-                >
-                  <li>Verification Criteria Acceptance</li>
-                </NavLink>
-                <NavLink
-                  to="/dashboard/configuration/default-weighting"
-                  className={({ isActive }): string =>
-                    isActive ? 'active' : ''
-                  }
-                >
-                  <li>(Default Weighting 0-10)</li>
-                </NavLink>
-              </ul>
-            )}
-          </li> */}
-
-          {/* <NavLink
+          <NavLink
             to="/dashboard/billing"
             className={({ isActive }): string => (isActive ? 'active' : '')}
           >
@@ -254,55 +180,52 @@ const SideBar: React.FC<SideBarprops> = ({ toggleSidebar, isCollapsed }) => {
               <img src={Billing} alt="" className="icon" />
               {!isCollapsed && 'Billing'}
             </li>
-          </NavLink> */}
+          </NavLink>
         </ul>
       </div>
 
       <div className="bottom-navigations">
         <ul className="sidebar-navigation-list">
-          <li className="support" title="Support">
+          <NavLink
+            to="/dashboard/settings"
+            className={({ isActive }): string => (isActive ? 'active' : '')}
+          >
+            <li className="menu-list" title="Settings">
+              <img src={Settings} alt="" className="icon" />
+              {!isCollapsed && 'Settings'}
+            </li>
+          </NavLink>
+
+          <NavLink to="https://docs.usesourceid.com/v1/" target="_blank">
+            <li className="menu-list" title="Documentation">
+              <img src={Documentation} alt="" className="icon" />
+              {!isCollapsed && 'Documentation'}
+            </li>
+          </NavLink>
+
+          <li className="menu-list support" title="Support">
             <div>
               <img src={Support} alt="" className="icon" />
               {!isCollapsed && 'Support'}
             </div>
-            {!isCollapsed && <OnlineStatus />}
+            {!isCollapsed && <img src={Arrow} alt="" />}
           </li>
-
-          <li title="Documentation">
-            <img src={Documentation} alt="" className="icon" />
-            {!isCollapsed && 'Documentation'}
-          </li>
-          <Link to="/dashboard/settings">
-            <li title="Settings">
-              <img src={Settings} alt="" className="icon" />
-              {!isCollapsed && 'Settings'}
-            </li>
-          </Link>
         </ul>
 
-        {!isCollapsed ? (
-          <Popover
-            content={<UserPopOver />}
-            trigger="click"
-            open={open}
-            onOpenChange={handleOpenChange}
-            placement="topLeft"
-          >
-            <div className="mt-4 user-container">
-              <UserBoard />
-              <img src={Arrow} alt="" />
-            </div>
-          </Popover>
+        {isCollapsed ? (
+          <MinifiedUserBoard />
         ) : (
           <Popover
             content={<UserPopOver />}
+            title=""
             trigger="click"
             open={open}
             onOpenChange={handleOpenChange}
-            placement="topLeft"
+            overlayClassName="user-account-popover"
+            placement="rightTop"
           >
-            <div>
-              <MinifiedUserBoard />
+            <div className="user-container">
+              <UserBoard />
             </div>
           </Popover>
         )}

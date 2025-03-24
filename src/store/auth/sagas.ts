@@ -13,25 +13,18 @@ import {
 import { postData } from '../../setup/config/api';
 import { LoginResponse, TwoFALoginResponse } from './model';
 import { notify } from '../../components/toast/utils';
-import { encryptPassword } from 'helpers/helper';
 import { AxiosError } from 'axios';
 
 function* handleLogin(action: LoginRequestAction): Generator {
   try {
     const { email, password } = action.payload;
 
-    const encryptedPassword = encryptPassword(password);
-
     const response = (yield call(
-      postData<
-        LoginResponse,
-        { email: string; password: string; passwordIsEncrypted: boolean }
-      >,
-      '/auth/staff/login',
+      postData<LoginResponse, { email: string; password: string }>,
+      '/auth/admin/login',
       {
         email,
-        password: encryptedPassword,
-        passwordIsEncrypted: true,
+        password: password,
       }
     )) as LoginResponse;
 
@@ -93,7 +86,7 @@ function* handleTwoFaLogin(action: TwoFaRequestAction): Generator {
 
     const response = (yield call(
       postData<TwoFALoginResponse, { email: string; mfaCode: string }>,
-      '/auth/staff/complete-mfa-login',
+      '/auth/admin/complete-mfa-login',
       {
         email,
         mfaCode,

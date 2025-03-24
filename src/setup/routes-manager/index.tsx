@@ -6,6 +6,14 @@ import ProtectedRoute from './ProtectedRoute'; // Import ProtectedRoute componen
 
 // pages
 import SignIn from 'pages/sign-in';
+import Dashboard from 'pages/dashboard';
+import Organisation from 'pages/organisation';
+import Customers from 'pages/customers';
+import RoleManagement from 'pages/role-management';
+import AuditLog from 'pages/logs/child-pages/audit-log';
+import ApiLog from 'pages/logs/child-pages/api-log';
+import Billing from 'pages/billing';
+import Settings from 'pages/settings';
 
 const RoutesManager: React.FC = () => {
   return (
@@ -17,7 +25,25 @@ const RoutesManager: React.FC = () => {
         </Route>
 
         {/* Protected Routes */}
-        <Route element={<ProtectedRoute />}></Route>
+        <Route element={<ProtectedRoute />}>
+          <Route path="dashboard">
+            <Route index element={<Dashboard />} />
+            <Route path="organisation" element={<Organisation />} />
+            <Route path="customers" element={<Customers />} />
+
+            <Route path="role-management">
+              <Route index element={<RoleManagement />} />
+            </Route>
+
+            <Route path="logs">
+              <Route path="audit-log" element={<AuditLog />} />
+              <Route path="api-log" element={<ApiLog />} />
+            </Route>
+
+            <Route path="billing" element={<Billing />} />
+            <Route path="settings" element={<Settings />} />
+          </Route>
+        </Route>
       </Routes>
     </BrowserRouter>
   );
