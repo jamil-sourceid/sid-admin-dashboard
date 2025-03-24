@@ -42,7 +42,6 @@ const SourceIdPagination: React.FC<SourceIdPaginationProps> = ({
   return (
     <Pagination
       className="sourceid-pagination"
-      align="center"
       defaultCurrent={defaultCurrent}
       total={total}
       pageSize={pageSize}
@@ -50,6 +49,7 @@ const SourceIdPagination: React.FC<SourceIdPaginationProps> = ({
       onShowSizeChange={onChange}
       showSizeChanger
       itemRender={itemRender}
+      style={{ width: '100%', display: 'flex', justifyContent: 'flex-end' }}
     />
   );
 };

@@ -8,6 +8,8 @@ import ProtectedRoute from './ProtectedRoute'; // Import ProtectedRoute componen
 import SignIn from 'pages/sign-in';
 import Dashboard from 'pages/dashboard';
 import Organisation from 'pages/organisation';
+import AddOrganisation from 'pages/organisation/add-organisation';
+import EditOrganisation from 'pages/organisation/edit-organisation';
 import Customers from 'pages/customers';
 import RoleManagement from 'pages/role-management';
 import AuditLog from 'pages/logs/child-pages/audit-log';
@@ -28,7 +30,11 @@ const RoutesManager: React.FC = () => {
         <Route element={<ProtectedRoute />}>
           <Route path="dashboard">
             <Route index element={<Dashboard />} />
-            <Route path="organisation" element={<Organisation />} />
+            <Route path="organisation">
+              <Route index element={<Organisation />} />
+              <Route path="add-organisation" element={<AddOrganisation />} />
+              <Route path="edit-organisation/:id" element={<EditOrganisation />} />
+            </Route>
             <Route path="customers" element={<Customers />} />
 
             <Route path="role-management">

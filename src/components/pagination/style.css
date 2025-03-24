@@ -1,4 +1,14 @@
 .sourceid-pagination {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  justify-content: flex-end;
+  
+  .ant-pagination-total-text {
+    margin-right: auto;
+  }
+  
   li {
     &:nth-child(1),
     &:last-child {
@@ -40,10 +50,10 @@
       }
     }
     &.ant-pagination-prev {
-      margin-right: auto;
+      margin-right: 8px;
     }
     &.ant-pagination-next {
-      margin-left: auto;
+      margin-left: 8px;
     }
     &.ant-pagination-disabled {
       .previous,
@@ -54,6 +64,7 @@
       }
     }
     &.ant-pagination-item {
+      margin: 0 4px;
       a {
         color: var(--color-pagination);
         font-family: var(--lato-regular);
