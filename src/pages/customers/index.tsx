@@ -28,11 +28,7 @@ interface CustomerPillProps {
   amount: string;
 }
 
-const CustomerPill: React.FC<CustomerPillProps> = ({
-  state,
-  image,
-  amount,
-}) => {
+const CustomerPill: React.FC<CustomerPillProps> = ({ state, image, amount }) => {
   return (
     <div className="customer-pill">
       <img src={image} alt={state} />
@@ -165,18 +161,12 @@ const Customers: React.FC = () => {
                             <td>{customer.email}</td>
                             <td>{customer.organisation}</td>
                             <td>
-                              <span
-                                className={`status-badge ${customer.status.toLowerCase()}`}
-                              >
+                              <span className={`status-badge ${customer.status.toLowerCase()}`}>
                                 {customer.status}
                               </span>
                             </td>
                             <td>
-                              <img
-                                src={View}
-                                alt="View"
-                                style={{ cursor: 'pointer' }}
-                              />
+                              <img src={View} alt="View" style={{ cursor: 'pointer' }} />
                             </td>
                           </tr>
                         ))}

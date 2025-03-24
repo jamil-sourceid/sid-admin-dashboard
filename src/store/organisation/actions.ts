@@ -8,14 +8,12 @@ import {
   OrganizationsResponse,
 } from './types';
 
-export const fetchOrganisationsRequest = (
-  params?: {
-    page?: number;
-    limit?: number;
-    search?: string;
-    status?: string;
-  }
-): FetchOrganisationsRequestAction => ({
+export const fetchOrganisationsRequest = (params?: {
+  page?: number;
+  limit?: number;
+  search?: string;
+  status?: string;
+}): FetchOrganisationsRequestAction => ({
   type: FETCH_ORGANISATIONS_REQUEST,
   payload: params,
 });
@@ -27,9 +25,7 @@ export const fetchOrganisationsSuccess = (
   payload: data,
 });
 
-export const fetchOrganisationsFailure = (
-  error: string
-): FetchOrganisationsFailureAction => ({
+export const fetchOrganisationsFailure = (error: string): FetchOrganisationsFailureAction => ({
   type: FETCH_ORGANISATIONS_FAILURE,
   payload: { error },
-}); 
+});

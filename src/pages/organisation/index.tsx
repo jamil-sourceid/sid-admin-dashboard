@@ -34,11 +34,7 @@ interface OrganisationPillProps {
   amount: string;
 }
 
-const OrganisationPill: React.FC<OrganisationPillProps> = ({
-  state,
-  image,
-  amount,
-}) => {
+const OrganisationPill: React.FC<OrganisationPillProps> = ({ state, image, amount }) => {
   return (
     <div className="customer-pill">
       <img src={image} alt={state} />
@@ -51,11 +47,13 @@ const OrganisationPill: React.FC<OrganisationPillProps> = ({
 const Organisation: React.FC = () => {
   const [activeTab, setActiveTab] = useState('1');
   const [searchTerm, setSearchTerm] = useState('');
-  
+
   const dispatch = useDispatch();
-  const { data: organisations, loading, error } = useSelector(
-    (state: RootState) => state.organisations
-  );
+  const {
+    data: organisations,
+    loading,
+    error,
+  } = useSelector((state: RootState) => state.organisations);
 
   useEffect(() => {
     dispatch(fetchOrganisationsRequest() as unknown as AnyAction);
@@ -69,12 +67,8 @@ const Organisation: React.FC = () => {
     setSearchTerm(e.target.value);
   };
 
-  const activeOrganisations = organisations.filter(
-    (org) => org.status === 'active'
-  );
-  const inactiveOrganisations = organisations.filter(
-    (org) => org.status === 'inactive'
-  );
+  const activeOrganisations = organisations.filter((org) => org.status === 'active');
+  const inactiveOrganisations = organisations.filter((org) => org.status === 'inactive');
 
   // Filter organizations based on search term
   const filteredOrganisations = organisations.filter((org) =>
@@ -142,18 +136,10 @@ const Organisation: React.FC = () => {
                   <td>{org.country}</td>
                   <td>{formatDate(org.createdAt)}</td>
                   <td>
-                    <span
-                      className={`status-badge ${org.status.toLowerCase()}`}
-                    >
-                      {org.status}
-                    </span>
+                    <span className={`status-badge ${org.status.toLowerCase()}`}>{org.status}</span>
                   </td>
                   <td>
-                    <img
-                      src={View}
-                      alt="View"
-                      style={{ cursor: 'pointer' }}
-                    />
+                    <img src={View} alt="View" style={{ cursor: 'pointer' }} />
                   </td>
                 </tr>
               ))}
@@ -168,9 +154,7 @@ const Organisation: React.FC = () => {
           </table>
         </div>
 
-        <div className="table-footer">
-          {/* Add pagination component here if available */}
-        </div>
+        <div className="table-footer">{/* Add pagination component here if available */}</div>
       </div>
     </div>
   );
@@ -183,9 +167,21 @@ const Organisation: React.FC = () => {
       pageDesc="Manage client organisations and their settings"
     >
       <div className="customer-pills">
-        <OrganisationPill state="All Organisations" image={AllOrgs} amount={String(organisations.length)} />
-        <OrganisationPill state="Active Organisations" image={ActiveOrgs} amount={String(activeOrganisations.length)} />
-        <OrganisationPill state="Inactive Organisations" image={InactiveOrgs} amount={String(inactiveOrganisations.length)} />
+        <OrganisationPill
+          state="All Organisations"
+          image={AllOrgs}
+          amount={String(organisations.length)}
+        />
+        <OrganisationPill
+          state="Active Organisations"
+          image={ActiveOrgs}
+          amount={String(activeOrganisations.length)}
+        />
+        <OrganisationPill
+          state="Inactive Organisations"
+          image={InactiveOrgs}
+          amount={String(inactiveOrganisations.length)}
+        />
       </div>
 
       {loading ? (
@@ -193,9 +189,7 @@ const Organisation: React.FC = () => {
           <Spin size="large" />
         </div>
       ) : error ? (
-        <div style={{ color: 'red', textAlign: 'center', padding: '20px' }}>
-          {error}
-        </div>
+        <div style={{ color: 'red', textAlign: 'center', padding: '20px' }}>{error}</div>
       ) : (
         <Tabs
           className="tabs"

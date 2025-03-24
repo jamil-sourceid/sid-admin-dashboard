@@ -91,4 +91,4 @@ export interface OrganisationState {
   data: Organization[];
   error: string | null;
   meta: Pagination | null;
-} 
+}

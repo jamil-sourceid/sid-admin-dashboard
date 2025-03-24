@@ -19,11 +19,7 @@ const SourceIdPagination: React.FC<SourceIdPaginationProps> = ({
   pageSize = 10,
   onChange,
 }) => {
-  const itemRender: PaginationProps['itemRender'] = (
-    _,
-    type,
-    originalElement
-  ) => {
+  const itemRender: PaginationProps['itemRender'] = (_, type, originalElement) => {
     if (type === 'prev') {
       return (
         <div className="previous">

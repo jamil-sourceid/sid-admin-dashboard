@@ -8,14 +8,9 @@ import {
   FetchOrganisationsRequestAction,
   OrganizationsResponse,
 } from './types';
-import {
-  fetchOrganisationsSuccess,
-  fetchOrganisationsFailure,
-} from './actions';
+import { fetchOrganisationsSuccess, fetchOrganisationsFailure } from './actions';
 
-function* handleFetchOrganisations(
-  action: FetchOrganisationsRequestAction
-): SagaIterator {
+function* handleFetchOrganisations(action: FetchOrganisationsRequestAction): SagaIterator {
   try {
     const { page = 1, limit = 50, search, status } = action.payload || {};
     const queryParams = new URLSearchParams({
@@ -54,4 +49,4 @@ function* handleFetchOrganisations(
 
 export function* organisationSaga(): Generator {
   yield takeLatest(FETCH_ORGANISATIONS_REQUEST, handleFetchOrganisations);
-} 
+}

@@ -9,11 +9,7 @@ interface IdleModalProps {
   logoutBtnAction: () => void;
 }
 
-const IdleModal: React.FC<IdleModalProps> = ({
-  open,
-  continueBtnAction,
-  logoutBtnAction,
-}) => {
+const IdleModal: React.FC<IdleModalProps> = ({ open, continueBtnAction, logoutBtnAction }) => {
   const [countdown, setCountdown] = useState(120);
 
   useEffect(() => {
@@ -48,12 +44,11 @@ const IdleModal: React.FC<IdleModalProps> = ({
             <div className="modal-content">
               <h2>You will be logged out soon!</h2>
               <p>
-                For your security, we log you out automatically when you have
-                not been active for a certain period of time.
+                For your security, we log you out automatically when you have not been active for a
+                certain period of time.
               </p>
               <h1>
-                {Math.floor(countdown / 60)}:
-                {String(countdown % 60).padStart(2, '0')}
+                {Math.floor(countdown / 60)}:{String(countdown % 60).padStart(2, '0')}
               </h1>
             </div>
           </div>
@@ -61,16 +56,10 @@ const IdleModal: React.FC<IdleModalProps> = ({
         <div className="idle-modal-footer">
           <div className="footer-content">
             <div className="button-group">
-              <button
-                className="btn-cancel"
-                onClick={(): void => logoutBtnAction()}
-              >
+              <button className="btn-cancel" onClick={(): void => logoutBtnAction()}>
                 Log out now
               </button>
-              <button
-                className="btn-confirm"
-                onClick={(): void => continueBtnAction()}
-              >
+              <button className="btn-confirm" onClick={(): void => continueBtnAction()}>
                 Continue session
               </button>
             </div>

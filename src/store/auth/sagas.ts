@@ -119,11 +119,7 @@ function* handleTwoFaLogin(action: TwoFaRequestAction): Generator {
     let errMessage = 'An unknown error occurred';
 
     if (typeof error === 'object' && error !== null) {
-      if (
-        'response' in error &&
-        typeof error.response === 'object' &&
-        error.response !== null
-      ) {
+      if ('response' in error && typeof error.response === 'object' && error.response !== null) {
         const response = error.response as { data?: { message?: string } };
         if (response.data?.message) {
           errMessage = response.data.message;

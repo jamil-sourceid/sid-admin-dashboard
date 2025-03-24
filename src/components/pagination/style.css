@@ -49,8 +49,8 @@
       .previous,
       .next {
         color: rgba(164, 167, 174, 1);
-        filter: brightness(0) saturate(100%) invert(89%) sepia(0%)
-          saturate(2973%) hue-rotate(168deg) brightness(80%) contrast(79%);
+        filter: brightness(0) saturate(100%) invert(89%) sepia(0%) saturate(2973%)
+          hue-rotate(168deg) brightness(80%) contrast(79%);
       }
     }
     &.ant-pagination-item {

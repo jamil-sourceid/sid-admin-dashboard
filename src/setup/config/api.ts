@@ -80,9 +80,7 @@ export const postData = async <T, D = any>(
 };
 
 // Generic function for DELETE requests
-export const deleteData = async <T>(
-  endpoint: string
-): Promise<AxiosResponse<T>> => {
+export const deleteData = async <T>(endpoint: string): Promise<AxiosResponse<T>> => {
   try {
     const response = await api.delete<T>(endpoint);
     return response;
@@ -94,10 +92,7 @@ export const deleteData = async <T>(
 
 // Generic function for PUT requests
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const putData = async <T, D = any>(
-  endpoint: string,
-  data: D
-): Promise<AxiosResponse<T>> => {
+export const putData = async <T, D = any>(endpoint: string, data: D): Promise<AxiosResponse<T>> => {
   try {
     const response = await api.put<T>(endpoint, data);
     return response;
@@ -122,10 +117,7 @@ export const patchData = async <T, D = any>(
   }
 };
 
-export const uploadToPresignedUrl = async (
-  url: string,
-  file: File
-): Promise<Response> => {
+export const uploadToPresignedUrl = async (url: string, file: File): Promise<Response> => {
   try {
     if (!url || typeof url !== 'string' || !url.startsWith('http')) {
       throw new Error(`Invalid URL: ${url}`);

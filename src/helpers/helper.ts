@@ -1,7 +1,4 @@
-import {
-  AES_ENCRYPTION_MASTER_IV,
-  AES_ENCRYPTION_MASTER_KEY,
-} from 'setup/config/apiConfig';
+import { AES_ENCRYPTION_MASTER_IV, AES_ENCRYPTION_MASTER_KEY } from 'setup/config/apiConfig';
 import CryptoJS from 'crypto-js';
 
 export function numberWithCommas(x: string): string {
@@ -33,9 +30,7 @@ export const getRelativeTime = (dateString: string): string => {
 export const calculateExpiryDate = (period: string): string => {
   if (period === 'never') return '9999-12-31';
   const days = parseInt(period);
-  return new Date(Date.now() + days * 24 * 60 * 60 * 1000)
-    .toISOString()
-    .split('T')[0];
+  return new Date(Date.now() + days * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
 };
 export function formatDate(isoString: string): string {
   const date = new Date(isoString);

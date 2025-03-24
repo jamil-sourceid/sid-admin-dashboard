@@ -27,9 +27,7 @@ export interface TwoFaRequestPayload {
   mfaCode: string;
 }
 
-export const loginRequest = (
-  payload: LoginRequestPayload
-): LoginRequestAction => ({
+export const loginRequest = (payload: LoginRequestPayload): LoginRequestAction => ({
   type: LOGIN_REQUEST,
   payload,
 });
@@ -47,9 +45,7 @@ export const logout = (): LogoutAction => ({
   type: LOGOUT,
 });
 
-export const twoFaRequest = (
-  payload: TwoFaRequestPayload
-): TwoFaRequestAction => ({
+export const twoFaRequest = (payload: TwoFaRequestPayload): TwoFaRequestAction => ({
   type: TWO_FA_REQUEST,
   payload,
 });

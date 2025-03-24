@@ -6,25 +6,19 @@ const Billing: React.FC = () => {
     <DashboardLayout>
       <div className="p-6">
         <h1 className="text-2xl font-bold mb-4">Billing Management</h1>
-        <p className="mb-4">
-          Manage billing, invoices, and organization payments
-        </p>
+        <p className="mb-4">Manage billing, invoices, and organization payments</p>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
           <div className="bg-white rounded-lg shadow-md p-6">
             <h2 className="text-lg font-semibold mb-2">Total Revenue</h2>
             <p className="text-3xl font-bold text-blue-600">$256,890.45</p>
-            <p className="text-sm text-gray-500 mt-2">
-              Current monthly revenue
-            </p>
+            <p className="text-sm text-gray-500 mt-2">Current monthly revenue</p>
           </div>
 
           <div className="bg-white rounded-lg shadow-md p-6">
             <h2 className="text-lg font-semibold mb-2">Active Subscriptions</h2>
             <p className="text-3xl font-bold text-green-600">34</p>
-            <p className="text-sm text-gray-500 mt-2">
-              Across 12 organizations
-            </p>
+            <p className="text-sm text-gray-500 mt-2">Across 12 organizations</p>
           </div>
 
           <div className="bg-white rounded-lg shadow-md p-6">
@@ -66,12 +60,8 @@ const Billing: React.FC = () => {
                     </span>
                   </td>
                   <td className="py-3 px-4">
-                    <button className="text-blue-600 hover:text-blue-800 mr-2">
-                      View
-                    </button>
-                    <button className="text-green-600 hover:text-green-800">
-                      Download
-                    </button>
+                    <button className="text-blue-600 hover:text-blue-800 mr-2">View</button>
+                    <button className="text-green-600 hover:text-green-800">Download</button>
                   </td>
                 </tr>
                 <tr className="border-b border-gray-200 hover:bg-gray-50">
@@ -85,12 +75,8 @@ const Billing: React.FC = () => {
                     </span>
                   </td>
                   <td className="py-3 px-4">
-                    <button className="text-blue-600 hover:text-blue-800 mr-2">
-                      View
-                    </button>
-                    <button className="text-green-600 hover:text-green-800">
-                      Download
-                    </button>
+                    <button className="text-blue-600 hover:text-blue-800 mr-2">View</button>
+                    <button className="text-green-600 hover:text-green-800">Download</button>
                   </td>
                 </tr>
               </tbody>
@@ -107,9 +93,7 @@ const Billing: React.FC = () => {
               <p className="text-2xl font-bold mb-4">
                 $499<span className="text-sm text-gray-500">/month</span>
               </p>
-              <p className="text-gray-600 mb-4">
-                Suitable for small organizations
-              </p>
+              <p className="text-gray-600 mb-4">Suitable for small organizations</p>
               <button className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 w-full">
                 Edit Plan
               </button>
@@ -120,9 +104,7 @@ const Billing: React.FC = () => {
               <p className="text-2xl font-bold mb-4">
                 $999<span className="text-sm text-gray-500">/month</span>
               </p>
-              <p className="text-gray-600 mb-4">
-                Ideal for medium-sized companies
-              </p>
+              <p className="text-gray-600 mb-4">Ideal for medium-sized companies</p>
               <button className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 w-full">
                 Edit Plan
               </button>

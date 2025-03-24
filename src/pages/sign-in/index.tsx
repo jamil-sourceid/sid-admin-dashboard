@@ -33,16 +33,11 @@ const SignIn: React.FC = () => {
     },
     validationSchema: twoFaRequired
       ? Yup.object({
-          otp: Yup.string()
-            .length(6, 'OTP must be 6 digits')
-            .required('OTP is required'),
+          otp: Yup.string().length(6, 'OTP must be 6 digits').required('OTP is required'),
         })
       : Yup.object({
           email: Yup.string()
-            .matches(
-              /^\S+@\S+\.\S+$|^\d{10,15}$/,
-              'Enter a valid email address'
-            )
+            .matches(/^\S+@\S+\.\S+$|^\d{10,15}$/, 'Enter a valid email address')
             .required('Email is required'),
           password: Yup.string().required('Password is required'),
         }),
@@ -50,9 +45,7 @@ const SignIn: React.FC = () => {
       if (twoFaRequired) {
         dispatch(twoFaRequest({ email: userEmail, mfaCode: otp.join('') }));
       } else {
-        dispatch(
-          loginRequest({ email: values.email, password: values.password })
-        );
+        dispatch(loginRequest({ email: values.email, password: values.password }));
       }
     },
   });
@@ -70,11 +63,7 @@ const SignIn: React.FC = () => {
         </p>
         {twoFaRequired && qrCode && (
           <div className="qr-code-container">
-            <img
-              src={qrCode}
-              alt="QR Code for authentication"
-              className="qr-code"
-            />
+            <img src={qrCode} alt="QR Code for authentication" className="qr-code" />
           </div>
         )}
         <form onSubmit={formik.handleSubmit} className="mt-2">
@@ -104,9 +93,7 @@ const SignIn: React.FC = () => {
                   id="email"
                   name="email"
                   placeholder="Enter your email"
-                  className={
-                    formik.touched.email && formik.errors.email ? 'error' : ''
-                  }
+                  className={formik.touched.email && formik.errors.email ? 'error' : ''}
                   value={formik.values.email}
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
@@ -122,11 +109,7 @@ const SignIn: React.FC = () => {
                   id="password"
                   name="password"
                   placeholder="Enter your password"
-                  className={
-                    formik.touched.password && formik.errors.password
-                      ? 'error'
-                      : ''
-                  }
+                  className={formik.touched.password && formik.errors.password ? 'error' : ''}
                   value={formik.values.password}
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}

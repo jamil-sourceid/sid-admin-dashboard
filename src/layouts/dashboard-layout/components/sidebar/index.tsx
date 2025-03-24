@@ -49,11 +49,7 @@ const SideBar: React.FC<SideBarprops> = ({ toggleSidebar, isCollapsed }) => {
   };
 
   return (
-    <div
-      className={`dashboard-layout-wrapper__sidebar ${
-        isCollapsed ? 'collapsed' : ''
-      }`}
-    >
+    <div className={`dashboard-layout-wrapper__sidebar ${isCollapsed ? 'collapsed' : ''}`}>
       <div className="top-navigations">
         <div className="logo-container">
           {!isCollapsed && <img className="logo" src={Logo} alt="Logo" />}
@@ -67,11 +63,7 @@ const SideBar: React.FC<SideBarprops> = ({ toggleSidebar, isCollapsed }) => {
 
         {!isCollapsed && (
           <div className="input-container">
-            <Input
-              size="large"
-              placeholder="Search"
-              prefix={<img src={Search} alt="Search" />}
-            />
+            <Input size="large" placeholder="Search" prefix={<img src={Search} alt="Search" />} />
           </div>
         )}
 
@@ -128,10 +120,7 @@ const SideBar: React.FC<SideBarprops> = ({ toggleSidebar, isCollapsed }) => {
           <li
             title="Logs"
             className={`dropdown ${dropdowns.logs && 'open'} ${
-              isDropdownActive([
-                '/dashboard/logs/audit-log',
-                '/dashboard/logs/api-log',
-              ]) && 'active'
+              isDropdownActive(['/dashboard/logs/audit-log', '/dashboard/logs/api-log']) && 'active'
             }`}
             onClick={(): void => toggleDropdown('logs')}
           >
@@ -144,9 +133,7 @@ const SideBar: React.FC<SideBarprops> = ({ toggleSidebar, isCollapsed }) => {
                 <img
                   src={ArrowDown}
                   alt="Toggle dropdown"
-                  className={`dropdown-arrow ${
-                    dropdowns.logs ? 'rotated' : ''
-                  }`}
+                  className={`dropdown-arrow ${dropdowns.logs ? 'rotated' : ''}`}
                 />
               )}
             </div>
@@ -154,17 +141,13 @@ const SideBar: React.FC<SideBarprops> = ({ toggleSidebar, isCollapsed }) => {
               <ul className="dropdown-menu">
                 <NavLink
                   to="/dashboard/logs/audit-log"
-                  className={({ isActive }): string =>
-                    isActive ? 'active' : ''
-                  }
+                  className={({ isActive }): string => (isActive ? 'active' : '')}
                 >
                   <li>Audit Log</li>
                 </NavLink>
                 <NavLink
                   to="/dashboard/logs/api-log"
-                  className={({ isActive }): string =>
-                    isActive ? 'active' : ''
-                  }
+                  className={({ isActive }): string => (isActive ? 'active' : '')}
                 >
                   <li>API Log</li>
                 </NavLink>

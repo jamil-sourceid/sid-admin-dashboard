@@ -24,10 +24,8 @@ const API_CONFIG: Record<string, ApiConfig> = {
 
 const ENV: string = process.env.NODE_ENV || 'rd';
 
-export const AES_ENCRYPTION_MASTER_KEY =
-  process.env.REACT_APP_AES_ENCRYPTION_MASTER_KEY || '';
-export const AES_ENCRYPTION_MASTER_IV =
-  process.env.REACT_APP_AES_ENCRYPTION_MASTER_IV || '';
+export const AES_ENCRYPTION_MASTER_KEY = process.env.REACT_APP_AES_ENCRYPTION_MASTER_KEY || '';
+export const AES_ENCRYPTION_MASTER_IV = process.env.REACT_APP_AES_ENCRYPTION_MASTER_IV || '';
 
 export const CLOUDFRONT_URL = (API_CONFIG[ENV] || API_CONFIG.rd).CLOUDFRONT_URL;
 
