@@ -62,9 +62,7 @@ const DashboardLayout: React.FC<DashboardLayoutprops> = ({
       <SideBar toggleSidebar={toggleSidebar} isCollapsed={isCollapsed} />
 
       <div
-        className={`dashboard-layout-wrapper__content ${
-          isCollapsed ? 'sidebar-collapsed' : ''
-        }`}
+        className={`dashboard-layout-wrapper__content ${isCollapsed ? 'sidebar-collapsed' : ''}`}
       >
         <div className="page-topbar">
           <div className="page-topbar__useraccount">
@@ -98,11 +96,7 @@ const DashboardLayout: React.FC<DashboardLayoutprops> = ({
         continueBtnAction={(): void => handleContinue()}
       />
 
-      <ToastContainer
-        autoClose={5000}
-        hideProgressBar={true}
-        closeButton={false}
-      />
+      <ToastContainer autoClose={5000} hideProgressBar={true} closeButton={false} />
     </div>
   );
 };

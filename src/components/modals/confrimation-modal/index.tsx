@@ -35,12 +35,7 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
   };
 
   return (
-    <Modal
-      open={open}
-      centered
-      className={`confirmation-modal ${type}`}
-      footer={null}
-    >
+    <Modal open={open} centered className={`confirmation-modal ${type}`} footer={null}>
       <div>
         <div className="confirmation-modal-header">
           <div className="header-content">
@@ -55,18 +50,10 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
           <div className="footer-content">
             <Checkbox disabled>Don&apos;t show again</Checkbox>
             <div className="button-group">
-              <button
-                disabled={loading}
-                className="btn-cancel"
-                onClick={(): void => closeModal()}
-              >
+              <button disabled={loading} className="btn-cancel" onClick={(): void => closeModal()}>
                 Cancel
               </button>
-              <button
-                disabled={loading}
-                className="btn-confirm"
-                onClick={handleConfirm}
-              >
+              <button disabled={loading} className="btn-confirm" onClick={handleConfirm}>
                 {callBackBtnText || 'Yes'}
               </button>
             </div>

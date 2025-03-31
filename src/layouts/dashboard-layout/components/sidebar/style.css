@@ -126,8 +126,8 @@
           font-weight: 700;
 
           .icon {
-            filter: brightness(0) saturate(100%) invert(14%) sepia(54%)
-              saturate(1335%) hue-rotate(218deg) brightness(90%) contrast(103%);
+            filter: brightness(0) saturate(100%) invert(14%) sepia(54%) saturate(1335%)
+              hue-rotate(218deg) brightness(90%) contrast(103%);
           }
         }
       }
@@ -206,8 +206,8 @@
           background-color: rgba(250, 250, 250, 1);
 
           .icon {
-            filter: brightness(0) saturate(100%) invert(25%) sepia(7%)
-              saturate(1190%) hue-rotate(183deg) brightness(94%) contrast(86%);
+            filter: brightness(0) saturate(100%) invert(25%) sepia(7%) saturate(1190%)
+              hue-rotate(183deg) brightness(94%) contrast(86%);
           }
         }
       }
@@ -245,7 +245,7 @@
     gap: 10px;
     color: rgba(140, 140, 140, 1);
     cursor: pointer;
-    filter: brightness(0) saturate(100%) invert(54%) sepia(0%) saturate(3930%)
-      hue-rotate(143deg) brightness(101%) contrast(102%);
+    filter: brightness(0) saturate(100%) invert(54%) sepia(0%) saturate(3930%) hue-rotate(143deg)
+      brightness(101%) contrast(102%);
   }
 }

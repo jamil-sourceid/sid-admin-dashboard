@@ -15,12 +15,7 @@ type CustomToastProps = ToastContentProps<DataProps>;
 const Toast: React.FC<CustomToastProps> = ({ closeToast, data }) => {
   return (
     <div className="toast-container">
-      <img
-        src={Close}
-        onClick={(): void => closeToast()}
-        alt=""
-        className="close-toast"
-      />
+      <img src={Close} onClick={(): void => closeToast()} alt="" className="close-toast" />
       <div className="toast-content">
         <div className="toast-indicator" />
         <div className="toast-info">

@@ -19,11 +19,7 @@ const SourceIdPagination: React.FC<SourceIdPaginationProps> = ({
   pageSize = 10,
   onChange,
 }) => {
-  const itemRender: PaginationProps['itemRender'] = (
-    _,
-    type,
-    originalElement
-  ) => {
+  const itemRender: PaginationProps['itemRender'] = (_, type, originalElement) => {
     if (type === 'prev') {
       return (
         <div className="previous">
@@ -46,7 +42,6 @@ const SourceIdPagination: React.FC<SourceIdPaginationProps> = ({
   return (
     <Pagination
       className="sourceid-pagination"
-      align="center"
       defaultCurrent={defaultCurrent}
       total={total}
       pageSize={pageSize}
@@ -54,6 +49,7 @@ const SourceIdPagination: React.FC<SourceIdPaginationProps> = ({
       onShowSizeChange={onChange}
       showSizeChanger
       itemRender={itemRender}
+      style={{ width: '100%', display: 'flex', justifyContent: 'flex-end' }}
     />
   );
 };

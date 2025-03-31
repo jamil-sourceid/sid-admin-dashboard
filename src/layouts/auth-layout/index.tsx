@@ -10,10 +10,7 @@ import OnboardingSecondaryImg from 'assets/images/auth-img-two.png';
 
 import { ToastContainer } from 'react-toastify';
 
-const AuthLayout: React.FC<Layoutprops> = ({
-  children,
-  showSecondaryImage,
-}) => {
+const AuthLayout: React.FC<Layoutprops> = ({ children, showSecondaryImage }) => {
   const getFullYear = new Date().getFullYear();
 
   return (
@@ -39,10 +36,7 @@ const AuthLayout: React.FC<Layoutprops> = ({
           <br /> and Revenue Across the Globe.
         </h1>
 
-        <img
-          src={!showSecondaryImage ? OnboardingImg : OnboardingSecondaryImg}
-          alt=""
-        />
+        <img src={!showSecondaryImage ? OnboardingImg : OnboardingSecondaryImg} alt="" />
       </div>
 
       <ToastContainer autoClose={false} />

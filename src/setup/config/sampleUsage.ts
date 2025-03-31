@@ -18,10 +18,10 @@ const fetchUsers = async (): Promise<void> => {
 
 const createUser = async (): Promise<void> => {
   try {
-    const newUser = await postData<User, { name: string; email: string }>(
-      '/users',
-      { name: 'John Doe', email: 'john@example.com' }
-    );
+    const newUser = await postData<User, { name: string; email: string }>('/users', {
+      name: 'John Doe',
+      email: 'john@example.com',
+    });
     console.log(newUser);
   } catch (error) {
     console.error('Error creating user:', error);
