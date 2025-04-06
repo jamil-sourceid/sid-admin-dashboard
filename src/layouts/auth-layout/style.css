@@ -42,7 +42,7 @@
     height: 100%;
     overflow: hidden;
     background-color: rgba(35, 30, 84, 1);
-    background-image: url('../../assets/images/auth-bg.png');
+    background-image: url('/assets/images/auth-bg.png');
     background-repeat: no-repeat;
     background-size: cover;
     background-position: bottom;
@@ -63,4 +63,9 @@
       margin-top: auto;
     }
   }
+}
+
+/* Utility classes */
+.mr-2 {
+  margin-right: 8px;
 }

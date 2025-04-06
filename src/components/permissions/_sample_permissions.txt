@@ -1,0 +1,18 @@
+const Permissions {
+  'OWN-ORG' = 'own-org',
+  'R-API-LOGS' = 'r-api-logs',
+  'R-AUDIT-LOGS' = 'r-audit-logs',
+  'RW-CONFIGURATION' = 'rw-configuration',
+  'R-CONFIGURATION' = 'r-configuration',
+  'R-FORMS' = 'r-forms',
+  'RW-FORMS' = 'rw-forms',
+  'R-WEIGHT' = 'r-weight',
+  'RW-WEIGHT' = 'rw-weight',
+  'R-ROLE-MANAGEMENT' = 'r-role-management',
+  'RW-ROLE-MANAGEMENT' = 'rw-role-management',
+  'R-DASHBOARD' = 'r-dashboard',
+  'R-KYC' = 'r-kyc',
+  'RW-KYC' = 'rw-kyc',
+  'R-KYB' = 'r-kyb',
+  'RW-KYB' = 'rw-kyb',
+}

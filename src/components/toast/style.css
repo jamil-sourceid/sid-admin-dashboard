@@ -3,7 +3,7 @@
   min-height: 100px;
   padding: 20px;
   align-items: flex-start;
-  background-image: url('../../assets/images/toast-bg.png');
+  background-image: url('/assets/images/toast-bg.png');
   background-repeat: no-repeat;
   border-radius: 12px;
 

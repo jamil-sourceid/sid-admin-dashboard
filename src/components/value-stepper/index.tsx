@@ -1,8 +1,14 @@
+"use client";
+
 import React, { useState } from 'react';
 import './style.css';
 import { ValueStepperProps } from './models';
 
-const ValueStepper: React.FC<ValueStepperProps> = ({ step, max, initialValue = 0 }) => {
+const ValueStepper: React.FC<ValueStepperProps> = ({
+  step,
+  max,
+  initialValue = 0,
+}) => {
   const [value, setValue] = useState<number>(initialValue);
 
   const handleIncrement = (): void => {

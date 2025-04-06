@@ -4,7 +4,7 @@
   max-width: 100%;
 
   .ant-modal-content {
-    background-image: url('../../../assets/images/modal-bg.png');
+    background-image: url('/assets/images/modal-bg.png');
     background-repeat: no-repeat;
   }
 

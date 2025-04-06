@@ -1,14 +1,10 @@
-import React from 'react';
+/* eslint-disable @next/next/no-img-element */
+"use client";
 
-import { Link } from 'react-router';
+import React from "react";
 
-import NotificationBell from '../../../../assets/icons/notification.svg';
-import Logout from '../../../../assets/icons/logout.svg';
-import Settings from '../../../../assets/icons/settings.svg';
-import User from '../../../../assets/icons/user.svg';
-
-import { UserBoard } from '../user-board';
-import { signOut } from '../../../../helpers/helper';
+import { UserBoard } from "../user-board";
+import { signOut } from "@/helpers";
 
 const UserPopOver: React.FC = () => {
   return (
@@ -17,27 +13,16 @@ const UserPopOver: React.FC = () => {
         <UserBoard />
       </div>
       <div className="section-two">
-        <Link to={'/dashboard/profile'}>
-          <li>
-            <img src={User} alt="" /> Profile
-          </li>
-        </Link>
-
-        <Link to={'/dashboard/profile?tab=notifications'}>
-          <li>
-            <img src={NotificationBell} alt="" /> Notification
-          </li>
-        </Link>
-
-        <Link to={'/dashboard/settings'}>
-          <li>
-            <img src={Settings} alt="" /> Settings
-          </li>{' '}
-        </Link>
+        <li>
+          <img src="/assets/icons/user.svg" alt="" /> Profile
+        </li>
+        <li>
+          <img src="/assets/icons/settings.svg" alt="" /> Settings
+        </li>{" "}
       </div>
       <div className="section-three">
         <li onClick={(): void => signOut()}>
-          <img src={Logout} alt="" /> Sign out
+          <img src="/assets/icons/logout.svg" alt="" /> Sign out
         </li>
       </div>
     </div>

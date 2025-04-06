@@ -1,11 +1,11 @@
-import React from 'react';
-import './style.css';
+/* eslint-disable @next/next/no-img-element */
+"use client";
 
-import { Modal, Checkbox } from 'antd';
-import { ConfirmationModalProps } from './models';
+import React from "react";
+import "./style.css";
 
-import DeleteIcon from '../../../assets/icons/deleteIcon.svg';
-import WarningIcon from '../../../assets/icons/warningIcon.svg';
+import { Modal, Checkbox } from "antd";
+import { ConfirmationModalProps } from "./models";
 
 const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
   open,
@@ -19,12 +19,12 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
 }) => {
   const chooseIcon = (): string => {
     switch (type) {
-      case 'delete':
-        return DeleteIcon;
-      case 'warning':
-        return WarningIcon;
+      case "delete":
+        return "/assets/icons/deleteIcon.svg'";
+      case "warning":
+        return "/assets/icons/warningIcon.svg";
       default:
-        return WarningIcon;
+        return "/assets/icons/warningIcon.svg";
     }
   };
 
@@ -35,7 +35,12 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
   };
 
   return (
-    <Modal open={open} centered className={`confirmation-modal ${type}`} footer={null}>
+    <Modal
+      open={open}
+      centered
+      className={`confirmation-modal ${type}`}
+      footer={null}
+    >
       <div>
         <div className="confirmation-modal-header">
           <div className="header-content">
@@ -50,11 +55,19 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
           <div className="footer-content">
             <Checkbox disabled>Don&apos;t show again</Checkbox>
             <div className="button-group">
-              <button disabled={loading} className="btn-cancel" onClick={(): void => closeModal()}>
+              <button
+                disabled={loading}
+                className="btn-cancel"
+                onClick={(): void => closeModal()}
+              >
                 Cancel
               </button>
-              <button disabled={loading} className="btn-confirm" onClick={handleConfirm}>
-                {callBackBtnText || 'Yes'}
+              <button
+                disabled={loading}
+                className="btn-confirm"
+                onClick={handleConfirm}
+              >
+                {callBackBtnText || "Yes"}
               </button>
             </div>
           </div>

@@ -1,0 +1,40 @@
+.page-401 {
+  width: 100lvw;
+  height: 100lvh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+
+  img {
+    width: 400px;
+  }
+
+  h1 {
+    font-size: 1.8rem;
+    font-weight: 700;
+    font-family: var(--lato-black);
+    color: var(--color-txt-grey);
+    color: #333;
+    margin: 0;
+  }
+
+  p {
+    font-size: 1.1rem;
+    text-align: center;
+    color: var(--color-input);
+    font-family: var(--lato-bold);
+    margin: 10px 0 20px 0;
+    line-height: 20px;
+  }
+
+  button {
+    background-color: var(--color-primary);
+    color: rgba(255, 255, 255, 1);
+    font-size: clamp(0.75rem, 1.5vw, 0.85rem);
+    width: 150px;
+    padding: 10px;
+    border-radius: 25px;
+    font-weight: 600;
+  }
+}

@@ -18,12 +18,13 @@
 
     &.collapsed {
       width: 70px;
-      margin: 10px;
+      /* margin: 10px; */
       border: 1px solid rgba(233, 234, 235, 1);
-      border-radius: 4px;
+      border-radius: 0px;
       padding: 14px;
       min-height: 0px;
-      height: calc(100vh - 20px);
+      /* height: calc(100vh - 20px); */
+      height: 100vh;
     }
 
     .top-navigations {
@@ -39,7 +40,9 @@
 
   .dashboard-layout-wrapper__content {
     width: calc(100% - 300px);
-    min-height: 100vh;
+    height: 100vh;
+    overflow: auto;
+    overflow-x: hidden;
     position: absolute;
     right: 0;
     padding: 35px 25px;
@@ -95,6 +98,9 @@
               height: 24px;
             }
           }
+          img {
+            cursor: pointer;
+          }
           .ant-badge-count {
             background-color: rgba(245, 102, 48, 1);
           }
@@ -110,4 +116,9 @@
       width: calc(100% - 80px);
     }
   }
+}
+
+/* Utility classes for spacing */
+.mr-4 {
+  margin-right: 16px;
 }

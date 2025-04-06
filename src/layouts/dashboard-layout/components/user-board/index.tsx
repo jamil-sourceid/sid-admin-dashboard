@@ -1,13 +1,18 @@
-import React from 'react';
-import './style.css';
+/* eslint-disable @next/next/no-img-element */
+"use client";
 
-import UserImage from '../../../../assets/icons/admin-icon.svg';
+import React from "react";
+import "./style.css";
 
 const UserBoard: React.FC = () => {
   return (
     <div className="user-board">
       <div className="user-image">
-        <img src={UserImage} alt="User Profile" className="h-20 w-20 rounded-full object-cover" />
+        <img
+          src="/assets/icons/admin-icon.svg"
+          alt="User Profile"
+          className="h-20 w-20 rounded-full object-cover"
+        />
 
         <div className="status online" />
       </div>
@@ -24,7 +29,11 @@ const MinifiedUserBoard: React.FC = () => {
   return (
     <div className="user-board minified">
       <div className="user-image">
-        <img src={UserImage} alt="User Profile" className="h-20 w-20 rounded-full object-cover" />
+        <img
+          src="/assets/icons/admin-icon.svg"
+          alt="User Profile"
+          className="h-20 w-20 rounded-full object-cover"
+        />
 
         <div className="status online" />
       </div>

@@ -10,9 +10,9 @@ import {
   TwoFaRequestAction,
   SET_MFA_DATA,
 } from './types';
-import { postData } from '../../setup/config/api';
+import { postData } from '@/setup/config/api';
 import { LoginResponse, TwoFALoginResponse } from './model';
-import { notify } from '../../components/toast/utils';
+import { notify } from '@/components/toast/utils';
 import { AxiosError } from 'axios';
 
 function* handleLogin(action: LoginRequestAction): Generator {
@@ -44,7 +44,7 @@ function* handleLogin(action: LoginRequestAction): Generator {
     }
 
     if (token) {
-      localStorage.setItem('authToken', token);
+      sessionStorage.setItem('authToken', token);
     }
 
     if (!isMfaLogin) {
@@ -96,7 +96,7 @@ function* handleTwoFaLogin(action: TwoFaRequestAction): Generator {
     const token = response.headers['x-access-token'];
 
     if (token) {
-      localStorage.setItem('authToken', token);
+      sessionStorage.setItem('authToken', token);
     } else {
       throw new Error();
     }
@@ -112,7 +112,7 @@ function* handleTwoFaLogin(action: TwoFaRequestAction): Generator {
     yield put({ type: TWO_FA_SUCCESS });
 
     setTimeout(() => {
-      localStorage.removeItem('userEmail');
+      sessionStorage.removeItem('userEmail');
       window.location.reload();
     }, 1000);
   } catch (error: unknown) {

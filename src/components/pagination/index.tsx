@@ -1,10 +1,11 @@
+/* eslint-disable @next/next/no-img-element */
+"use client";
+
 import React from 'react';
 import './style.css';
 
 import { Pagination } from 'antd';
 import type { PaginationProps } from 'antd';
-
-import Back from '../../assets/icons/back.svg';
 
 interface SourceIdPaginationProps {
   defaultCurrent?: number;
@@ -19,11 +20,15 @@ const SourceIdPagination: React.FC<SourceIdPaginationProps> = ({
   pageSize = 10,
   onChange,
 }) => {
-  const itemRender: PaginationProps['itemRender'] = (_, type, originalElement) => {
+  const itemRender: PaginationProps['itemRender'] = (
+    _,
+    type,
+    originalElement
+  ) => {
     if (type === 'prev') {
       return (
         <div className="previous">
-          <img src={Back} alt="" />
+          <img src="/assets/icons/back.svg" alt="" />
           Previous
         </div>
       );
@@ -32,7 +37,7 @@ const SourceIdPagination: React.FC<SourceIdPaginationProps> = ({
       return (
         <div className="next">
           Next
-          <img src={Back} alt="" />
+          <img src="/assets/icons/back.svg" alt="" />
         </div>
       );
     }
@@ -42,6 +47,7 @@ const SourceIdPagination: React.FC<SourceIdPaginationProps> = ({
   return (
     <Pagination
       className="sourceid-pagination"
+      align="center"
       defaultCurrent={defaultCurrent}
       total={total}
       pageSize={pageSize}
@@ -49,7 +55,6 @@ const SourceIdPagination: React.FC<SourceIdPaginationProps> = ({
       onShowSizeChange={onChange}
       showSizeChanger
       itemRender={itemRender}
-      style={{ width: '100%', display: 'flex', justifyContent: 'flex-end' }}
     />
   );
 };
