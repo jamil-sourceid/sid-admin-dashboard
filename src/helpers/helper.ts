@@ -1,6 +1,3 @@
-import { AES_ENCRYPTION_MASTER_IV, AES_ENCRYPTION_MASTER_KEY } from 'setup/config/apiConfig';
-import CryptoJS from 'crypto-js';
-
 export function numberWithCommas(x: string): string {
   return x?.toString()?.replace(/\B(?=(\d{3})+(?!\d))/g, ',') || '';
 }
@@ -44,16 +41,3 @@ export function formatDate(isoString: string): string {
     hour12: true,
   });
 }
-
-export const encryptPassword = (plaintext: string): string => {
-  const key = CryptoJS.enc.Base64.parse(AES_ENCRYPTION_MASTER_KEY);
-  const iv = CryptoJS.enc.Base64.parse(AES_ENCRYPTION_MASTER_IV);
-
-  const encrypted = CryptoJS.AES.encrypt(plaintext, key, {
-    iv: iv,
-    padding: CryptoJS.pad.Pkcs7,
-    mode: CryptoJS.mode.CBC,
-  });
-
-  return encrypted.toString();
-};
