@@ -1,0 +1,57 @@
+.user-details-container {
+  padding: 16px;
+}
+
+.user-details-card {
+  width: 100%;
+  margin-bottom: 20px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.section-title {
+  font-size: 18px;
+  font-weight: 500;
+  margin-bottom: 16px;
+  color: #333;
+}
+
+.detail-item {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 8px;
+}
+
+.detail-icon {
+  font-size: 18px;
+  margin-right: 16px;
+  color: #1890ff;
+  margin-top: 4px;
+}
+
+.detail-label {
+  font-size: 14px;
+  color: #8c8c8c;
+  margin-bottom: 4px;
+}
+
+.detail-value {
+  font-size: 15px;
+  color: #262626;
+  font-weight: 500;
+}
+
+.status-active {
+  color: #52c41a;
+}
+
+.status-inactive {
+  color: #f5222d;
+}
+
+.status-pending {
+  color: #faad14;
+}
+
+.status-suspended {
+  color: #ff4d4f;
+}

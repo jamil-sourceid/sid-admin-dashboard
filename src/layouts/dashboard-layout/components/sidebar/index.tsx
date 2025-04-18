@@ -36,6 +36,16 @@ export const menuItems = [
     permissions: []
   },
   {
+    title: "Customers",
+    icon: "/assets/icons/user.svg",
+    path: "/dashboard/customers",
+    key: "customer",
+    type: "link",
+    items: [],
+    hidden: false,
+    permissions: []
+  },
+  {
     title: "Modules",
     icon: "/assets/icons/module.svg",
     type: "dropdown",

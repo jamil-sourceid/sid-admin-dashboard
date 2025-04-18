@@ -1,0 +1,48 @@
+.add-new-customer {
+  padding: 0;
+  width: 100%;
+}
+
+.add-new-customer .add-customer-content {
+  background-color: #fff;
+}
+
+.add-new-customer .header-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.add-new-customer .back-button {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: #6b7280;
+  font-size: 14px;
+  cursor: pointer;
+  width: fit-content;
+  transition: color 0.3s ease;
+}
+
+.add-new-customer .back-button:hover {
+  color: #1f2937;
+}
+
+.add-new-customer .header-actions-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Override Ant Design button styles to match organisation page */
+.add-new-customer .ant-btn-primary {
+  background-color: var(--color-primary) !important;
+  border-color: var(--color-primary) !important;
+}
+
+.add-new-customer .ant-btn-primary:hover,
+.add-new-customer .ant-btn-primary:focus {
+  background-color: rgba(35, 30, 84, 0.9) !important;
+  border-color: rgba(35, 30, 84, 0.9) !important;
+}

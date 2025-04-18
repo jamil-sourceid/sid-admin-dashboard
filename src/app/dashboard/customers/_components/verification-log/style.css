@@ -1,0 +1,22 @@
+.verification-logs {
+  width: 100%;
+}
+
+.log-table {
+  background-color: white;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.empty-state {
+  margin: 48px 0;
+  background-color: white;
+  padding: 24px;
+  border-radius: 8px;
+}
+
+.loading-container {
+  padding: 24px;
+  background-color: white;
+  border-radius: 8px;
+}

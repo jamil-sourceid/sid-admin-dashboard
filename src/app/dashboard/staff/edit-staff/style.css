@@ -1,0 +1,226 @@
+.edit-staff-module {
+  padding: 0;
+  width: 100%;
+}
+
+.edit-staff-content {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+}
+
+.header-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.back-button {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  width: fit-content;
+  color: #6b7280;
+  font-size: 14px;
+}
+
+.back-button img {
+  width: 16px;
+  height: 16px;
+}
+
+.header-actions-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.edit-staff-form {
+  width: 100%;
+  max-width: 1200px;
+}
+
+.edit-staff-form .section {
+  margin-bottom: 24px;
+}
+
+.edit-staff-form .section h2 {
+  font-size: 18px;
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 20px;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+.input-container {
+  width: 100%;
+}
+
+.edit-staff-form .ant-form-item-label > label {
+  font-family: var(--lato-regular);
+  font-size: 14px;
+  color: #374151;
+  margin-bottom: 8px;
+  display: block;
+  font-weight: 500;
+}
+
+.edit-staff-form .ant-input,
+.edit-staff-form .ant-select-selector,
+.edit-staff-form .ant-input-number,
+.edit-staff-form .ant-picker {
+  width: 100%;
+  height: 40px;
+  border-radius: 8px;
+  background-color: rgba(250, 250, 250, 1);
+  border: 1px solid rgba(213, 215, 218, 1);
+  font-size: 14px;
+  color: #374151;
+}
+
+.edit-staff-form .ant-input::placeholder {
+  color: #9ca3af;
+}
+
+.edit-staff-form .ant-input:hover,
+.edit-staff-form .ant-input:focus,
+.edit-staff-form .ant-select-selector:hover,
+.edit-staff-form .ant-select-selector:focus {
+  border-color: var(--color-primary);
+}
+
+.edit-staff-form .ant-select {
+  width: 100%;
+  overflow: hidden;
+}
+
+.edit-staff-form .ant-select-selector {
+  height: 40px !important;
+  background-color: rgba(250, 250, 250, 1) !important;
+  border: none !important;
+  padding: 4px 11px !important;
+  display: flex;
+  align-items: center;
+}
+
+.edit-staff-form .ant-select-selection-placeholder {
+  color: #9ca3af;
+}
+
+.edit-staff-form .ant-select-focused .ant-select-selector,
+.edit-staff-form .ant-input-focused,
+.edit-staff-form .ant-input-number-focused,
+.edit-staff-form .ant-picker-focused {
+  border-color: var(--color-primary) !important;
+  box-shadow: 0 0 0 2px rgba(35, 30, 84, 0.1) !important;
+}
+
+.edit-staff-form .form-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 32px;
+  gap: 16px;
+}
+
+.edit-staff-form .form-actions button[type='default'] {
+  height: 40px;
+  padding: 0 16px;
+  background-color: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  color: #6b7280;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.edit-staff-form .form-actions button[type='default']:hover {
+  color: #4b5563;
+  border-color: #d1d5db;
+}
+
+.edit-staff-form .form-actions button[type='primary'] {
+  height: 40px;
+  padding: 0 24px;
+  background-color: var(--color-primary);
+  border: none;
+  border-radius: 8px;
+  color: white;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.edit-staff-form .form-actions button[type='primary']:hover {
+  background-color: rgba(35, 30, 84, 0.9);
+  opacity: 0.9;
+}
+
+.edit-staff-form .form-actions .ant-btn-primary {
+  background-color: var(--color-primary) !important;
+  border-color: var(--color-primary) !important;
+}
+
+.edit-staff-form .form-actions .ant-btn-primary:hover,
+.edit-staff-form .form-actions .ant-btn-primary:focus {
+  background-color: rgba(35, 30, 84, 0.9) !important;
+  border-color: rgba(35, 30, 84, 0.9) !important;
+}
+
+.edit-staff-form .error-message {
+  color: #ff4d4f;
+  margin-top: 15px;
+  padding: 10px;
+  background-color: #fff1f0;
+  border: 1px solid #ffccc7;
+  border-radius: 4px;
+}
+
+.edit-staff-module .ant-btn-primary {
+  background-color: var(--color-primary) !important;
+  border-color: var(--color-primary) !important;
+}
+
+.edit-staff-module .ant-btn-primary:hover,
+.edit-staff-module .ant-btn-primary:focus {
+  background-color: rgba(35, 30, 84, 0.9) !important;
+  border-color: rgba(35, 30, 84, 0.9) !important;
+}
+
+.profile-picture-container {
+  grid-column: span 3;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.profile-picture-uploader {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.profile-picture-preview {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-top: 12px;
+  border: 1px solid #e5e7eb;
+}
+
+.profile-picture-upload-button {
+  margin-top: 10px;
+  width: fit-content;
+}
+
+.section-divider {
+  margin: 24px 0;
+  border-top: 1px solid #e5e7eb;
+}

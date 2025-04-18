@@ -1,0 +1,22 @@
+.tabs {
+  font-family: var(--lato-regular);
+
+  .ant-tabs-ink-bar {
+    background-color: var(--color-primary);
+  }
+  .ant-tabs-tab {
+    .ant-tabs-tab-btn {
+      font-size: clamp(0.65rem, 1.5vw, 0.75rem);
+      color: rgba(113, 118, 128, 1);
+    }
+    &:hover {
+      color: var(--color-primary);
+    }
+    &.ant-tabs-tab-active {
+      .ant-tabs-tab-btn {
+        color: var(--color-primary);
+        font-weight: 600;
+      }
+    }
+  }
+}
