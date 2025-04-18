@@ -1,8 +1,8 @@
 import { call, put, takeLatest } from 'redux-saga/effects';
 import { SagaIterator } from 'redux-saga';
 import { AxiosError } from 'axios';
-import { getData, postData, patchData } from '../../setup/config/api';
-import { notify } from '../../components/toast/utils';
+import { getData, postData, patchData } from '@/setup/config/api';
+import { notify } from '@/components/toast/utils';
 import {
   FETCH_ORGANISATIONS_REQUEST,
   CREATE_ORGANISATION_REQUEST,

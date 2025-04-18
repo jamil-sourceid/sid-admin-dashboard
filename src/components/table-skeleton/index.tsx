@@ -1,3 +1,6 @@
+/* eslint-disable @next/next/no-img-element */
+"use client";
+
 import React from 'react';
 import './style.css';
 import { Skeleton } from 'antd';
@@ -20,7 +23,10 @@ const TableSkeleton: React.FC<TableSkeletonProps> = ({
       <tbody>
         <tr>
           <td colSpan={columnCount} className="empty-state">
-            <div className="empty-text">{emptyText}</div>
+            <div className="empty-text">
+              <img src="/assets/images/empty-state.svg" alt="" />
+              {emptyText}
+            </div>
           </td>
         </tr>
       </tbody>

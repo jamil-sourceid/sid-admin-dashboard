@@ -1,0 +1,31 @@
+.user-details {
+  width: 100%;
+}
+
+.details-card {
+  margin-bottom: 24px;
+}
+
+.info-item {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 8px;
+}
+
+.info-label {
+  font-size: 12px;
+  color: #6b7280;
+  margin-bottom: 4px;
+}
+
+.info-value {
+  font-size: 14px;
+  font-weight: 500;
+  color: #1f2937;
+}
+
+.loading-container {
+  padding: 24px;
+  background-color: white;
+  border-radius: 8px;
+}

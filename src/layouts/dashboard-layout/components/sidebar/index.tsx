@@ -1,36 +1,105 @@
-import React, { useState } from 'react';
-import './style.css';
+/* eslint-disable @next/next/no-img-element */
+"use client";
 
-import { NavLink, Link, useLocation } from 'react-router';
-import { Input, Popover } from 'antd';
-import UserPopOver from '../userpopover';
+import React, { useState, useMemo } from "react";
+import "./style.css";
 
-import Logo from '../../../../assets/images/logo.svg';
-import LogoMini from '../../../../assets/images/logo-mini.svg';
-import Search from '../../../../assets/icons/search.svg';
+// import { NavLink, Link, useLocation } from "react-router";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { Popover } from "antd";
+import UserPopOver from "../userpopover";
 
-import Dashboard from '../../../../assets/icons/dashboard.svg';
-import Organisation from '../../../../assets/icons/module.svg';
-import Customer from '../../../../assets/icons/user.svg';
-import RoleManagement from '../../../../assets/icons/role.svg';
-import Logs from '../../../../assets/icons/logs.svg';
-import Billing from '../../../../assets/icons/billing.svg';
-import Support from '../../../../assets/icons/support.svg';
-import Documentation from '../../../../assets/icons/documentation.svg';
-import Settings from '../../../../assets/icons/settings.svg';
-import Arrow from '../../../../assets/icons/updown.svg';
-import ArrowDown from '../../../../assets/icons/arrow-down.svg';
-import Menu from '../../../../assets/icons/menu.svg';
-import Expand from '../../../../assets/icons/expand.svg';
-import { UserBoard, MinifiedUserBoard } from '../user-board';
+import { UserBoard, OnlineStatus, MinifiedUserBoard } from "../user-board";
 
-import { SideBarprops } from './models';
+import { SideBarprops } from "./models";
+
+export const menuItems = [
+  {
+    title: "Dashboard",
+    icon: "/assets/icons/dashboard.svg",
+    path: "/dashboard",
+    key: "dashboard",
+    type: "link",
+    items: [],
+    hidden: false,
+    permissions: []
+  },
+  {
+    title: "Organisation",
+    icon: "/assets/icons/organisation.svg",
+    path: "/dashboard/organisation",
+    key: "organisation",
+    type: "link",
+    items: [],
+    hidden: false,
+    permissions: []
+  },
+  {
+    title: "Customers",
+    icon: "/assets/icons/user.svg",
+    path: "/dashboard/customers",
+    key: "customer",
+    type: "link",
+    items: [],
+    hidden: false,
+    permissions: []
+  },
+  {
+    title: "Modules",
+    icon: "/assets/icons/module.svg",
+    type: "dropdown",
+    key: "modules",
+    items: [
+      {
+        title: "KYC",
+        path: "/dashboard/modules/kyc",
+        permissions: ["own-org", "r-kyc"],
+      },
+      {
+        title: "KYB",
+        path: "/dashboard/modules/kyb",
+        permissions: ["own-org", "r-kyb"],
+      },
+    ],
+    hidden: true,
+    permissions: [],
+  },
+];
 
 const SideBar: React.FC<SideBarprops> = ({ toggleSidebar, isCollapsed }) => {
-  const location = useLocation();
+  // const location = useLocation();
+  const pathnameMaybe = usePathname();
+  const pathname = pathnameMaybe || "/dashboard";
+  const initialDropdownState = useMemo(() => {
+    const state: { [key: string]: boolean } = {};
+    menuItems.forEach((item) => {
+      if (item.type === "dropdown") {
+        state[item.key] = item.items.some((subItem) =>
+          pathname.includes(subItem.path)
+        );
+      }
+    });
+    return state;
+  }, [pathname]);
+
+  // Get user permissions from session storage
+  const userPermissions = useMemo(() => {
+    if (typeof window !== "undefined") {
+      return JSON.parse(sessionStorage.getItem("permissions") || "[]");
+    }
+    return [];
+  }, []);
+
+  // Function to check if user has required permissions
+  const hasPermission = (requiredPermissions: string[]) => {
+    return requiredPermissions.some((perm) => userPermissions.includes(perm));
+  };
 
   const [open, setOpen] = useState(false);
-  const [dropdowns, setDropdowns] = useState<{ [key: string]: boolean }>({}); // State for dynamic dropdowns
+  const [dropdowns, setDropdowns] = useState<{ [key: string]: boolean }>(
+    initialDropdownState
+  ); // State for dynamic dropdowns
 
   const handleOpenChange = (newOpen: boolean): void => {
     setOpen(newOpen);
@@ -39,176 +108,211 @@ const SideBar: React.FC<SideBarprops> = ({ toggleSidebar, isCollapsed }) => {
   const toggleDropdown = (key: string): void => {
     setDropdowns((prev) => ({
       ...prev,
-      [key]: !prev[key], // Toggle the specific dropdown
+      [key]: !prev[key],
     }));
   };
 
   // Check if the current path is within a dropdown's children
   const isDropdownActive = (paths: string[]): boolean => {
-    return paths.some((path) => location.pathname.includes(path));
+    return paths.some((path) => pathname.includes(path));
   };
 
+  const filteredMenuItems = menuItems
+    .map((item) => ({
+      ...item,
+      items: item.items?.filter((subItem) =>
+        hasPermission(subItem.permissions)
+      ), // Filter sub-items
+    }))
+    .filter((item) => item.type !== "dropdown" || item.items.length > 0);
+
   return (
-    <div className={`dashboard-layout-wrapper__sidebar ${isCollapsed ? 'collapsed' : ''}`}>
+    <div
+      className={`dashboard-layout-wrapper__sidebar ${
+        isCollapsed ? "collapsed" : ""
+      }`}
+    >
       <div className="top-navigations">
         <div className="logo-container">
-          {!isCollapsed && <img className="logo" src={Logo} alt="Logo" />}
+          {!isCollapsed && (
+            <img className="logo" src="/assets/images/logo.svg" alt="Logo" />
+          )}
           <img
-            src={!isCollapsed ? Menu : Expand}
+            src={
+              !isCollapsed
+                ? "/assets/icons/menu.svg"
+                : "/assets/icons/expand.svg"
+            }
             alt=""
             className="hamburger-menu"
             onClick={(): void => toggleSidebar(!isCollapsed)}
           />
         </div>
 
-        {!isCollapsed && (
-          <div className="input-container">
-            <Input size="large" placeholder="Search" prefix={<img src={Search} alt="Search" />} />
-          </div>
-        )}
-
         <ul className="sidebar-navigation-list">
           {isCollapsed && (
-            <Link to="/dashboard">
+            <Link href="/dashboard">
               <li className="logo-mini">
-                <img src={LogoMini} alt="" />
+                <img src="/assets/images/logo-mini.svg" alt="" />
               </li>
             </Link>
           )}
 
-          <NavLink
-            to="/dashboard"
-            end
-            className={({ isActive }): string => (isActive ? 'active' : '')}
-          >
-            <li className="menu-list" title="Dashboard">
-              <img src={Dashboard} alt="" className="icon" />
-              {!isCollapsed && 'Dashboard'}
-            </li>
-          </NavLink>
-
-          <NavLink
-            to="/dashboard/organisation"
-            className={({ isActive }): string => (isActive ? 'active' : '')}
-          >
-            <li className="menu-list" title="Organisation">
-              <img src={Organisation} alt="" className="icon" />
-              {!isCollapsed && 'Organisation'}
-            </li>
-          </NavLink>
-
-          <NavLink
-            to="/dashboard/customers"
-            className={({ isActive }): string => (isActive ? 'active' : '')}
-          >
-            <li className="menu-list" title="Customers">
-              <img src={Customer} alt="" className="icon" />
-              {!isCollapsed && 'Customers'}
-            </li>
-          </NavLink>
-
-          <NavLink
-            to="/dashboard/role-management"
-            className={({ isActive }): string => (isActive ? 'active' : '')}
-          >
-            <li className="menu-list" title="Role Management">
-              <img src={RoleManagement} alt="" className="icon" />
-              {!isCollapsed && 'Role Management'}
-            </li>
-          </NavLink>
-
-          <li
-            title="Logs"
-            className={`dropdown ${dropdowns.logs && 'open'} ${
-              isDropdownActive(['/dashboard/logs/audit-log', '/dashboard/logs/api-log']) && 'active'
-            }`}
-            onClick={(): void => toggleDropdown('logs')}
-          >
-            <div className="dropdown-header">
-              <div className="dropdown-header-content">
-                <img src={Logs} alt="" className="icon" />
-                {!isCollapsed && 'Logs'}
-              </div>
-              {!isCollapsed && (
-                <img
-                  src={ArrowDown}
-                  alt="Toggle dropdown"
-                  className={`dropdown-arrow ${dropdowns.logs ? 'rotated' : ''}`}
-                />
-              )}
-            </div>
-            {!isCollapsed && dropdowns.logs && (
-              <ul className="dropdown-menu">
-                <NavLink
-                  to="/dashboard/logs/audit-log"
-                  className={({ isActive }): string => (isActive ? 'active' : '')}
+          {filteredMenuItems
+            .filter((item) => item.hidden === false)
+            .map((item) =>
+              item.type === "link" ? (
+                <Link
+                  key={item.path}
+                  href={item.path || ""}
+                  className={pathname === item.path ? "active" : ""}
                 >
-                  <li>Audit Log</li>
-                </NavLink>
-                <NavLink
-                  to="/dashboard/logs/api-log"
-                  className={({ isActive }): string => (isActive ? 'active' : '')}
+                  <li className="menu-list" title={item.title}>
+                    <img src={item.icon} alt="" className="icon" />
+                    {!isCollapsed && item.title}
+                  </li>
+                </Link>
+              ) : isCollapsed ? (
+                <Popover
+                  key={item.key}
+                  placement="right"
+                  content={
+                    <ul className="popover-submenu-dropdown">
+                      {item.items.map((subItem) => (
+                        <Link
+                          key={subItem.path}
+                          href={subItem.path}
+                          className={
+                            pathname.includes(subItem.path) ? "active" : ""
+                          }
+                        >
+                          <li>{subItem.title}</li>
+                        </Link>
+                      ))}
+                    </ul>
+                  }
+                  trigger="hover"
                 >
-                  <li>API Log</li>
-                </NavLink>
-              </ul>
+                  <li
+                    title={item.title}
+                    className={`dropdown ${dropdowns[item.key] && "open"} ${
+                      isDropdownActive(item.items.map((sub) => sub.path)) &&
+                      "active"
+                    }`}
+                  >
+                    <div className="dropdown-header">
+                      <div className="dropdown-header-content">
+                        <img src={item.icon} alt="" className="icon" />
+                      </div>
+                    </div>
+                  </li>
+                </Popover>
+              ) : (
+                <li
+                  key={item.key}
+                  title={item.title}
+                  className={`dropdown ${dropdowns[item.key] && "open"} ${
+                    isDropdownActive(item.items.map((sub) => sub.path)) &&
+                    "active"
+                  }`}
+                  onClick={(): void => toggleDropdown(item.key)}
+                >
+                  <div className="dropdown-header">
+                    <div className="dropdown-header-content">
+                      <img src={item.icon} alt="" className="icon" />
+                      {item.title}
+                    </div>
+                    {!isCollapsed && (
+                      <img
+                        src="/assets/icons/arrow-down.svg"
+                        alt="Toggle dropdown"
+                        className={`dropdown-arrow ${
+                          dropdowns[item.key] ? "rotated" : ""
+                        }`}
+                      />
+                    )}
+                  </div>
+                  {!isCollapsed && dropdowns[item.key] && (
+                    <ul className="dropdown-menu">
+                      {item.items.map((subItem) => (
+                        <Link
+                          key={subItem.path}
+                          href={subItem.path}
+                          className={
+                            pathname.includes(subItem.path) ? "active" : ""
+                          }
+                        >
+                          <li>{subItem.title}</li>
+                        </Link>
+                      ))}
+                    </ul>
+                  )}
+                </li>
+              )
             )}
-          </li>
-
-          <NavLink
-            to="/dashboard/billing"
-            className={({ isActive }): string => (isActive ? 'active' : '')}
-          >
-            <li className="menu-list" title="Billing">
-              <img src={Billing} alt="" className="icon" />
-              {!isCollapsed && 'Billing'}
-            </li>
-          </NavLink>
         </ul>
       </div>
 
       <div className="bottom-navigations">
         <ul className="sidebar-navigation-list">
-          <NavLink
-            to="/dashboard/settings"
-            className={({ isActive }): string => (isActive ? 'active' : '')}
+          <li
+            className="support"
+            title="Support"
+            style={{ cursor: "pointer" }}
           >
-            <li className="menu-list" title="Settings">
-              <img src={Settings} alt="" className="icon" />
-              {!isCollapsed && 'Settings'}
-            </li>
-          </NavLink>
-
-          <NavLink to="https://docs.usesourceid.com/v1/" target="_blank">
-            <li className="menu-list" title="Documentation">
-              <img src={Documentation} alt="" className="icon" />
-              {!isCollapsed && 'Documentation'}
-            </li>
-          </NavLink>
-
-          <li className="menu-list support" title="Support">
             <div>
-              <img src={Support} alt="" className="icon" />
-              {!isCollapsed && 'Support'}
+              <img src="/assets/icons/support.svg" alt="" className="icon" />
+              {!isCollapsed && "Support"}
             </div>
-            {!isCollapsed && <img src={Arrow} alt="" />}
+            {!isCollapsed && <OnlineStatus />}
           </li>
+
+          <a
+            href="https://docs.sourceid.tech/"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <li title="Documentation">
+              <img
+                src="/assets/icons/documentation.svg"
+                alt=""
+                className="icon"
+              />
+              {!isCollapsed && "Documentation"}
+            </li>
+          </a>
+
+          <Link href="/dashboard/settings">
+            <li title="Settings">
+              <img src="/assets/icons/settings.svg" alt="" className="icon" />
+              {!isCollapsed && "Settings"}
+            </li>
+          </Link>
         </ul>
 
-        {isCollapsed ? (
-          <MinifiedUserBoard />
-        ) : (
+        {!isCollapsed ? (
           <Popover
             content={<UserPopOver />}
-            title=""
             trigger="click"
             open={open}
             onOpenChange={handleOpenChange}
-            overlayClassName="user-account-popover"
-            placement="rightTop"
+            placement="topLeft"
           >
-            <div className="user-container">
+            <div className="mt-4 user-container">
               <UserBoard />
+              <img src="/assets/icons/updown.svg" alt="" />
+            </div>
+          </Popover>
+        ) : (
+          <Popover
+            content={<UserPopOver />}
+            trigger="click"
+            open={open}
+            onOpenChange={handleOpenChange}
+            placement="topLeft"
+          >
+            <div>
+              <MinifiedUserBoard />
             </div>
           </Popover>
         )}

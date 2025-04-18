@@ -1,0 +1,103 @@
+.add-customer-form {
+  background-color: #fff;
+  padding: 24px;
+  width: 100%;
+  max-width: 1200px;
+}
+
+.form-section {
+  margin-bottom: 32px;
+}
+
+.section-title {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 16px;
+  color: #1f2937;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
+  margin-bottom: 16px;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 16px;
+  margin-top: 32px;
+}
+
+/* Form field styling to match organization form */
+.add-customer-form .ant-form-item-label > label {
+  font-size: 14px;
+  color: #374151;
+  margin-bottom: 8px;
+  display: block;
+  font-weight: 500;
+}
+
+.add-customer-form .ant-input,
+.add-customer-form .ant-select-selector,
+.add-customer-form .ant-input-number,
+.add-customer-form .ant-picker {
+  width: 100%;
+  height: 40px;
+  border-radius: 8px;
+  background-color: rgba(250, 250, 250, 1);
+  border: 1px solid rgba(213, 215, 218, 1);
+  font-size: 14px;
+  color: #374151;
+}
+
+.add-customer-form .ant-select-selector {
+  height: 40px !important;
+  background-color: rgba(250, 250, 250, 1) !important;
+  border: none !important;
+  padding: 4px 11px !important;
+  display: flex;
+  align-items: center;
+}
+
+.add-customer-form .ant-select-focused .ant-select-selector,
+.add-customer-form .ant-input-focused,
+.add-customer-form .ant-input-number-focused {
+  border-color: var(--color-primary) !important;
+  box-shadow: 0 0 0 2px rgba(35, 30, 84, 0.1) !important;
+}
+
+.add-customer-form .ant-btn-primary {
+  height: 40px;
+  padding: 0 24px;
+  background-color: var(--color-primary) !important;
+  border: none;
+  border-radius: 8px;
+  color: white;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.add-customer-form .ant-btn-primary:hover,
+.add-customer-form .ant-btn-primary:focus {
+  background-color: rgba(35, 30, 84, 0.9) !important;
+  border-color: rgba(35, 30, 84, 0.9) !important;
+  opacity: 0.9;
+}
+
+.add-customer-form .ant-btn-default {
+  height: 40px;
+  padding: 0 16px;
+  background-color: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  color: #6b7280;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.add-customer-form .ant-btn-default:hover {
+  color: #4b5563;
+  border-color: #d1d5db;
+}

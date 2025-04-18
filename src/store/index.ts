@@ -1,6 +1,6 @@
 import { configureStore } from '@reduxjs/toolkit';
 import createSagaMiddleware from 'redux-saga';
-import logger from 'redux-logger';
+// import logger from 'redux-logger';
 import rootReducer from './rootReducer';
 import rootSaga from './rootSaga';
 
@@ -14,10 +14,10 @@ const store = configureStore({
     getDefaultMiddleware({
       serializableCheck: {
         // Ignore specific paths in actions
-        ignoredActionPaths: ['payload.cb', 'payload.callback'],
+        ignoredActionPaths: ['payload.cb', 'payload.callback', 'payload.photo'],
       },
       thunk: false,
-    }).concat(sagaMiddleware, logger),
+    }).concat(sagaMiddleware),
   devTools: process.env.NODE_ENV !== 'production',
 });
 
