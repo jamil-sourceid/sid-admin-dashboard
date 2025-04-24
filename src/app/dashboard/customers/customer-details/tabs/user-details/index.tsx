@@ -20,7 +20,8 @@ import './style.css';
 const { Title, Text } = Typography;
 
 const UserDetails: React.FC = () => {
-  const { id } = useParams<{ id: string }>();
+  const params = useParams<{ id: string }>();
+  const id = params?.id;
   const dispatch = useDispatch<AppDispatch>();
 
   const { data: customer, loading } = useSelector((state: RootState) => state.customers.customer);

@@ -1,7 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useEffect, Suspense } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
@@ -44,7 +44,8 @@ interface StaffFormValues {
   organization: string;
 }
 
-const AddStaff: React.FC = () => {
+// Component that uses useSearchParams must be wrapped in Suspense
+const AddStaffContent: React.FC = () => {
   const [form] = Form.useForm();
   const dispatch = useDispatch();
   const router = useRouter();
@@ -112,51 +113,7 @@ const AddStaff: React.FC = () => {
 
   if (submitLoading) {
     return (
-      <DashboardLayout
-        pageClass="add-staff-module"
-        pageTag="Staff Management"
-        pageTitle="Add New Staff"
-        pageDesc="Create a new staff member"
-      >
-        <div className="add-staff-content">
-          <div className="header-actions">
-            <div className="back-button" onClick={handleBack}>
-              <ArrowLeftOutlined />
-              <span>Back</span>
-            </div>
-          </div>
-
-          <div className="skeleton-container">
-            <h2>Staff Information</h2>
-            <div className="form-grid">
-              {[...Array(6)].map((_, index) => (
-                <div key={index} className="input-container">
-                  <Skeleton active paragraph={{ rows: 1 }} />
-                </div>
-              ))}
-            </div>
-            <h2>Additional Information</h2>
-            <div className="form-grid">
-              {[...Array(4)].map((_, index) => (
-                <div key={index} className="input-container">
-                  <Skeleton active paragraph={{ rows: 1 }} />
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </DashboardLayout>
-    );
-  }
-
-  return (
-    <DashboardLayout
-      pageClass="add-staff-module"
-      pageTag="Staff Management"
-      pageTitle="Add New Staff"
-      pageDesc="Create a new staff member in the SourceID platform"
-    >
-      <div className="add-staff-module">
+      <div className="add-staff-content">
         <div className="header-actions">
           <div className="back-button" onClick={handleBack}>
             <ArrowLeftOutlined />
@@ -164,163 +121,222 @@ const AddStaff: React.FC = () => {
           </div>
         </div>
 
-        <div className="add-staff-content">
-          <Form
-            form={form}
-            layout="vertical"
-            onFinish={handleSubmit}
-            className="add-staff-form"
-            initialValues={{
-              organization: orgId,
-            }}
-          >
-            <div className="form-section">
-              <h3 className="section-title">Staff Information</h3>
-
-              <div className="form-grid">
-                <div className="input-container">
-                  <Form.Item
-                    name="firstName"
-                    label="First Name *"
-                    rules={[
-                      {
-                        required: true,
-                        message: "Please enter first name",
-                      },
-                    ]}
-                  >
-                    <Input placeholder="Enter first name" />
-                  </Form.Item>
-                </div>
-
-                <div className="input-container">
-                  <Form.Item
-                    name="middleName"
-                    label="Middle Name"
-                  >
-                    <Input placeholder="Enter middle name (optional)" />
-                  </Form.Item>
-                </div>
-
-                <div className="input-container">
-                  <Form.Item
-                    name="lastName"
-                    label="Last Name *"
-                    rules={[
-                      { required: true, message: "Please enter last name" },
-                    ]}
-                  >
-                    <Input placeholder="Enter last name" />
-                  </Form.Item>
-                </div>
-
-                <div className="input-container">
-                  <Form.Item
-                    name="email"
-                    label="Email Address *"
-                    rules={[
-                      { required: true, message: "Please enter email address" },
-                      { type: "email", message: "Please enter a valid email" },
-                    ]}
-                  >
-                    <Input placeholder="Enter email address" />
-                  </Form.Item>
-                </div>
-
-                <div className="input-container">
-                  <Form.Item
-                    name="phoneNumber"
-                    label="Phone Number *"
-                    rules={[
-                      { required: true, message: "Please enter phone number" },
-                      { 
-                        pattern: /^\+[0-9]{1,}$/, 
-                        message: "Phone number must be in international format (e.g., +123456789)" 
-                      }
-                    ]}
-                  >
-                    <Input placeholder="Enter phone number in international format (e.g., +123456789)" />
-                  </Form.Item>
-                </div>
-
-                <div className="input-container">
-                  <Form.Item
-                    name="title"
-                    label="Job Title *"
-                    rules={[
-                      {
-                        required: true,
-                        message: "Please enter job title",
-                      },
-                    ]}
-                  >
-                    <Input placeholder="Enter job title" />
-                  </Form.Item>
-                </div>
-
-                <div className="input-container">
-                  <Form.Item
-                    name="dateOfBirth"
-                    label="Date of Birth *"
-                    rules={[
-                      {
-                        required: true,
-                        message: "Please select date of birth",
-                      },
-                    ]}
-                  >
-                    <DatePicker style={{ width: "100%" }} />
-                  </Form.Item>
-                </div>
-
-                <div className="input-container">
-                  <Form.Item
-                    name="gender"
-                    label="Gender *"
-                    rules={[
-                      { required: true, message: "Please select gender" },
-                    ]}
-                  >
-                    <Select placeholder="Select gender">
-                      <Option value="male">Male</Option>
-                      <Option value="female">Female</Option>
-                    </Select>
-                  </Form.Item>
-                </div>
-
-                <div className="input-container">
-                  <Form.Item
-                    name="organization"
-                    label="Organization *"
-                    tooltip="This field is pre-populated and cannot be changed"
-                  >
-                    <Input 
-                      placeholder="Organization" 
-                      value={organization?.name || ""}
-                      disabled
-                    />
-                    <Input type="hidden" value={orgId} />
-                  </Form.Item>
-                </div>
+        <div className="skeleton-container">
+          <h2>Staff Information</h2>
+          <div className="form-grid">
+            {[...Array(6)].map((_, index) => (
+              <div key={index} className="input-container">
+                <Skeleton active paragraph={{ rows: 1 }} />
               </div>
-            </div>
-
-            <div className="form-actions">
-              <Button onClick={handleCancel} className="cancel-button">
-                Cancel
-              </Button>
-              <Button
-                type="primary"
-                htmlType="submit"
-                loading={submitLoading}
-                className="submit-button"
-              >
-                Create Staff
-              </Button>
-            </div>
-          </Form>
+            ))}
+          </div>
+          <h2>Additional Information</h2>
+          <div className="form-grid">
+            {[...Array(4)].map((_, index) => (
+              <div key={index} className="input-container">
+                <Skeleton active paragraph={{ rows: 1 }} />
+              </div>
+            ))}
+          </div>
         </div>
       </div>
+    );
+  }
+
+  return (
+    <div className="add-staff-module">
+      <div className="header-actions">
+        <div className="back-button" onClick={handleBack}>
+          <ArrowLeftOutlined />
+          <span>Back</span>
+        </div>
+      </div>
+
+      <div className="add-staff-content">
+        <Form
+          form={form}
+          layout="vertical"
+          onFinish={handleSubmit}
+          className="add-staff-form"
+          initialValues={{
+            organization: orgId,
+          }}
+        >
+          <div className="form-section">
+            <h3 className="section-title">Staff Information</h3>
+
+            <div className="form-grid">
+              <div className="input-container">
+                <Form.Item
+                  name="firstName"
+                  label="First Name *"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Please enter first name",
+                    },
+                  ]}
+                >
+                  <Input placeholder="Enter first name" />
+                </Form.Item>
+              </div>
+
+              <div className="input-container">
+                <Form.Item
+                  name="middleName"
+                  label="Middle Name"
+                >
+                  <Input placeholder="Enter middle name (optional)" />
+                </Form.Item>
+              </div>
+
+              <div className="input-container">
+                <Form.Item
+                  name="lastName"
+                  label="Last Name *"
+                  rules={[
+                    { required: true, message: "Please enter last name" },
+                  ]}
+                >
+                  <Input placeholder="Enter last name" />
+                </Form.Item>
+              </div>
+
+              <div className="input-container">
+                <Form.Item
+                  name="email"
+                  label="Email Address *"
+                  rules={[
+                    { required: true, message: "Please enter email address" },
+                    { type: "email", message: "Please enter a valid email" },
+                  ]}
+                >
+                  <Input placeholder="Enter email address" />
+                </Form.Item>
+              </div>
+
+              <div className="input-container">
+                <Form.Item
+                  name="phoneNumber"
+                  label="Phone Number *"
+                  rules={[
+                    { required: true, message: "Please enter phone number" },
+                    { 
+                      pattern: /^\+[0-9]{1,}$/, 
+                      message: "Phone number must be in international format (e.g., +123456789)" 
+                    }
+                  ]}
+                >
+                  <Input placeholder="Enter phone number in international format (e.g., +123456789)" />
+                </Form.Item>
+              </div>
+
+              <div className="input-container">
+                <Form.Item
+                  name="title"
+                  label="Job Title *"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Please enter job title",
+                    },
+                  ]}
+                >
+                  <Input placeholder="Enter job title" />
+                </Form.Item>
+              </div>
+
+              <div className="input-container">
+                <Form.Item
+                  name="dateOfBirth"
+                  label="Date of Birth *"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Please select date of birth",
+                    },
+                  ]}
+                >
+                  <DatePicker style={{ width: "100%" }} />
+                </Form.Item>
+              </div>
+
+              <div className="input-container">
+                <Form.Item
+                  name="gender"
+                  label="Gender *"
+                  rules={[
+                    { required: true, message: "Please select gender" },
+                  ]}
+                >
+                  <Select placeholder="Select gender">
+                    <Option value="male">Male</Option>
+                    <Option value="female">Female</Option>
+                  </Select>
+                </Form.Item>
+              </div>
+
+              <div className="input-container">
+                <Form.Item
+                  name="organization"
+                  label="Organization *"
+                  tooltip="This field is pre-populated and cannot be changed"
+                >
+                  <Input 
+                    placeholder="Organization" 
+                    value={organization?.name || ""}
+                    disabled
+                  />
+                  <Input type="hidden" value={orgId} />
+                </Form.Item>
+              </div>
+            </div>
+          </div>
+
+          <div className="form-actions">
+            <Button onClick={handleCancel} className="cancel-button">
+              Cancel
+            </Button>
+            <Button
+              type="primary"
+              htmlType="submit"
+              loading={submitLoading}
+              className="submit-button"
+            >
+              Create Staff
+            </Button>
+          </div>
+        </Form>
+      </div>
+    </div>
+  );
+};
+
+// Main component with Suspense boundary
+const AddStaff: React.FC = () => {
+  return (
+    <DashboardLayout
+      pageClass="add-staff-module"
+      pageTag="Staff Management"
+      pageTitle="Add New Staff"
+      pageDesc="Create a new staff member in the SourceID platform"
+    >
+      <Suspense fallback={
+        <div className="add-staff-content">
+          <div className="skeleton-container">
+            <h2>Loading...</h2>
+            <div className="form-grid">
+              {[...Array(6)].map((_, index) => (
+                <div key={index} className="input-container">
+                  <Skeleton active paragraph={{ rows: 1 }} />
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      }>
+        <AddStaffContent />
+      </Suspense>
     </DashboardLayout>
   );
 };

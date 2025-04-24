@@ -14,7 +14,8 @@ import { fetchCustomerRequest } from '@/store/customers/actions';
 import { Customer } from '@/store/customers/types';
 
 const CustomerDetails: React.FC = () => {
-  const { id } = useParams<{ id: string }>();
+  const params = useParams<{ id: string }>();
+  const id = params?.id;
   const router = useRouter();
   const dispatch = useDispatch<AppDispatch>();
 

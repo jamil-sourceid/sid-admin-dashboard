@@ -12,7 +12,8 @@ import { Identity as IdentityType } from '@/store/customers/types';
 import { AppDispatch } from '@/store';
 
 const Identity: React.FC = () => {
-  const { id } = useParams<{ id: string }>();
+  const params = useParams<{ id: string }>();
+  const id = params?.id;
   const dispatch = useDispatch<AppDispatch>();
 
   const identities = useSelector(selectIdentity) as IdentityType[];
