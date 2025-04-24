@@ -3,21 +3,19 @@
 
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useRouter, useParams, useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import {
   Form,
   Input,
   Button,
   Select,
   DatePicker,
-  Divider,
-  message,
   Skeleton,
+  message,
 } from "antd";
 import { ArrowLeftOutlined } from "@ant-design/icons";
 import DashboardLayout from "@/layouts/dashboard-layout";
 import { AnyAction } from "redux";
-import { getData } from "@/setup/config/api";
 import "./style.css";
 import { 
   selectOrgs,
@@ -61,7 +59,6 @@ interface Group {
 
 const AddStaff: React.FC = () => {
   const [form] = Form.useForm();
-  const [loading, setLoading] = useState<boolean>(false);
   const dispatch = useDispatch();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -110,10 +107,12 @@ const AddStaff: React.FC = () => {
     const formattedValues = {
       ...values,
       dateOfBirth: dayjs(values.dateOfBirth).toISOString(),
+      // Add roles array with default value for CreateStaffPayload compatibility
+      roles: ['staff'],
     };
 
     // Dispatch action to create staff
-    dispatch(createStaffRequest(formattedValues as any) as unknown as AnyAction);
+    dispatch(createStaffRequest(formattedValues) as unknown as AnyAction);
   };
 
   const handleCancel = (): void => {
@@ -124,7 +123,7 @@ const AddStaff: React.FC = () => {
     router.push(`/dashboard/organisation/edit-organisation/${orgId}?tab=staff`);
   };
 
-  if (loading) {
+  if (submitLoading) {
     return (
       <DashboardLayout
         pageClass="add-staff-module"

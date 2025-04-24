@@ -5,7 +5,6 @@ import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useRouter, useParams, useSearchParams } from "next/navigation";
 import {
-  Button,
   Divider,
   Descriptions,
   Card,
@@ -57,13 +56,6 @@ const commonRoleNames: {[key: string]: string} = {
   "staff": "Staff Member"
 };
 
-const sampleGroups = [
-  { _id: "group1", name: "Finance Department" },
-  { _id: "group2", name: "Human Resources" },
-  { _id: "group3", name: "IT Department" },
-  { _id: "group4", name: "Operations" },
-];
-
 // Common interface for staff member data across different sources
 interface NormalizedStaffMember {
   id: string;
@@ -87,6 +79,13 @@ interface NormalizedStaffMember {
   isMfaSetupComplete?: boolean;
   roles?: string[];
   verified?: boolean;
+}
+
+// Type for an object from an unknown source that might have role data
+interface UnknownRole {
+  _id?: string;
+  name?: string;
+  [key: string]: unknown;
 }
 
 const ViewStaff: React.FC = () => {
@@ -135,7 +134,7 @@ const ViewStaff: React.FC = () => {
           middleName: foundStaff.middleName || "",
           // Ensure roles is always an array
           roles: Array.isArray(foundStaff.roles) ? 
-            foundStaff.roles.map((role: any) => {
+            foundStaff.roles.map((role: UnknownRole | string) => {
               if (typeof role === 'string') return role;
               return role && typeof role === 'object' ? (role._id || role.name || "") : "";
             }).filter(Boolean) : // Filter out empty strings
@@ -230,16 +229,6 @@ const ViewStaff: React.FC = () => {
       
       // Final fallback
       return "Staff Role";
-    });
-  };
-
-  // Get group names from ids
-  const getGroupNames = (groupIds?: string[]): string[] => {
-    if (!groupIds || !groupIds.length) return [];
-    return groupIds.map(groupId => {
-      if (!groupId) return "Unknown Group";
-      const group = sampleGroups.find(g => g._id === groupId);
-      return group ? group.name : groupId;
     });
   };
 

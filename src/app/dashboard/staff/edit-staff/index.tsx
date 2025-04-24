@@ -8,7 +8,6 @@ import { Form, Input, Button, Select, DatePicker, Upload, Spin, Divider } from '
 import { UploadOutlined, ArrowLeftOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
 import DashboardLayout from '@/layouts/dashboard-layout';
-import { RootState } from '@/store/rootReducer';
 import { UploadChangeParam, UploadFile } from 'antd/lib/upload/interface';
 import { AnyAction } from 'redux';
 import './style.css';
@@ -17,16 +16,13 @@ import {
   selectStaffData,
   selectStaffCreateLoading, 
   selectStaffCreateSuccess, 
-  selectStaffCreateError,
-  selectStaffDeleteLoading,
-  selectStaffDeleteSuccess 
+  selectStaffCreateError
 } from '@/store/organisation/selectors';
 import {
   createStaffRequest,
   resetCreateStaffState,
   fetchOrganisationStaffRequest
 } from '@/store/organisation/actions';
-import { getData } from '@/setup/config/api';
 import { message } from 'antd';
 
 const { Option } = Select;
@@ -49,22 +45,6 @@ const countryOptions: CountryOption[] = [
   { value: 'GH', label: 'Ghana', code: 'GH' },
   { value: 'ZA', label: 'South Africa', code: 'ZA' },
 ];
-
-// Staff interface matching the organization store schema
-interface StaffMember {
-  _id?: string;
-  title: string;
-  firstName: string;
-  lastName: string;
-  middleName: string;
-  phoneNumber: string;
-  email: string;
-  photo?: string;
-  dateOfBirth: string;
-  gender: 'male' | 'female';
-  organization: string;
-  countryCode?: string;
-}
 
 // Define form values
 interface FormValues {
@@ -89,7 +69,6 @@ const EditStaff: React.FC = () => {
   const orgId = params.orgId as string || "";
   const [form] = Form.useForm();
   const [imageUrl, setImageUrl] = useState<string>('');
-  const [loading, setLoading] = useState<boolean>(false);
   const isEditMode = !!id;
 
   // Get organization data from redux
@@ -207,7 +186,7 @@ const EditStaff: React.FC = () => {
     ? 'Update staff member details'
     : 'Add new staff member to the organization';
 
-  if ((loading || submitLoading) && isEditMode && !currentStaff) {
+  if (submitLoading && isEditMode && !currentStaff) {
     return (
       <DashboardLayout
         pageClass="edit-staff-module"
