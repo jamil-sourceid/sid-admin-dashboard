@@ -19,7 +19,6 @@ import {
   StaffAction,
   StaffResponse,
   StaffByIdResponse,
-  StaffMember,
   CreateStaffPayload,
   UpdateStaffPayload,
   CreateStaffResponse,

@@ -256,7 +256,7 @@ function* handleFetchOrganisationStaff(action: FetchOrganisationStaffRequestActi
 
 function* handleDeleteStaff(action: DeleteStaffRequestAction): SagaIterator {
   try {
-    const { staffId, organizationId } = action.payload;
+    const { staffId } = action.payload;
 
     // API endpoint for deleting a staff member - update to match the pattern of the get endpoint
     const response = (yield call(

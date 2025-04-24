@@ -1,7 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
@@ -42,19 +42,6 @@ interface StaffFormValues {
   dateOfBirth: string;
   gender: string;
   organization: string;
-}
-
-// Define interfaces for roles and groups (keeping for reference only)
-interface Role {
-  _id: string;
-  name: string;
-  description: string;
-}
-
-interface Group {
-  _id: string;
-  name: string;
-  description: string;
 }
 
 const AddStaff: React.FC = () => {

@@ -10,12 +10,7 @@ import {
   FetchStaffByIdRequestAction,
   CreateStaffRequestAction,
   UpdateStaffRequestAction,
-  DeleteStaffRequestAction,
-  StaffResponse,
-  StaffByIdResponse,
-  CreateStaffResponse,
-  UpdateStaffResponse,
-  DeleteStaffResponse
+  DeleteStaffRequestAction
 } from './types';
 import {
   fetchStaffSuccess,
@@ -35,6 +30,7 @@ import staffService from '../../services/staff';
 function* fetchStaffSaga(action: FetchStaffRequestAction): SagaIterator {
   try {
     const params = action.payload;
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     const response = yield call(staffService.getStaffList.bind(staffService), params);
     yield put(fetchStaffSuccess({
@@ -56,6 +52,7 @@ function* fetchStaffSaga(action: FetchStaffRequestAction): SagaIterator {
 function* fetchStaffByIdSaga(action: FetchStaffByIdRequestAction): SagaIterator {
   try {
     const { staffId } = action.payload;
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     const staffMember = yield call(staffService.getStaffById.bind(staffService), staffId);
     yield put(fetchStaffByIdSuccess({ data: staffMember }));
@@ -63,7 +60,17 @@ function* fetchStaffByIdSaga(action: FetchStaffByIdRequestAction): SagaIterator 
     let errorMessage = 'Failed to fetch staff details';
     
     if (error && typeof error === 'object' && 'response' in error) {
-      const axiosError = error as any;
+      interface AxiosErrorResponse {
+        response: {
+          status: number;
+          data?: {
+            message?: string;
+          };
+        };
+        message?: string;
+      }
+      
+      const axiosError = error as AxiosErrorResponse;
       if (axiosError.response?.status === 404) {
         errorMessage = 'Staff member not found. They may have been deleted or moved to a different organization.';
       } else if (axiosError.response?.data?.message) {
@@ -82,6 +89,7 @@ function* fetchStaffByIdSaga(action: FetchStaffByIdRequestAction): SagaIterator 
 function* createStaffSaga(action: CreateStaffRequestAction): SagaIterator {
   try {
     const staffData = action.payload;
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     const newStaff = yield call(staffService.createStaff.bind(staffService), staffData);
     yield put(createStaffSuccess({
@@ -97,6 +105,7 @@ function* createStaffSaga(action: CreateStaffRequestAction): SagaIterator {
 function* updateStaffSaga(action: UpdateStaffRequestAction): SagaIterator {
   try {
     const staffData = action.payload;
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     const updatedStaff = yield call(staffService.updateStaff.bind(staffService), staffData);
     yield put(updateStaffSuccess({
@@ -112,6 +121,7 @@ function* updateStaffSaga(action: UpdateStaffRequestAction): SagaIterator {
 function* deleteStaffSaga(action: DeleteStaffRequestAction): SagaIterator {
   try {
     const { staffId } = action.payload;
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     yield call(staffService.deleteStaff.bind(staffService), staffId);
     yield put(deleteStaffSuccess(staffId, 'Staff deleted successfully'));

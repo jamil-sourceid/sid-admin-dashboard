@@ -47,13 +47,31 @@ api.interceptors.response.use(
   (error) => {
     console.error("API Error:", error);
 
-    if (error.response?.status === 401) {
-      // Remove authentication token
-      sessionStorage.removeItem("authToken");
+    if (error && typeof error === 'object' && 'response' in error) {
+      interface AxiosErrorResponse {
+        response: {
+          status: number;
+          data?: {
+            message?: string;
+          };
+        };
+        message?: string;
+      }
+      
+      const axiosError = error as AxiosErrorResponse;
+      switch (axiosError.response?.status) {
+        case 401:
+          // Remove authentication token
+          sessionStorage.removeItem("authToken");
 
-      // Redirect only in browser (not on server)
-      if (typeof window !== "undefined") {
-        window.location.replace("/"); // Redirect to login/home page
+          // Redirect only in browser (not on server)
+          if (typeof window !== "undefined") {
+            window.location.replace("/"); // Redirect to login/home page
+          }
+          break;
+        default:
+          // For other status codes, log a simple message
+          console.warn(`API Error: ${axiosError.response?.status} - ${axiosError.response?.data?.message || 'No additional message'}`);
       }
     }
 
@@ -69,9 +87,11 @@ export const getData = async <T>(
   try {
     const response: AxiosResponse<T> = await api.get(endpoint, { params });
     return response;
-  } catch (error: any) {
+  } catch (error: unknown) {
     // Only log detailed errors for non-404 status codes
-    if (!error.response || error.response.status !== 404) {
+    if (error && typeof error === 'object' && 'response' in error && 
+        error.response && typeof error.response === 'object' && 'status' in error.response && 
+        error.response.status !== 404) {
       console.error(`GET ${endpoint} failed:`, error);
     } else {
       // For 404, just log a simple message
@@ -82,8 +102,7 @@ export const getData = async <T>(
 };
 
 // Generic function for POST requests
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const postData = async <T, D = any>(
+export const postData = async <T, D = Record<string, unknown>>(
   endpoint: string,
   data: D
 ): Promise<AxiosResponse<T>> => {
@@ -111,7 +130,7 @@ export const deleteData = async <T>(
 
 // Generic function for PUT requests
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const putData = async <T, D = any>(
+export const putData = async <T, D = Record<string, unknown>>(
   endpoint: string,
   data: D
 ): Promise<AxiosResponse<T>> => {
@@ -126,7 +145,7 @@ export const putData = async <T, D = any>(
 
 // Generic function for PATCH requests
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const patchData = async <T, D = any>(
+export const patchData = async <T, D = Record<string, unknown>>(
   endpoint: string,
   data: D
 ): Promise<AxiosResponse<T>> => {

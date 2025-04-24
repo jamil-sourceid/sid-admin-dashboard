@@ -1,11 +1,8 @@
-import {
-  getData,
-  postData,
-  putData,
-  deleteData,
-  uploadToPresignedUrl
-} from "@/setup/config/api";
-import { RootState } from "@/store/rootReducer";
+import { getData, postData, putData, deleteData } from "../setup/config/api";
+import { 
+  UpdateStaffPayload as StaffUpdatePayload, 
+  CreateStaffPayload as StaffCreatePayload 
+} from '../store/staff/types';
 
 // Response types
 export interface StaffListResponse {
@@ -78,232 +75,193 @@ export interface StaffParams {
   status?: string;
 }
 
-const staffService = {
-  /**
-   * Get list of staff with optional filtering
-   */
-  async getStaffList(params?: StaffParams): Promise<StaffListResponse> {
-    try {
-      if (!params) {
-        params = { page: 1, limit: 10 };
-      }
-      
-      const queryParams = new URLSearchParams();
-      if (params.page) queryParams.append('page', params.page.toString());
-      if (params.limit) queryParams.append('limit', params.limit.toString());
-      if (params.search) queryParams.append('search', params.search);
-      if (params.status) queryParams.append('status', params.status);
-      
-      const url = `/staff/admin${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
-      const response = await getData<StaffListResponse>(url);
-      
-      if (!response.data || !Array.isArray(response.data.data)) {
-        throw new Error('Invalid response format from staff list API');
-      }
-      
-      return response.data;
-    } catch (error: any) {
-      // Handle specific error types
-      if (error.response) {
-        // Server responded with a status code outside the 2xx range
-        const statusCode = error.response.status;
-        const errorMessage = error.response.data?.message || 'Unknown server error';
-        
-        if (statusCode === 401) {
-          console.error('Authentication error fetching staff list:', errorMessage);
-          throw new Error('You are not authorized to access this data. Please log in again.');
-        } else if (statusCode === 403) {
-          console.error('Permission error fetching staff list:', errorMessage);
-          throw new Error('You do not have permission to access this data.');
-        } else if (statusCode === 404) {
-          console.error('Staff list not found:', errorMessage);
-          throw new Error('Staff list could not be found. The resource may have been moved or deleted.');
-        } else {
-          console.error(`Error (${statusCode}) fetching staff list:`, errorMessage);
-          throw new Error(`Failed to fetch staff list: ${errorMessage}`);
-        }
-      } else if (error.request) {
-        // Request was made but no response received
-        console.error('No response received when fetching staff list:', error.request);
-        throw new Error('Network error. Please check your connection and try again.');
-      } else {
-        // Something else caused an error
-        console.error('Error fetching staff list:', error.message || error);
-        throw error;
-      }
-    }
-  },
-
-  /**
-   * Get a staff member by ID
-   */
-  async getStaffById(staffId: string): Promise<StaffMember> {
-    try {
-      if (!staffId) {
-        throw new Error('Staff ID is required');
-      }
-      
-      const response = await getData<{ data: StaffMember }>(`/staff/admin/${staffId}`);
-      return response.data.data;
-    } catch (error) {
-      console.error(`Error fetching staff with ID ${staffId}:`, error);
-      throw error;
-    }
-  },
-
-  /**
-   * Create a new staff member
-   */
-  async createStaff(staffData: CreateStaffPayload): Promise<StaffMember> {
-    try {
-      if (!staffData) {
-        throw new Error('Staff data is required');
-      }
-      
-      // Handle file upload if profile picture is included
-      let profilePictureUrl = undefined;
-      
-      if (staffData.profilePicture) {
-        // First upload the file to get a URL
-        const uploadResponse = await this.uploadStaffProfilePicture(staffData.profilePicture);
-        profilePictureUrl = uploadResponse.url;
-      }
-      
-      // Handle organization field conversion
-      let organizationId = staffData.organizationId;
-      if (!organizationId && staffData.organization) {
-        organizationId = staffData.organization;
-      }
-      
-      // Create staff with form data
-      const staffPayload = {
-        ...staffData,
-        profilePictureUrl,
-        // Convert organization to organizationId if needed
-        organizationId,
-        // Remove fields not needed in the API
-        organization: undefined,
-        profilePicture: undefined
-      };
-      
-      const response = await postData<{ data: StaffMember }>('/staff/admin', staffPayload);
-      return response.data.data;
-    } catch (error) {
-      console.error('Error creating staff:', error);
-      throw error;
-    }
-  },
-
-  /**
-   * Update an existing staff member
-   */
-  async updateStaff(staffData: UpdateStaffPayload): Promise<StaffMember> {
-    try {
-      const { staffId, ...updateData } = staffData;
-      
-      if (!staffId) {
-        throw new Error('Staff ID is required');
-      }
-      
-      if (!updateData) {
-        throw new Error('Staff data is required');
-      }
-      
-      // Handle file upload if profile picture is included
-      let profilePictureUrl = undefined;
-      
-      if (updateData.profilePicture) {
-        // First upload the file to get a URL
-        const uploadResponse = await this.uploadStaffProfilePicture(updateData.profilePicture);
-        profilePictureUrl = uploadResponse.url;
-      }
-      
-      // Handle organization field conversion
-      let organizationId = updateData.organizationId;
-      if (!organizationId && updateData.organization) {
-        organizationId = updateData.organization;
-      }
-      
-      // Update staff with form data
-      const staffPayload = {
-        ...updateData,
-        profilePictureUrl: profilePictureUrl || undefined,
-        // Convert organization to organizationId if needed
-        organizationId,
-        // Remove fields not needed in the API
-        organization: undefined,
-        profilePicture: undefined
-      };
-      
-      const response = await putData<{ data: StaffMember }>(`/staff/admin/${staffId}`, staffPayload);
-      return response.data.data;
-    } catch (error) {
-      console.error(`Error updating staff with ID ${staffData.staffId}:`, error);
-      throw error;
-    }
-  },
-
-  /**
-   * Delete a staff member
-   */
-  async deleteStaff(staffId: string): Promise<void> {
-    try {
-      if (!staffId) {
-        throw new Error('Staff ID is required');
-      }
-      
-      await deleteData(`/staff/admin/${staffId}`);
-    } catch (error) {
-      console.error(`Error deleting staff with ID ${staffId}:`, error);
-      throw error;
-    }
-  },
-
-  /**
-   * Upload a staff profile picture and get the URL
-   */
-  async uploadStaffProfilePicture(file: File): Promise<{ url: string }> {
-    try {
-      if (!file) {
-        throw new Error('File is required');
-      }
-      
-      // Get presigned URL from API
-      const getUrlResponse = await postData<{ data: { url: string; fields: Record<string, string>; key?: string } }>(
-        '/upload/presigned-url',
-        {
-          fileType: file.type,
-          fileName: file.name,
-          directory: 'staff-profile-pictures'
-        }
-      );
-      
-      // Check response structure
-      const { data } = getUrlResponse.data;
-      
-      if (!data.url) {
-        throw new Error('Invalid response format: Missing URL');
-      }
-      
-      // Upload to the presigned URL
-      await uploadToPresignedUrl(data.url, file);
-      
-      // Return the final URL for the uploaded file
-      // If the API returns a key, use it to construct the final URL
-      let fileUrl = data.url;
-      if (data.key) {
-        // Some services return a base URL and a key separately
-        // In that case, we need to construct the final URL
-        const baseUrl = data.url.split('?')[0]; // Remove query params if any
-        fileUrl = `${baseUrl}/${data.key}`;
-      }
-      
-      return { url: fileUrl };
-    } catch (error) {
-      console.error('Error uploading staff profile picture:', error);
-      throw error;
-    }
+/**
+ * Get a list of staff members
+ * @param params Optional parameters for pagination and filtering
+ * @returns A promise with the staff list response
+ */
+export const getStaffList = async (params?: StaffParams) => {
+  try {
+    const response = await getData('/staff', params as Record<string, unknown>);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching staff list:', error);
+    throw error;
   }
 };
 
+/**
+ * Get staff member by ID
+ * @param staffId The ID of the staff member to retrieve
+ * @returns A promise with the staff member data
+ */
+export const getStaffById = async (staffId: string) => {
+  try {
+    const response = await getData(`/staff/${staffId}`);
+    return response.data;
+  } catch (error) {
+    console.error(`Error fetching staff with ID ${staffId}:`, error);
+    throw error;
+  }
+};
+
+/**
+ * Create a new staff member
+ * @param staffData The data for the new staff member
+ * @returns A promise with the created staff member
+ */
+export const createStaff = async (staffData: StaffCreatePayload | CreateStaffPayload) => {
+  try {
+    // Extract the profile picture from the data
+    const { profilePicture, ...staffDataWithoutPicture } = staffData;
+    
+    // Create a new form data object for the request
+    const formData = new FormData();
+    
+    // Add all the staff data to the form data
+    Object.entries(staffDataWithoutPicture).forEach(([key, value]) => {
+      if (value !== null && value !== undefined) {
+        formData.append(key, value.toString());
+      }
+    });
+    
+    // Add the profile picture if it exists
+    if (profilePicture) {
+      formData.append('profilePicture', profilePicture);
+    }
+    
+    // Send the request
+    const response = await postData('/staff', formData);
+    return response.data;
+  } catch (error) {
+    console.error('Error creating staff member:', error);
+    throw error;
+  }
+};
+
+/**
+ * Update an existing staff member
+ * @param staffData The updated data for the staff member
+ * @returns A promise with the updated staff member
+ */
+export const updateStaff = async (staffData: StaffUpdatePayload | UpdateStaffPayload) => {
+  try {
+    const { staffId, profilePicture, ...staffDataWithoutPicture } = staffData;
+    
+    // Create a new form data object for the request
+    const formData = new FormData();
+    
+    // Add all the staff data to the form data
+    Object.entries(staffDataWithoutPicture).forEach(([key, value]) => {
+      if (value !== null && value !== undefined) {
+        formData.append(key, value.toString());
+      }
+    });
+    
+    // Add the profile picture if it exists
+    if (profilePicture) {
+      formData.append('profilePicture', profilePicture);
+    }
+    
+    // Send the request
+    const response = await putData(`/staff/${staffId}`, formData);
+    return response.data;
+  } catch (error) {
+    console.error(`Error updating staff member:`, error);
+    throw error;
+  }
+};
+
+/**
+ * Delete a staff member
+ * @param staffId The ID of the staff member to delete
+ * @returns A promise with the deletion response
+ */
+export const deleteStaff = async (staffId: string) => {
+  try {
+    const response = await deleteData(`/staff/${staffId}`);
+    return response.data;
+  } catch (error) {
+    console.error(`Error deleting staff member with ID ${staffId}:`, error);
+    throw error;
+  }
+};
+
+// Parameters for uploadStaffProfilePicture
+export interface UploadStaffProfilePictureParams {
+  file: File;
+  directory: string;
+}
+
+interface PresignedUrlResponse {
+  data: {
+    url: string;
+    fields: Record<string, string>;
+    key: string;
+  }
+}
+
+/**
+ * Upload a staff profile picture and get the URL
+ * @param params The parameters for the upload
+ * @returns A promise with the uploaded file URL
+ */
+export const uploadStaffProfilePicture = async (params: UploadStaffProfilePictureParams): Promise<{ url: string }> => {
+  try {
+    const { file, directory } = params;
+    
+    if (!file) {
+      throw new Error('File is required');
+    }
+    
+    // Get presigned URL from API
+    const getUrlResponse = await postData<PresignedUrlResponse>(
+      '/upload/presigned-url',
+      {
+        fileType: file.type,
+        fileName: file.name,
+        directory: directory || 'staff-profile-pictures'
+      }
+    );
+    
+    const { url, fields, key } = getUrlResponse.data.data;
+    
+    // Create form data for the file upload
+    const formData = new FormData();
+    
+    // Add all the fields from the presigned URL response
+    Object.entries(fields).forEach(([fieldName, fieldValue]) => {
+      formData.append(fieldName, fieldValue as string);
+    });
+    
+    // Add the file itself
+    formData.append('file', file);
+    
+    // Upload directly to the storage provider
+    await fetch(url, {
+      method: 'POST',
+      body: formData,
+    });
+    
+    // Return the URL where the file can be accessed
+    return {
+      url: `${url}/${key}`
+    };
+  } catch (error) {
+    console.error('Error uploading staff profile picture:', error);
+    throw error;
+  }
+};
+
+// Create a staff service object with all the functions
+const staffService = {
+  getStaffList,
+  getStaffById,
+  createStaff,
+  updateStaff,
+  deleteStaff,
+  uploadStaffProfilePicture
+};
+
+// Export the staff service as default
 export default staffService; 
