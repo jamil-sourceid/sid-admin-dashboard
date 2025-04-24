@@ -64,6 +64,31 @@ const sampleGroups = [
   { _id: "group4", name: "Operations" },
 ];
 
+// Common interface for staff member data across different sources
+interface NormalizedStaffMember {
+  id: string;
+  firstName: string;
+  lastName: string;
+  middleName?: string;
+  email: string;
+  title: string;
+  phoneNumber: string;
+  profilePictureUrl?: string;
+  photo?: string;
+  status: string;
+  country?: string;
+  countryCode?: string;
+  organizationId?: string;
+  organization?: string;
+  createdAt?: string;
+  updatedAt?: string;
+  dateOfBirth?: string;
+  emailVerified?: boolean;
+  isMfaSetupComplete?: boolean;
+  roles?: string[];
+  verified?: boolean;
+}
+
 const ViewStaff: React.FC = () => {
   const dispatch = useDispatch();
   const router = useRouter();
@@ -79,7 +104,7 @@ const ViewStaff: React.FC = () => {
   
   // Get organization staff data (for backup if redux staff data isn't available)
   const orgStaffMembers = useSelector(selectStaffData);
-  const [staffMember, setStaffMember] = useState<any>(null);
+  const [staffMember, setStaffMember] = useState<NormalizedStaffMember | null>(null);
   const [dataSource, setDataSource] = useState<'org' | 'api' | null>(null);
   
   // Get organizations from Redux store
@@ -96,27 +121,29 @@ const ViewStaff: React.FC = () => {
         // Convert from organization staff format to standard staff format
         setStaffMember({
           id: foundStaff._id,
-          firstName: foundStaff.firstName,
-          lastName: foundStaff.lastName,
-          email: foundStaff.email,
-          title: foundStaff.title,
-          phoneNumber: foundStaff.phoneNumber,
+          firstName: foundStaff.firstName || "",
+          lastName: foundStaff.lastName || "",
+          email: foundStaff.email || "",
+          title: foundStaff.title || "",
+          phoneNumber: foundStaff.phoneNumber || "",
           profilePictureUrl: foundStaff.photo,
           status: foundStaff.verified ? "active" : "inactive",
           countryCode: foundStaff.countryCode || "",
           country: "",
           organizationId: foundStaff.organization || orgId,
-          createdAt: "",
-          updatedAt: "",
           // Other fields from organization staff
-          middleName: foundStaff.middleName,
+          middleName: foundStaff.middleName || "",
           // Ensure roles is always an array
           roles: Array.isArray(foundStaff.roles) ? 
-            foundStaff.roles.map((role: any) => typeof role === 'string' ? role : (role._id || role.name || JSON.stringify(role))) : 
+            foundStaff.roles.map((role: any) => {
+              if (typeof role === 'string') return role;
+              return role && typeof role === 'object' ? (role._id || role.name || "") : "";
+            }).filter(Boolean) : // Filter out empty strings
             [],
-          emailVerified: foundStaff.emailVerified,
-          isMfaSetupComplete: foundStaff.isMfaSetupComplete,
-          dateOfBirth: foundStaff.dateOfBirth,
+          emailVerified: Boolean(foundStaff.emailVerified),
+          isMfaSetupComplete: Boolean(foundStaff.isMfaSetupComplete),
+          dateOfBirth: foundStaff.dateOfBirth || "",
+          verified: Boolean(foundStaff.verified),
         });
         setDataSource('org');
       }
@@ -139,7 +166,21 @@ const ViewStaff: React.FC = () => {
   // Update staffMember when staffData changes
   useEffect(() => {
     if (staffData && dataSource === 'api') {
-      setStaffMember(staffData);
+      setStaffMember({
+        id: staffData.id,
+        firstName: staffData.firstName,
+        lastName: staffData.lastName,
+        email: staffData.email,
+        title: staffData.title,
+        phoneNumber: staffData.phoneNumber,
+        profilePictureUrl: staffData.profilePictureUrl,
+        status: staffData.status,
+        country: staffData.country,
+        countryCode: staffData.countryCode,
+        organizationId: staffData.organizationId,
+        createdAt: staffData.createdAt,
+        updatedAt: staffData.updatedAt,
+      });
     }
   }, [staffData, dataSource]);
 
@@ -160,48 +201,31 @@ const ViewStaff: React.FC = () => {
   };
 
   // Format date
-  const formatDate = (dateString: string): string => {
+  const formatDate = (dateString?: string): string => {
     if (!dateString) return "-";
     return dayjs(dateString).format("MMMM D, YYYY");
   };
 
   // Get role names from ids with improved role name resolution
-  const getRoleNames = (roleIds: string[] | any[] = []): string[] => {
+  const getRoleNames = (roleIds?: string[]): string[] => {
     if (!roleIds || !roleIds.length) return [];
     
     return roleIds.map(roleId => {
-      // Case 1: If roleId is an object with a name property
-      if (typeof roleId === 'object' && roleId !== null) {
-        if (roleId.name) return roleId.name;
-        
-        // Case 2: If roleId is an object with an _id property
-        if (roleId._id) {
-          const role = sampleRoles.find(r => r._id === roleId._id);
-          if (role) return role.name;
-          
-          // Try to create a friendly name if it's an ID
-          return "Role"; // Generic fallback
-        }
-        
-        // If all else fails with an object
-        return "Unknown Role";
+      if (!roleId) return "Staff Role";
+      
+      // Case 1: Check if it matches any common role names (case insensitive)
+      const lowerRoleId = roleId.toLowerCase();
+      if (commonRoleNames[lowerRoleId]) {
+        return commonRoleNames[lowerRoleId];
       }
       
-      // Case 3: If roleId is a string, try to find a matching role by ID
+      // Case 2: Try to find a matching role by ID
       const role = sampleRoles.find(r => r._id === roleId);
       if (role) return role.name;
       
-      // Case 4: Check if it matches any common role names (case insensitive)
-      if (typeof roleId === 'string') {
-        const lowerRoleId = roleId.toLowerCase();
-        if (commonRoleNames[lowerRoleId]) {
-          return commonRoleNames[lowerRoleId];
-        }
-        
-        // If it looks like a readable name, return it capitalized
-        if (/^[a-zA-Z]+$/.test(roleId)) {
-          return roleId.charAt(0).toUpperCase() + roleId.slice(1);
-        }
+      // Case 3: If it looks like a readable name, return it capitalized
+      if (/^[a-zA-Z]+$/.test(roleId)) {
+        return roleId.charAt(0).toUpperCase() + roleId.slice(1);
       }
       
       // Final fallback
@@ -210,9 +234,10 @@ const ViewStaff: React.FC = () => {
   };
 
   // Get group names from ids
-  const getGroupNames = (groupIds: string[] = []): string[] => {
+  const getGroupNames = (groupIds?: string[]): string[] => {
     if (!groupIds || !groupIds.length) return [];
     return groupIds.map(groupId => {
+      if (!groupId) return "Unknown Group";
       const group = sampleGroups.find(g => g._id === groupId);
       return group ? group.name : groupId;
     });
@@ -260,7 +285,7 @@ const ViewStaff: React.FC = () => {
     staffMember.dateOfBirth ? { label: "Date of Birth", value: formatDate(staffMember.dateOfBirth) } : null,
     staffMember.createdAt ? { label: "Created At", value: formatDate(staffMember.createdAt) } : null,
     staffMember.updatedAt ? { label: "Updated At", value: formatDate(staffMember.updatedAt) } : null,
-  ].filter((item): item is {label: string, value: string} => item !== null); // Remove null items and type guard
+  ].filter((item): item is {label: string, value: string} => item !== null && Boolean(item.value)); // Remove null items and filter out empty values
 
   return (
     <DashboardLayout

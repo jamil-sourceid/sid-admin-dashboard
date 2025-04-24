@@ -11,14 +11,13 @@ import {
   Select,
   InputNumber,
   Upload,
-  Spin,
   Row,
   Col,
   Tabs,
   Skeleton,
   message,
 } from "antd";
-import { UploadOutlined, ArrowLeftOutlined } from "@ant-design/icons";
+import { ArrowLeftOutlined } from "@ant-design/icons";
 import DashboardLayout from "@/layouts/dashboard-layout";
 import {
   updateOrganisationRequest,
@@ -26,7 +25,6 @@ import {
   fetchOrganisationStaffRequest,
   deleteStaffRequest,
 } from "@/store/organisation/actions";
-import { UpdateOrganizationPayload } from "@/store/organisation/types";
 import { AnyAction } from "redux";
 import { UploadChangeParam, UploadFile } from "antd/lib/upload/interface";
 import "./style.css";
@@ -39,7 +37,7 @@ import {
   selectStaffDeleteLoading,
   selectStaffDeleteSuccess,
 } from "@/store/organisation/selectors";
-import { ExtendedOrganization, FormValues, StaffMember } from "./model";
+import { ExtendedOrganization, FormValues } from "./model";
 import ConfirmationModal from "@/components/modals/confrimation-modal";
 
 const { Option } = Select;
@@ -47,8 +45,9 @@ const { Option } = Select;
 const EditOrganisation: React.FC = () => {
   const dispatch = useDispatch();
   const router = useRouter();
-  const { id } = useParams();
-  const idString = id as string; // Type assertion to handle id as string
+  const params = useParams();
+  const id = params?.id as string;
+  const idString = id; // Type assertion to handle id as string
   const searchParams = useSearchParams();
   const tabParam = searchParams?.get("tab");
   
@@ -62,7 +61,6 @@ const EditOrganisation: React.FC = () => {
   const [pageSize, setPageSize] = useState<number>(10);
   const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false);
   const [staffToDelete, setStaffToDelete] = useState<string | null>(null);
-  const [logo, setLogo] = useState<File | null>(null);
   const [form] = Form.useForm();
 
   // Get organization data and loading states from Redux
@@ -123,19 +121,13 @@ const EditOrganisation: React.FC = () => {
           countryCode: organizationToEdit.address?.countryCode || "",
         },
       });
-      setLogo(organizationToEdit.img ? new File([], "") : null);
     }
   }, [organizationToEdit, form]);
 
   // Initial data fetch
   useEffect(() => {
     if (idString) {
-      // Fetch organizations if not already loaded
-      if (organizations.length === 0) {
-        dispatch(fetchOrganisationsRequest() as unknown as AnyAction);
-      }
-
-      // Fetch staff members for this organization
+      // Fetch staff members for this organization if on staff tab
       if (activeTab === "2") {
         dispatch(
           fetchOrganisationStaffRequest({
@@ -147,7 +139,7 @@ const EditOrganisation: React.FC = () => {
         );
       }
     }
-  }, [idString, dispatch, organizations.length, currentPage, pageSize, searchTerm, activeTab]);
+  }, [idString, dispatch, currentPage, pageSize, searchTerm, activeTab, organizations.length]);
 
   // Reset update state on component unmount
   useEffect(() => {
@@ -191,19 +183,7 @@ const EditOrganisation: React.FC = () => {
   const handleSubmit = (values: FormValues): void => {
     if (!idString) return;
 
-    // Prepare address object
-    const address = {
-      addressLineOne: values.addressLineOne,
-      addressLineTwo: values.addressLineTwo,
-      city: values.city,
-      region: values.region,
-      countryCode: values.countryCode,
-      zipCode: values.zipCode,
-      longitude: values.longitude,
-      latitude: values.latitude,
-    };
-
-    // Prepare update data
+    // Prepare update data with values from the form
     const updateData = {
       organizationId: idString,
       name: values.name,
@@ -212,7 +192,7 @@ const EditOrganisation: React.FC = () => {
       email: values.email,
       country: values.country,
       distanceTolerance: values.distanceTolerance,
-      address,
+      address: values.address,
     };
 
     dispatch(updateOrganisationRequest(updateData) as unknown as AnyAction);
@@ -222,9 +202,6 @@ const EditOrganisation: React.FC = () => {
   const handleImageUpload = (info: UploadChangeParam<UploadFile>): void => {
     if (info.file.status === "done") {
       message.success(`${info.file.name} file uploaded successfully`);
-      if (info.file.originFileObj) {
-        setLogo(info.file.originFileObj);
-      }
     } else if (info.file.status === "error") {
       message.error(`${info.file.name} file upload failed.`);
     }
@@ -274,12 +251,6 @@ const EditOrganisation: React.FC = () => {
     router.push(`/dashboard/staff/view-staff/${staffId}?orgId=${idString}`);
   };
 
-  // Open delete confirmation modal
-  const handleDeleteClick = (staffId: string): void => {
-    setStaffToDelete(staffId);
-    setShowDeleteModal(true);
-  };
-
   // Close delete confirmation modal
   const handleCloseDeleteModal = (): void => {
     setShowDeleteModal(false);
@@ -299,12 +270,6 @@ const EditOrganisation: React.FC = () => {
   const handlePaginationChange = (page: number, pageSize?: number): void => {
     setCurrentPage(page);
     if (pageSize) setPageSize(pageSize);
-  };
-
-  // Format date function for displaying created date
-  const _formatDate = (dateString: string): string => {
-    const date = new Date(dateString);
-    return date.toISOString().split("T")[0]; // Format as YYYY-MM-DD
   };
 
   // Filter staff members based on search term
@@ -457,10 +422,7 @@ const EditOrganisation: React.FC = () => {
                 listType="picture"
                 maxCount={1}
                 onChange={handleImageUpload}
-                // Placeholder beforeUpload to prevent automatic upload
-                beforeUpload={(file) => {
-                  return false;
-                }}
+                beforeUpload={() => false}
               >
                 <Button>Click to upload</Button>
               </Upload>
