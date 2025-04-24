@@ -69,8 +69,14 @@ export const getData = async <T>(
   try {
     const response: AxiosResponse<T> = await api.get(endpoint, { params });
     return response;
-  } catch (error) {
-    console.error(`GET ${endpoint} failed:`, error);
+  } catch (error: any) {
+    // Only log detailed errors for non-404 status codes
+    if (!error.response || error.response.status !== 404) {
+      console.error(`GET ${endpoint} failed:`, error);
+    } else {
+      // For 404, just log a simple message
+      console.warn(`Resource not found: ${endpoint}`);
+    }
     throw error;
   }
 };

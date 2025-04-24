@@ -13,9 +13,20 @@ import {
   TOGGLE_ORGANISATION_MFA_REQUEST,
   TOGGLE_ORGANISATION_MFA_SUCCESS,
   TOGGLE_ORGANISATION_MFA_FAILURE,
+  FETCH_ORGANISATION_STAFF_REQUEST,
+  FETCH_ORGANISATION_STAFF_SUCCESS,
+  FETCH_ORGANISATION_STAFF_FAILURE,
+  DELETE_STAFF_REQUEST,
+  DELETE_STAFF_SUCCESS,
+  DELETE_STAFF_FAILURE,
+  CREATE_STAFF_REQUEST,
+  CREATE_STAFF_SUCCESS,
+  CREATE_STAFF_FAILURE,
+  RESET_CREATE_STAFF_STATE,
   OrganisationState,
   OrganisationActionTypes,
   Organization,
+  StaffMember,
 } from './types';
 
 const initialState: OrganisationState = {
@@ -36,6 +47,21 @@ const initialState: OrganisationState = {
     data: null,
   },
   selectedOrganization: null,
+  staff: {
+    loading: false,
+    data: [],
+    error: null,
+    meta: null,
+    deleteLoading: false,
+    deleteSuccess: false,
+    deleteError: null,
+    createStaff: {
+      loading: false,
+      success: false,
+      error: null,
+      data: null,
+    },
+  },
 };
 
 export const organisationReducer = (
@@ -198,6 +224,131 @@ export const organisationReducer = (
           loading: false,
           success: false,
           error: action.payload.error,
+        },
+      };
+
+    case FETCH_ORGANISATION_STAFF_REQUEST:
+      return {
+        ...state,
+        staff: {
+          ...state.staff,
+          loading: true,
+          error: null,
+        },
+      };
+
+    case FETCH_ORGANISATION_STAFF_SUCCESS:
+      return {
+        ...state,
+        staff: {
+          ...state.staff,
+          loading: false,
+          data: action.payload.data,
+          meta: action.payload.meta,
+          error: null,
+        },
+      };
+
+    case FETCH_ORGANISATION_STAFF_FAILURE:
+      return {
+        ...state,
+        staff: {
+          ...state.staff,
+          loading: false,
+          error: action.payload.error,
+        },
+      };
+
+    case DELETE_STAFF_REQUEST:
+      return {
+        ...state,
+        staff: {
+          ...state.staff,
+          deleteLoading: true,
+          deleteSuccess: false,
+          deleteError: null,
+        },
+      };
+
+    case DELETE_STAFF_SUCCESS:
+      return {
+        ...state,
+        staff: {
+          ...state.staff,
+          deleteLoading: false,
+          deleteSuccess: true,
+          deleteError: null,
+          data: state.staff.data.filter(
+            (staff: StaffMember) => staff._id !== action.payload.staffId
+          ),
+        },
+      };
+
+    case DELETE_STAFF_FAILURE:
+      return {
+        ...state,
+        staff: {
+          ...state.staff,
+          deleteLoading: false,
+          deleteSuccess: false,
+          deleteError: action.payload.error,
+        },
+      };
+
+    case CREATE_STAFF_REQUEST:
+      return {
+        ...state,
+        staff: {
+          ...state.staff,
+          createStaff: {
+            ...state.staff.createStaff,
+            loading: true,
+            success: false,
+            error: null,
+          },
+        },
+      };
+
+    case CREATE_STAFF_SUCCESS:
+      return {
+        ...state,
+        staff: {
+          ...state.staff,
+          data: [...state.staff.data, action.payload.data],
+          createStaff: {
+            loading: false,
+            success: true,
+            error: null,
+            data: action.payload.data,
+          },
+        },
+      };
+
+    case CREATE_STAFF_FAILURE:
+      return {
+        ...state,
+        staff: {
+          ...state.staff,
+          createStaff: {
+            ...state.staff.createStaff,
+            loading: false,
+            success: false,
+            error: action.payload.error,
+          },
+        },
+      };
+
+    case RESET_CREATE_STAFF_STATE:
+      return {
+        ...state,
+        staff: {
+          ...state.staff,
+          createStaff: {
+            loading: false,
+            success: false,
+            error: null,
+            data: null,
+          },
         },
       };
 

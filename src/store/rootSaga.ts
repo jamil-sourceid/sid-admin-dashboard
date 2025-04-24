@@ -3,7 +3,8 @@ import authSaga from "./auth/sagas";
 import { organisationSaga } from "./organisation/sagas";
 import { CustomersSaga } from "./customers/sagas";
 import { OverviewSaga } from "./dashboard/overview/sagas";
+import staffSaga from "./staff/sagas";
 
 export default function* rootSaga(): Generator {
-  yield all([authSaga(), organisationSaga(), CustomersSaga(), OverviewSaga()]);
+  yield all([authSaga(), organisationSaga(), CustomersSaga(), OverviewSaga(), staffSaga()]);
 }

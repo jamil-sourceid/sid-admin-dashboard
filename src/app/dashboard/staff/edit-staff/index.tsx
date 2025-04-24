@@ -10,6 +10,7 @@ import dayjs from 'dayjs';
 import DashboardLayout from '@/layouts/dashboard-layout';
 import { RootState } from '@/store/rootReducer';
 import { UploadChangeParam, UploadFile } from 'antd/lib/upload/interface';
+import { getData } from '@/setup/config/api';
 import './style.css';
 
 const { Option } = Select;
@@ -33,6 +34,34 @@ const countryOptions: CountryOption[] = [
   { value: 'ZA', label: 'South Africa', code: 'ZA' },
 ];
 
+// Sample roles and groups for dropdowns
+const sampleRoles = [
+  { value: '6553a47b6c2031cc7dad3c5a', label: 'Admin' },
+  { value: '6553a47b6c2031cc7dad3c5b', label: 'Manager' },
+  { value: '6553a47b6c2031cc7dad3c5c', label: 'User' },
+  { value: '6553a47b6c2031cc7dad3c5d', label: 'Supervisor' }
+];
+
+const sampleGroups = [
+  { value: '6553a47b6c2031cc7dad3c5e', label: 'Finance Department' },
+  { value: '6553a47b6c2031cc7dad3c5f', label: 'Human Resources' },
+  { value: '6553a47b6c2031cc7dad3c60', label: 'IT Department' },
+  { value: '6553a47b6c2031cc7dad3c61', label: 'Operations' }
+];
+
+// Interface for role and group objects (keeping for reference)
+interface Role {
+  _id: string;
+  name: string;
+  description: string;
+}
+
+interface Group {
+  _id: string;
+  name: string;
+  description: string;
+}
+
 // Staff interface matching the requested schema
 interface StaffMember {
   _id?: string;
@@ -44,9 +73,9 @@ interface StaffMember {
   email: string;
   photo?: string;
   dateOfBirth: string;
-  gender: 'male' | 'female' | 'other';
+  gender: 'male' | 'female';
   organization: string;
-  countryCode?: string; // Added country code
+  countryCode?: string;
 }
 
 // Define form values
@@ -58,17 +87,19 @@ interface FormValues {
   phoneNumber: string;
   email: string;
   dateOfBirth: string;
-  gender: 'male' | 'female' | 'other';
+  gender: 'male' | 'female';
   organization: string;
-  country?: string; // Added country
-  countryCode?: string; // Added country code
+  country?: string;
+  countryCode?: string;
 }
 
 const EditStaff: React.FC = () => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const _dispatch = useDispatch();
   const router = useRouter();
-  const { id, orgId } = useParams<{ id?: string; orgId?: string }>();
+  const params = useParams<{ id?: string; orgId?: string }>() || {};
+  const id = params.id;
+  const orgId = params.orgId;
   const [form] = Form.useForm();
   const [imageUrl, setImageUrl] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
@@ -76,6 +107,7 @@ const EditStaff: React.FC = () => {
 
   // Get organization data from redux
   const { data: organizations } = useSelector((state: RootState) => state.organisations);
+  const organization = organizations.find((org) => org._id === orgId);
 
   // In a real app, you would fetch the staff member's data if in edit mode
   useEffect(() => {
@@ -95,7 +127,7 @@ const EditStaff: React.FC = () => {
           dateOfBirth: '2020-04-03T18:06:06.668Z',
           gender: 'female',
           organization: orgId || '67eecdf7166ff3ec74e36f49',
-          countryCode: 'NG',
+          countryCode: 'NG'
         };
 
         form.setFieldsValue({
@@ -118,13 +150,22 @@ const EditStaff: React.FC = () => {
   const handleSubmit = (values: FormValues): void => {
     setLoading(true);
 
+    // Format date to ISO string
+    const formattedDateOfBirth = values.dateOfBirth 
+      ? typeof values.dateOfBirth === 'string' 
+        ? values.dateOfBirth
+        : (values.dateOfBirth as any).toISOString()
+      : '';
+
     const formattedValues: StaffMember = {
       ...values,
-      dateOfBirth: values.dateOfBirth,
+      dateOfBirth: formattedDateOfBirth,
       photo: imageUrl,
     };
 
-    // In a real app, dispatch an action to save the staff member
+    // In a real app, this would call your API endpoint
+    // API path would be PATCH /v1/api/staff/admin/{staffId} for updates
+    // or POST /v1/api/staff/admin for creating new staff
     console.log('Saving staff member:', formattedValues);
 
     // Simulate API call
@@ -289,9 +330,15 @@ const EditStaff: React.FC = () => {
                 <Form.Item
                   label="Phone Number *"
                   name="phoneNumber"
-                  rules={[{ required: true, message: 'Please enter phone number' }]}
+                  rules={[
+                    { required: true, message: 'Please enter phone number' },
+                    { 
+                      pattern: /^\+[0-9]{1,}$/, 
+                      message: "Phone number must be in international format (e.g., +123456789)" 
+                    }
+                  ]}
                 >
-                  <Input placeholder="Enter phone number" />
+                  <Input placeholder="Enter phone number in international format (e.g., +123456789)" />
                 </Form.Item>
               </div>
 
@@ -324,7 +371,6 @@ const EditStaff: React.FC = () => {
                   <Select placeholder="Select gender">
                     <Option value="male">Male</Option>
                     <Option value="female">Female</Option>
-                    <Option value="other">Other</Option>
                   </Select>
                 </Form.Item>
               </div>
@@ -335,13 +381,24 @@ const EditStaff: React.FC = () => {
                   name="organization"
                   rules={[{ required: true, message: 'Please select organization' }]}
                 >
-                  <Select placeholder="Select organization">
-                    {organizations.map((org) => (
-                      <Option key={org._id} value={org._id}>
-                        {org.name}
-                      </Option>
-                    ))}
-                  </Select>
+                  {isEditMode || orgId ? (
+                    <>
+                      <Input 
+                        placeholder="Organization" 
+                        value={organization?.name || ""}
+                        disabled
+                      />
+                      <Input type="hidden" value={orgId} />
+                    </>
+                  ) : (
+                    <Select placeholder="Select organization">
+                      {organizations.map((org) => (
+                        <Option key={org._id} value={org._id}>
+                          {org.name}
+                        </Option>
+                      ))}
+                    </Select>
+                  )}
                 </Form.Item>
               </div>
             </div>
