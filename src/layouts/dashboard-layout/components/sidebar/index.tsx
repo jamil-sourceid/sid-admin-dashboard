@@ -23,7 +23,7 @@ export const menuItems = [
     type: "link",
     items: [],
     hidden: false,
-    permissions: []
+    permissions: [],
   },
   {
     title: "Organisation",
@@ -33,7 +33,7 @@ export const menuItems = [
     type: "link",
     items: [],
     hidden: false,
-    permissions: []
+    permissions: [],
   },
   {
     title: "Customers",
@@ -43,7 +43,7 @@ export const menuItems = [
     type: "link",
     items: [],
     hidden: false,
-    permissions: []
+    permissions: [],
   },
   {
     title: "Modules",
@@ -63,6 +63,16 @@ export const menuItems = [
       },
     ],
     hidden: true,
+    permissions: [],
+  },
+  {
+    title: "Billing",
+    icon: "/assets/icons/billing-icon.svg",
+    path: "/dashboard/billing",
+    key: "billing",
+    type: "link",
+    items: [],
+    hidden: false,
     permissions: [],
   },
 ];
@@ -255,11 +265,7 @@ const SideBar: React.FC<SideBarprops> = ({ toggleSidebar, isCollapsed }) => {
 
       <div className="bottom-navigations">
         <ul className="sidebar-navigation-list">
-          <li
-            className="support"
-            title="Support"
-            style={{ cursor: "pointer" }}
-          >
+          <li className="support" title="Support" style={{ cursor: "pointer" }}>
             <div>
               <img src="/assets/icons/support.svg" alt="" className="icon" />
               {!isCollapsed && "Support"}
