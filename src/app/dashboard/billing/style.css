@@ -11,7 +11,7 @@
     flex-direction: column;
     align-items: flex-start;
     justify-content: center;
-    gap: 8px;
+    gap: 16px;
     padding: 16px 24px;
     border-radius: 12px;
     background: #ffffff;
@@ -21,6 +21,10 @@
     img {
       width: 48px;
       height: 48px;
+      &.arrow-up {
+        width: 15px;
+        height: 15px;
+      }
     }
 
     .state {
@@ -35,6 +39,39 @@
       font-weight: 600;
       line-height: 32px;
     }
+  }
+
+  .status-badge {
+    font-size: clamp(0.75rem, 1.5vw, 0.85rem);
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 90px;
+    padding: 3px 10px;
+    border-radius: 4px;
+
+    &.paid {
+      background: #cff9cd;
+      color: #3fb85d;
+    }
+
+    &.overdue {
+      background: #ffccc7;
+      color: #ff4d4f;
+    }
+
+    &.pending {
+      background: #ffe9cc;
+      color: #faad14;
+    }
+  }
+
+  .bin-icon {
+    cursor: pointer;
+    color: #ff4d4f !important;
+    font-size: 16px;
+    transition: color 0.3s;
   }
 }
 

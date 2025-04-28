@@ -25,19 +25,38 @@ const CustomerPill: React.FC<CustomerPillProps> = ({
 }) => {
   return (
     <div className="billing-pill">
-      <span className="state">{state}</span>
-      <span className="amount">${amount}</span>
-      {pillKey === "totalRevenue" && (
-        <p className="text-xs">
-          <span className="text-[#079455]">5.2%</span> from last month
-        </p>
-      )}
-      {pending && (
-        <h6 className="text-[#FF4D4F] text-xs">3 invoices Pending</h6>
-      )}
+      <h6 className="state">{state}</h6>
+      <div className="space-y-3">
+        <h4 className="amount">${amount}</h4>
+        {pillKey === "totalRevenue" && (
+          <p className="text-xs flex gap-0.5 items-center">
+            <img
+              src="/assets/icons/arrow-up.svg"
+              alt="Arrow-up"
+              className="arrow-up"
+            />
+            <span className="text-[#079455]">5.2%</span> from last month
+          </p>
+        )}
+        {pending && (
+          <h6 className="text-[#FF4D4F] text-xs">{pending} invoices Pending</h6>
+        )}
+      </div>
     </div>
   );
 };
+
+interface Invoice {
+  _id: string;
+  firstName: string;
+  lastName: string;
+  image: string;
+  invoiceNumber: string;
+  type: string;
+  plan: string;
+  amount: string;
+  status: "Paid" | "Pending" | "Overdue";
+}
 
 const Billing: React.FC = () => {
   const router = useRouter();
@@ -47,6 +66,8 @@ const Billing: React.FC = () => {
   const [pageSize, setPageSize] = useState<number>(10);
   const [showFilter, setShowFilter] = useState<boolean>(false);
   const total = 0;
+  const View = "/assets/icons/view.svg";
+  const Trash = "/assets/icons/trash-can.svg";
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchString(e.target.value);
@@ -67,21 +88,14 @@ const Billing: React.FC = () => {
     router.push(`/dashboard/customers/${invoice._id}`);
   };
 
+  const handleViewOrganisation = (id: string): void => {
+    router.push(`/dashboard/billing/view-invoice/${id}`);
+  };
+
   const getInitials = (name: string): string => {
     const parts = name.trim().split(" ");
     return parts.length > 1 ? parts[0][0] + parts[1][0] : parts[0][0];
   };
-
-  interface Invoice {
-    _id: string;
-    firstName: string;
-    lastName: string;
-    image: string;
-    invoiceNumber: string;
-    type: string;
-    plan: string;
-    amount: string;
-  }
 
   const invoices: Invoice[] = [
     {
@@ -93,6 +107,7 @@ const Billing: React.FC = () => {
       type: "customer",
       plan: "basic",
       amount: "1,200",
+      status: "Paid",
     },
     {
       _id: "2",
@@ -103,6 +118,7 @@ const Billing: React.FC = () => {
       type: "customer",
       plan: "premium",
       amount: "1,200",
+      status: "Overdue",
     },
     {
       _id: "3",
@@ -113,8 +129,23 @@ const Billing: React.FC = () => {
       type: "organisation",
       plan: "standard",
       amount: "1,200",
+      status: "Pending",
     },
   ];
+
+  const paidInvoices = invoices.filter((invoice) => invoice.status === "Paid");
+  const pendingInvoices = invoices.filter(
+    (invoice) => invoice.status === "Pending"
+  );
+  const overdueInvoices = invoices.filter(
+    (invoice) => invoice.status === "Overdue"
+  );
+
+  const dynamicTabData = [
+    paidInvoices.length > 0 && { label: "Paid Invoices", key: "1" },
+    pendingInvoices.length > 0 && { label: "Pending Invoices", key: "2" },
+    overdueInvoices.length > 0 && { label: "Overdue Invoices", key: "3" },
+  ].filter(Boolean) as { label: string; key: string }[];
 
   const customerPillData = [
     { state: "Total Revenue", pillKey: "totalRevenue", amount: "24,500" },
@@ -122,25 +153,19 @@ const Billing: React.FC = () => {
       state: "Pending Payment",
       pillKey: "payment",
       amount: "3,500",
-      pending: "3",
+      pending: pendingInvoices.length.toString(),
     },
     {
       state: "Overdue Invoices",
       pillKey: "overdue",
       amount: "1,200",
-      pending: "3",
+      pending: overdueInvoices.length.toString(),
     },
   ];
 
-  const tabData = [
-    { label: "Paid Invoices", key: "1", verified: undefined },
-    { label: "Pending Invoices", key: "2", verified: true },
-    { label: "Overdue Invoices", key: "3", verified: false },
-  ];
-
-  const renderTableContent = () => (
+  const renderTableContent = (filteredInvoices: Invoice[]) => (
     <tbody>
-      {invoices.map((invoice) => (
+      {filteredInvoices.map((invoice) => (
         <tr key={invoice._id}>
           <td>{invoice.invoiceNumber || "N/A"}</td>
           <td className="capitalize">{invoice.type || "N/A"}</td>
@@ -164,15 +189,44 @@ const Billing: React.FC = () => {
           <td>
             <button
               onClick={() => handleViewInvoice(invoice)}
-              className="text-xs"
+              className={`text-xs status-badge ${invoice.status.toLowerCase()}`}
             >
-              View details
+              {invoice.status}
             </button>
+          </td>
+          <td>
+            <div className="flex gap-2">
+              <img
+                src={View}
+                alt="View"
+                className="view-icon"
+                onClick={(): void => handleViewOrganisation("11")}
+              />
+              <img
+                src={Trash}
+                alt="bin"
+                className="bin-icon"
+                onClick={(): void => handleViewOrganisation("11")}
+              />
+            </div>
           </td>
         </tr>
       ))}
     </tbody>
   );
+
+  const getFilteredInvoices = (key: string): Invoice[] => {
+    switch (key) {
+      case "1":
+        return paidInvoices;
+      case "2":
+        return pendingInvoices;
+      case "3":
+        return overdueInvoices;
+      default:
+        return [];
+    }
+  };
 
   return (
     <DashboardLayout
@@ -197,7 +251,7 @@ const Billing: React.FC = () => {
         className="tabs"
         activeKey={activeTab}
         onChange={handleTabChange}
-        items={tabData.map(({ label, key }) => ({
+        items={dynamicTabData.map(({ label, key }) => ({
           label,
           key,
           children: (
@@ -261,7 +315,7 @@ const Billing: React.FC = () => {
                         <th></th>
                       </tr>
                     </thead>
-                    {renderTableContent()}
+                    {renderTableContent(getFilteredInvoices(key))}
                   </table>
                 </div>
                 <div className="table-footer">
