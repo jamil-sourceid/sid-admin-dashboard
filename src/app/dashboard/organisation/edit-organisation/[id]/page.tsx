@@ -3,7 +3,7 @@
 
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useRouter, useParams } from "next/navigation";
+import { useRouter, useParams, useSearchParams } from "next/navigation";
 import {
   Form,
   Input,
@@ -11,18 +11,20 @@ import {
   Select,
   InputNumber,
   Upload,
-  Spin,
   Row,
   Col,
   Tabs,
+  Skeleton,
+  message,
 } from "antd";
-import { UploadOutlined, ArrowLeftOutlined } from "@ant-design/icons";
+import { ArrowLeftOutlined } from "@ant-design/icons";
 import DashboardLayout from "@/layouts/dashboard-layout";
 import {
   updateOrganisationRequest,
   resetUpdateOrganisationState,
+  fetchOrganisationStaffRequest,
+  deleteStaffRequest,
 } from "@/store/organisation/actions";
-import { UpdateOrganizationPayload } from "@/store/organisation/types";
 import { AnyAction } from "redux";
 import { UploadChangeParam, UploadFile } from "antd/lib/upload/interface";
 import "./style.css";
@@ -30,8 +32,12 @@ import {
   selectOrgLoading,
   selectOrgs,
   selectUpdateOrganization,
+  selectStaffLoading,
+  selectStaffData,
+  selectStaffDeleteLoading,
+  selectStaffDeleteSuccess,
 } from "@/store/organisation/selectors";
-import { ExtendedOrganization, FormValues, StaffMember } from "./model";
+import { ExtendedOrganization, FormValues } from "./model";
 import ConfirmationModal from "@/components/modals/confrimation-modal";
 
 const { Option } = Select;
@@ -39,25 +45,23 @@ const { Option } = Select;
 const EditOrganisation: React.FC = () => {
   const dispatch = useDispatch();
   const router = useRouter();
-  const { id } = useParams<{ id: string }>();
-  const [form] = Form.useForm();
-  const [imageUrl, setImageUrl] = useState<string>("");
-  // const [showMfaSettings, setShowMfaSettings] = useState<boolean>(false);
-
-  // Check for tab query parameter
-  const location = window.location;
-  const queryParams = new URLSearchParams(location.search);
-  const tabParam = queryParams.get("tab");
-  const [activeTab, setActiveTab] = useState<string>(
-    tabParam === "staff" ? "2" : "1"
-  );
-
+  const params = useParams();
+  const id = params?.id as string;
+  const idString = id; // Type assertion to handle id as string
+  const searchParams = useSearchParams();
+  const tabParam = searchParams?.get("tab");
+  
+  // Set initial tab based on query parameter (staff = "2", details = "1")
+  const initialTab = tabParam === "staff" ? "2" : "1";
+  const [activeTab, setActiveTab] = useState<string>(initialTab);
+  
+  // Staff-related state
   const [searchTerm, setSearchTerm] = useState<string>("");
-
-  // Add state for confirmation modal
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [pageSize, setPageSize] = useState<number>(10);
   const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false);
   const [staffToDelete, setStaffToDelete] = useState<string | null>(null);
-  const [deletingStaff, setDeletingStaff] = useState<boolean>(false);
+  const [form] = Form.useForm();
 
   // Get organization data and loading states from Redux
   const organizations = useSelector(selectOrgs);
@@ -65,7 +69,14 @@ const EditOrganisation: React.FC = () => {
   const {
     loading: updateLoading,
     success: updateSuccess,
+    error: updateError,
   } = useSelector(selectUpdateOrganization);
+
+  // Get staff data from Redux
+  const staffLoading = useSelector(selectStaffLoading);
+  const staffMembers = useSelector(selectStaffData);
+  const deletingStaff = useSelector(selectStaffDeleteLoading);
+  const deleteSuccess = useSelector(selectStaffDeleteSuccess);
 
   // Find the organization to edit and cast to extended type
   const organizationToEdit = organizations.find((org) => org._id === id) as
@@ -83,42 +94,6 @@ const EditOrganisation: React.FC = () => {
     { value: "GH", label: "Ghana" },
     { value: "ZA", label: "South Africa" },
   ];
-
-  // Mock staff data - in a real application, this would be fetched from an API
-  const [staffMembers] = useState<StaffMember[]>([
-    {
-      _id: "1",
-      title: "Head Manager",
-      firstName: "Camilla",
-      lastName: "Rimdans",
-      middleName: "",
-      photo: "",
-      phoneNumber: "+2349139369457",
-      email: "camilla.rimdans@ubagroup.com",
-      emailVerified: false,
-      mfaTotpSecret: null,
-      isMfaSetupComplete: false,
-      verified: false,
-      dateOfBirth: "2020-04-03T18:06:06.668Z",
-      roles: ["67fe663cff52d662a0244ded"],
-    },
-    {
-      _id: "2",
-      title: "Director",
-      firstName: "John",
-      lastName: "Smith",
-      middleName: "David",
-      photo: "",
-      phoneNumber: "+2348012345678",
-      email: "john.smith@ubagroup.com",
-      emailVerified: true,
-      mfaTotpSecret: null,
-      isMfaSetupComplete: true,
-      verified: true,
-      dateOfBirth: "1985-06-15T12:00:00.000Z",
-      roles: ["67fe663cff52d662a0244dee"],
-    },
-  ]);
 
   // Initialize form values when organization data is loaded
   useEffect(() => {
@@ -146,9 +121,25 @@ const EditOrganisation: React.FC = () => {
           countryCode: organizationToEdit.address?.countryCode || "",
         },
       });
-      setImageUrl(organizationToEdit.img || "");
     }
   }, [organizationToEdit, form]);
+
+  // Initial data fetch
+  useEffect(() => {
+    if (idString) {
+      // Fetch staff members for this organization if on staff tab
+      if (activeTab === "2") {
+        dispatch(
+          fetchOrganisationStaffRequest({
+            organizationId: idString,
+            page: currentPage,
+            limit: pageSize,
+            search: searchTerm,
+          }) as unknown as AnyAction
+        );
+      }
+    }
+  }, [idString, dispatch, currentPage, pageSize, searchTerm, activeTab, organizations.length]);
 
   // Reset update state on component unmount
   useEffect(() => {
@@ -160,41 +151,59 @@ const EditOrganisation: React.FC = () => {
   // Navigate back to organizations page on successful update
   useEffect(() => {
     if (updateSuccess) {
-      router.push("/dashboard/organisation");
+      message.success("Organization updated successfully");
+      dispatch(resetUpdateOrganisationState() as AnyAction);
     }
-  }, [updateSuccess, router]);
+  }, [updateSuccess, dispatch]);
 
-  // Handle form submission
+  // Show error message if update fails
+  useEffect(() => {
+    if (updateError) {
+      message.error(`Failed to update organization: ${updateError}`);
+    }
+  }, [updateError]);
+
+  // Refresh staff list when a staff member is successfully deleted
+  useEffect(() => {
+    if (deleteSuccess && id) {
+      dispatch(
+        fetchOrganisationStaffRequest({
+          organizationId: id,
+          page: currentPage,
+          limit: pageSize,
+          search: searchTerm,
+        }) as unknown as AnyAction
+      );
+      setShowDeleteModal(false);
+      setStaffToDelete(null);
+    }
+  }, [deleteSuccess, dispatch, id, currentPage, pageSize, searchTerm]);
+
+  // Submit form handler
   const handleSubmit = (values: FormValues): void => {
-    if (!id) return;
+    if (!idString) return;
 
-    const formattedValues: UpdateOrganizationPayload = {
-      organizationId: id,
+    // Prepare update data with values from the form
+    const updateData = {
+      organizationId: idString,
       name: values.name,
-      img: imageUrl || "https://example.com/default-image.jpg", // Default image if none provided
+      img: organizationToEdit?.img || "", // Keep existing image if no new one
       phoneNumber: values.phoneNumber,
       email: values.email,
-      address: {
-        addressLineOne: values.address.addressLineOne,
-        addressLineTwo: values.address.addressLineTwo,
-        city: values.address.city,
-        region: values.address.region,
-        zipCode: values.address.zipCode,
-        countryCode: values.address.countryCode,
-      },
       country: values.country,
       distanceTolerance: values.distanceTolerance,
+      address: values.address,
     };
 
-    dispatch(updateOrganisationRequest(formattedValues) as AnyAction);
+    dispatch(updateOrganisationRequest(updateData) as unknown as AnyAction);
   };
 
   // Handle image upload
   const handleImageUpload = (info: UploadChangeParam<UploadFile>): void => {
     if (info.file.status === "done") {
-      // In a real scenario, you would get the URL from the server response
-      // For now, we'll simulate it with a placeholder URL
-      setImageUrl("https://example.com/uploaded-image.jpg");
+      message.success(`${info.file.name} file uploaded successfully`);
+    } else if (info.file.status === "error") {
+      message.error(`${info.file.name} file upload failed.`);
     }
   };
 
@@ -204,30 +213,42 @@ const EditOrganisation: React.FC = () => {
 
   const handleTabChange = (key: string): void => {
     setActiveTab(key);
+    // Fetch staff data when switching to staff tab
+    if (key === "2" && id) {
+      dispatch(
+        fetchOrganisationStaffRequest({
+          organizationId: id,
+          page: currentPage,
+          limit: pageSize,
+          search: searchTerm,
+        }) as unknown as AnyAction
+      );
+    }
+    
+    // Update URL to reflect the current tab without causing a page reload
+    const tabParam = key === "2" ? "staff" : "details";
+    const url = `/dashboard/organisation/edit-organisation/${id}?tab=${tabParam}`;
+    
+    // Use window.history to update URL without causing a navigation
+    window.history.replaceState({}, "", url);
   };
 
   // Handle search for staff members
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>): void => {
     setSearchTerm(e.target.value);
-    // In a real app, you would trigger an API call to search staff
+    setCurrentPage(1); // Reset to first page when searching
   };
 
   // Add new staff member
   const handleAddStaff = (): void => {
     // Navigate to add staff page with the organization ID
-    router.push(`/dashboard/staff/edit-staff/new/${id}`);
+    router.push(`/dashboard/staff/add-staff?orgId=${idString}`);
   };
 
   // View staff member details
   const handleViewStaff = (staffId: string): void => {
-    // Navigate to staff details page
-    router.push(`/dashboard/staff/edit-staff/${staffId}/${id}`);
-  };
-
-  // Open delete confirmation modal
-  const handleDeleteClick = (staffId: string): void => {
-    setStaffToDelete(staffId);
-    setShowDeleteModal(true);
+    // Navigate to view staff details page
+    router.push(`/dashboard/staff/view-staff/${staffId}?orgId=${idString}`);
   };
 
   // Close delete confirmation modal
@@ -238,43 +259,28 @@ const EditOrganisation: React.FC = () => {
 
   // Handle staff deletion
   const handleDeleteStaff = (): void => {
-    if (!staffToDelete) return;
-
-    setDeletingStaff(true);
-
-    // In a real implementation, you would call an API to delete the staff member
-    console.log(`Deleting staff with ID: ${staffToDelete}`);
-
-    // Simulate API call with timeout
-    setTimeout(() => {
-      // Remove staff from the local state
-      // In a real implementation, you would dispatch an action to update the Redux store
-      setDeletingStaff(false);
-      setShowDeleteModal(false);
-      setStaffToDelete(null);
-      // For now, we're not actually removing the staff member from the UI
-    }, 1000);
-  };
-
-  // Format date function for displaying created date
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const _formatDate = (dateString: string): string => {
-    const date = new Date(dateString);
-    return date.toISOString().split("T")[0]; // Format as YYYY-MM-DD
-  };
-
-  // Staff filter function
-  const filterStaffMember = (staff: StaffMember): boolean => {
-    return (
-      staff.firstName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      staff.lastName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      staff.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      staff.title.toLowerCase().includes(searchTerm.toLowerCase())
+    if (!staffToDelete || !idString) return;
+    
+    dispatch(
+      deleteStaffRequest(staffToDelete, idString) as unknown as AnyAction
     );
   };
 
-  // Filter staff based on search term
-  const filteredStaff = staffMembers.filter(filterStaffMember);
+  // Handle pagination change
+  const handlePaginationChange = (page: number, pageSize?: number): void => {
+    setCurrentPage(page);
+    if (pageSize) setPageSize(pageSize);
+  };
+
+  // Filter staff members based on search term
+  const filteredStaff = searchTerm
+    ? staffMembers.filter((staff) => 
+        staff.firstName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        staff.lastName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        staff.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        staff.title.toLowerCase().includes(searchTerm.toLowerCase())
+      )
+    : staffMembers;
 
   if (fetchLoading || !organizationToEdit) {
     return (
@@ -285,7 +291,61 @@ const EditOrganisation: React.FC = () => {
         pageDesc="Update organisation details and settings"
       >
         <div className="edit-organisation-content">
-          <Spin size="large" />
+          <div className="header-actions">
+            <div className="back-button" onClick={handleBack}>
+              <ArrowLeftOutlined />
+              <span>Back</span>
+            </div>
+          </div>
+
+          <Tabs
+            className="tabs"
+            activeKey={activeTab}
+            items={[
+              {
+                label: "Details",
+                key: "1",
+                children: (
+                  <div className="section skeleton-container">
+                    <h2>Organization Information</h2>
+                    <Row gutter={16}>
+                      <Col span={12}>
+                        <Skeleton active paragraph={{ rows: 1 }} />
+                      </Col>
+                      <Col span={12}>
+                        <Skeleton active paragraph={{ rows: 1 }} />
+                      </Col>
+                    </Row>
+                    <Row gutter={16}>
+                      <Col span={12}>
+                        <Skeleton active paragraph={{ rows: 1 }} />
+                      </Col>
+                      <Col span={12}>
+                        <Skeleton active paragraph={{ rows: 1 }} />
+                      </Col>
+                    </Row>
+                    <h2>Address Information</h2>
+                    <Row gutter={16}>
+                      <Col span={8}>
+                        <Skeleton active paragraph={{ rows: 1 }} />
+                      </Col>
+                      <Col span={8}>
+                        <Skeleton active paragraph={{ rows: 1 }} />
+                      </Col>
+                      <Col span={8}>
+                        <Skeleton active paragraph={{ rows: 1 }} />
+                      </Col>
+                    </Row>
+                  </div>
+                ),
+              },
+              {
+                label: "Staff",
+                key: "2",
+                children: <div></div>,
+              },
+            ]}
+          />
         </div>
       </DashboardLayout>
     );
@@ -356,29 +416,15 @@ const EditOrganisation: React.FC = () => {
 
         <Row gutter={16}>
           <Col span={12}>
-            <Form.Item label="Organization Logo" name="img">
+            <Form.Item label="Logo" name="logo">
               <Upload
                 name="logo"
                 listType="picture"
-                className="logo-uploader"
-                showUploadList={false}
-                action="https://www.mocky.io/v2/5cc8019d300000980a055e76" // Replace with your upload endpoint
+                maxCount={1}
                 onChange={handleImageUpload}
+                beforeUpload={() => false}
               >
-                <Button icon={<UploadOutlined />}>
-                  {imageUrl ? "Change Logo" : "Upload Logo"}
-                </Button>
-                {imageUrl && (
-                  <img
-                    src={imageUrl}
-                    alt="Organization Logo"
-                    style={{
-                      maxWidth: "100%",
-                      maxHeight: "120px",
-                      marginTop: "12px",
-                    }}
-                  />
-                )}
+                <Button>Click to upload</Button>
               </Upload>
             </Form.Item>
           </Col>
@@ -510,63 +556,120 @@ const EditOrganisation: React.FC = () => {
         </div>
 
         <div className="table-body">
-          <table>
-            <thead>
-              <tr>
-                <th>Full Name</th>
-                <th>Email Address</th>
-                <th>Title</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredStaff.length === 0 ? (
+          {staffLoading ? (
+            <div className="skeleton-loading">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Full Name</th>
+                    <th>Email Address</th>
+                    <th>Title</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {[...Array(5)].map((_, index) => (
+                    <tr key={index}>
+                      <td><Skeleton paragraph={false} title={{ width: '100%' }} active /></td>
+                      <td><Skeleton paragraph={false} title={{ width: '100%' }} active /></td>
+                      <td><Skeleton paragraph={false} title={{ width: '100%' }} active /></td>
+                      <td><Skeleton paragraph={false} title={{ width: '100%' }} active /></td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          ) : (
+            <table>
+              <thead>
                 <tr>
-                  <td
-                    colSpan={4}
-                    style={{ textAlign: "center", padding: "20px" }}
-                  >
-                    No staff members found
-                  </td>
+                  <th>Full Name</th>
+                  <th>Email Address</th>
+                  <th>Title</th>
+                  <th>Actions</th>
                 </tr>
-              ) : (
-                filteredStaff.map((staff) => (
-                  <tr key={staff._id}>
-                    <td>
-                      <div className="customer-name">
-                        <span>{`${staff.firstName} ${
-                          staff.middleName ? staff.middleName + " " : ""
-                        }${staff.lastName}`}</span>
-                      </div>
-                    </td>
-                    <td>{staff.email}</td>
-                    <td>{staff.title}</td>
-                    <td>
-                      <div className="action-icons">
-                        <img
-                          src="/assets/icons/view.svg"
-                          alt="View"
-                          className="view-icon"
-                          onClick={(): void => handleViewStaff(staff._id)}
-                        />
-                        <img
-                          src="/assets/icons/trash-can.svg"
-                          alt="Delete"
-                          className="delete-icon"
-                          onClick={(): void => handleDeleteClick(staff._id)}
-                        />
-                      </div>
+              </thead>
+              <tbody>
+                {filteredStaff.length === 0 ? (
+                  <tr>
+                    <td
+                      colSpan={4}
+                      style={{ textAlign: "center", padding: "20px" }}
+                    >
+                      No staff members found
                     </td>
                   </tr>
-                ))
-              )}
-            </tbody>
-          </table>
+                ) : (
+                  filteredStaff.map((staff) => (
+                    <tr key={staff._id}>
+                      <td>
+                        <div className="customer-name">
+                          <span>{`${staff.firstName} ${
+                            staff.middleName ? staff.middleName + " " : ""
+                          }${staff.lastName}`}</span>
+                        </div>
+                      </td>
+                      <td>{staff.email}</td>
+                      <td>{staff.title}</td>
+                      <td>
+                        <div className="action-icons">
+                          <img
+                            src="/assets/icons/view.svg"
+                            alt="View"
+                            className="view-icon"
+                            onClick={(): void => handleViewStaff(staff._id)}
+                          />
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          )}
         </div>
 
         <div className="table-footer">
           <div className="pagination-container">
-            {/* Add pagination component here if needed */}
+            {/* Add pagination component */}
+            {filteredStaff.length > 0 && (
+              <Row justify="space-between" align="middle">
+                <Col>
+                  <span className="pagination-info">
+                    Showing {(currentPage - 1) * pageSize + 1} to{" "}
+                    {Math.min(currentPage * pageSize, filteredStaff.length)} of{" "}
+                    {filteredStaff.length} entries
+                  </span>
+                </Col>
+                <Col>
+                  <Row justify="end">
+                    <Col className="pagination-button-col">
+                      <Button
+                        disabled={currentPage === 1}
+                        onClick={() => handlePaginationChange(currentPage - 1)}
+                        className="pagination-button"
+                      >
+                        Previous
+                      </Button>
+                    </Col>
+                    <Col className="pagination-page-col">
+                      <span className="pagination-page-info">
+                        Page {currentPage}
+                      </span>
+                    </Col>
+                    <Col className="pagination-button-col">
+                      <Button
+                        disabled={currentPage * pageSize >= filteredStaff.length}
+                        onClick={() => handlePaginationChange(currentPage + 1)}
+                        className="pagination-button"
+                      >
+                        Next
+                      </Button>
+                    </Col>
+                  </Row>
+                </Col>
+              </Row>
+            )}
           </div>
         </div>
       </div>

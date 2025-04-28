@@ -15,7 +15,8 @@ import { VerificationLog as VerificationLogType } from '@/store/customers/types'
 import { AppDispatch } from '@/store';
 
 const VerificationLog: React.FC = () => {
-  const { id } = useParams<{ id: string }>();
+  const params = useParams<{ id: string }>();
+  const id = params?.id;
   const dispatch = useDispatch<AppDispatch>();
 
   const logs = useSelector(selectVerificationLogs) as VerificationLogType[];

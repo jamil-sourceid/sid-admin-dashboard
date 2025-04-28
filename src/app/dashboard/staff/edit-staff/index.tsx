@@ -8,9 +8,22 @@ import { Form, Input, Button, Select, DatePicker, Upload, Spin, Divider } from '
 import { UploadOutlined, ArrowLeftOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
 import DashboardLayout from '@/layouts/dashboard-layout';
-import { RootState } from '@/store/rootReducer';
 import { UploadChangeParam, UploadFile } from 'antd/lib/upload/interface';
+import { AnyAction } from 'redux';
 import './style.css';
+import { 
+  selectOrgs,
+  selectStaffData,
+  selectStaffCreateLoading, 
+  selectStaffCreateSuccess, 
+  selectStaffCreateError
+} from '@/store/organisation/selectors';
+import {
+  createStaffRequest,
+  resetCreateStaffState,
+  fetchOrganisationStaffRequest
+} from '@/store/organisation/actions';
+import { message } from 'antd';
 
 const { Option } = Select;
 
@@ -33,22 +46,6 @@ const countryOptions: CountryOption[] = [
   { value: 'ZA', label: 'South Africa', code: 'ZA' },
 ];
 
-// Staff interface matching the requested schema
-interface StaffMember {
-  _id?: string;
-  title: string;
-  firstName: string;
-  lastName: string;
-  middleName: string;
-  phoneNumber: string;
-  email: string;
-  photo?: string;
-  dateOfBirth: string;
-  gender: 'male' | 'female' | 'other';
-  organization: string;
-  countryCode?: string; // Added country code
-}
-
 // Define form values
 interface FormValues {
   title: string;
@@ -57,82 +54,101 @@ interface FormValues {
   middleName: string;
   phoneNumber: string;
   email: string;
-  dateOfBirth: string;
-  gender: 'male' | 'female' | 'other';
+  dateOfBirth: dayjs.Dayjs | string;
+  gender: 'male' | 'female';
   organization: string;
-  country?: string; // Added country
-  countryCode?: string; // Added country code
+  country?: string;
+  countryCode?: string;
 }
 
 const EditStaff: React.FC = () => {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const _dispatch = useDispatch();
+  const dispatch = useDispatch();
   const router = useRouter();
-  const { id, orgId } = useParams<{ id?: string; orgId?: string }>();
+  const params = useParams<{ id?: string; orgId?: string }>() || {};
+  const id = params.id;
+  const orgId = params.orgId as string || "";
   const [form] = Form.useForm();
   const [imageUrl, setImageUrl] = useState<string>('');
-  const [loading, setLoading] = useState<boolean>(false);
   const isEditMode = !!id;
 
   // Get organization data from redux
-  const { data: organizations } = useSelector((state: RootState) => state.organisations);
-
-  // In a real app, you would fetch the staff member's data if in edit mode
+  const organizations = useSelector(selectOrgs);
+  const organization = organizations.find((org) => org._id === orgId);
+  
+  // Get staff data from redux
+  const staffList = useSelector(selectStaffData);
+  const currentStaff = staffList?.find(staff => staff._id === id);
+  
+  // Get staff creation state from Redux
+  const submitLoading = useSelector(selectStaffCreateLoading);
+  const createSuccess = useSelector(selectStaffCreateSuccess);
+  const createError = useSelector(selectStaffCreateError);
+  
+  // Fetch staff list for the organization if in edit mode
   useEffect(() => {
-    if (isEditMode) {
-      setLoading(true);
-      // This would be an API call to fetch staff data
-      // For now, just simulate loading and set dummy data
-      setTimeout(() => {
-        const dummyStaffData: StaffMember = {
-          _id: id,
-          title: 'Head Manager',
-          firstName: 'Camilla',
-          lastName: 'Rimdans',
-          middleName: '',
-          phoneNumber: '+2349139369457',
-          email: 'camilla.rimdans@ubagroup.com',
-          dateOfBirth: '2020-04-03T18:06:06.668Z',
-          gender: 'female',
-          organization: orgId || '67eecdf7166ff3ec74e36f49',
-          countryCode: 'NG',
-        };
+    if (isEditMode && orgId && !currentStaff) {
+      dispatch(fetchOrganisationStaffRequest({ 
+        organizationId: orgId 
+      }) as unknown as AnyAction);
+    }
+  }, [dispatch, isEditMode, orgId, currentStaff]);
 
-        form.setFieldsValue({
-          ...dummyStaffData,
-          dateOfBirth: dayjs(dummyStaffData.dateOfBirth),
-          country: 'NG', // Set country based on country code
-        });
-        setImageUrl(dummyStaffData.photo || '');
-        setLoading(false);
-      }, 1000);
+  // Reset create staff state when component mounts
+  useEffect(() => {
+    dispatch(resetCreateStaffState() as unknown as AnyAction);
+  }, [dispatch]);
+
+  // Navigate back to organization page on successful creation
+  useEffect(() => {
+    if (createSuccess) {
+      message.success("Staff created successfully!");
+      router.push(`/dashboard/organisation/edit-organisation/${orgId}?tab=staff`);
+    }
+  }, [createSuccess, router, orgId]);
+
+  // Show error message if creation fails
+  useEffect(() => {
+    if (createError) {
+      message.error(createError);
+    }
+  }, [createError]);
+
+  // Populate form with staff data if in edit mode
+  useEffect(() => {
+    if (isEditMode && currentStaff) {
+      form.setFieldsValue({
+        ...currentStaff,
+        dateOfBirth: currentStaff.dateOfBirth ? dayjs(currentStaff.dateOfBirth) : undefined,
+        country: currentStaff.countryCode || '', // Set country based on country code
+      });
+      setImageUrl(currentStaff.photo || '');
     } else if (orgId) {
       // If adding a new staff member with preselected organization
       form.setFieldsValue({
         organization: orgId,
       });
     }
-  }, [form, id, isEditMode, orgId]);
+  }, [form, currentStaff, isEditMode, orgId]);
 
   // Handle form submission
   const handleSubmit = (values: FormValues): void => {
-    setLoading(true);
+    // Format date to ISO string
+    const formattedDateOfBirth = values.dateOfBirth 
+      ? typeof values.dateOfBirth === 'string' 
+        ? values.dateOfBirth
+        : values.dateOfBirth.toISOString()
+      : '';
 
-    const formattedValues: StaffMember = {
+    const formattedValues = {
       ...values,
-      dateOfBirth: values.dateOfBirth,
-      photo: imageUrl,
+      dateOfBirth: formattedDateOfBirth,
+      organization: orgId,
+      // Add roles array with a default role
+      roles: ['staff'],
     };
 
-    // In a real app, dispatch an action to save the staff member
-    console.log('Saving staff member:', formattedValues);
-
-    // Simulate API call
-    setTimeout(() => {
-      setLoading(false);
-      // Navigate back after successful save
-      handleBack();
-    }, 1000);
+    // Dispatch action to create staff
+    dispatch(createStaffRequest(formattedValues) as unknown as AnyAction);
   };
 
   // Handle image upload
@@ -140,7 +156,8 @@ const EditStaff: React.FC = () => {
     if (info.file.status === 'done') {
       // In a real scenario, you would get the URL from the server response
       // For now, we'll simulate it with a placeholder URL
-      setImageUrl('https://example.com/uploaded-profile.jpg');
+      const imageUrl = info.file.response?.url || 'https://example.com/uploaded-profile.jpg';
+      setImageUrl(imageUrl);
     }
   };
 
@@ -169,7 +186,7 @@ const EditStaff: React.FC = () => {
     ? 'Update staff member details'
     : 'Add new staff member to the organization';
 
-  if (loading && isEditMode) {
+  if (submitLoading && isEditMode && !currentStaff) {
     return (
       <DashboardLayout
         pageClass="edit-staff-module"
@@ -289,9 +306,15 @@ const EditStaff: React.FC = () => {
                 <Form.Item
                   label="Phone Number *"
                   name="phoneNumber"
-                  rules={[{ required: true, message: 'Please enter phone number' }]}
+                  rules={[
+                    { required: true, message: 'Please enter phone number' },
+                    { 
+                      pattern: /^\+[0-9]{1,}$/, 
+                      message: "Phone number must be in international format (e.g., +123456789)" 
+                    }
+                  ]}
                 >
-                  <Input placeholder="Enter phone number" />
+                  <Input placeholder="Enter phone number in international format (e.g., +123456789)" />
                 </Form.Item>
               </div>
 
@@ -324,7 +347,6 @@ const EditStaff: React.FC = () => {
                   <Select placeholder="Select gender">
                     <Option value="male">Male</Option>
                     <Option value="female">Female</Option>
-                    <Option value="other">Other</Option>
                   </Select>
                 </Form.Item>
               </div>
@@ -335,13 +357,24 @@ const EditStaff: React.FC = () => {
                   name="organization"
                   rules={[{ required: true, message: 'Please select organization' }]}
                 >
-                  <Select placeholder="Select organization">
-                    {organizations.map((org) => (
-                      <Option key={org._id} value={org._id}>
-                        {org.name}
-                      </Option>
-                    ))}
-                  </Select>
+                  {isEditMode || orgId ? (
+                    <>
+                      <Input 
+                        placeholder="Organization" 
+                        value={organization?.name || ""}
+                        disabled
+                      />
+                      <Input type="hidden" value={orgId} />
+                    </>
+                  ) : (
+                    <Select placeholder="Select organization">
+                      {organizations.map((org) => (
+                        <Option key={org._id} value={org._id}>
+                          {org.name}
+                        </Option>
+                      ))}
+                    </Select>
+                  )}
                 </Form.Item>
               </div>
             </div>
@@ -376,7 +409,7 @@ const EditStaff: React.FC = () => {
 
           <div className="form-actions">
             <Button onClick={handleBack}>Cancel</Button>
-            <Button type="primary" htmlType="submit" loading={loading}>
+            <Button type="primary" htmlType="submit" loading={submitLoading}>
               {isEditMode ? 'Save Changes' : 'Create Staff Member'}
             </Button>
           </div>

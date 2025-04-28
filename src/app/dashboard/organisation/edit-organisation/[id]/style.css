@@ -387,8 +387,22 @@
 
 .action-icons {
   display: flex;
-  gap: 15px;
-  align-items: center;
+  gap: 10px;
+  justify-content: flex-start;
+}
+
+.action-icons img {
+  cursor: pointer;
+  width: 20px;
+  height: 20px;
+}
+
+.action-icons .view-icon:hover {
+  opacity: 0.7;
+}
+
+.action-icons .delete-icon:hover {
+  opacity: 0.7;
 }
 
 .delete-icon {
@@ -414,6 +428,26 @@
   width: 100%;
   display: flex;
   justify-content: flex-end;
+}
+
+.pagination-button-col {
+  margin: 0 12px;
+}
+
+.pagination-page-col {
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+}
+
+.pagination-page-info {
+  font-size: 14px;
+  color: #6b7280;
+  padding: 0 8px;
+}
+
+.pagination-button {
+  min-width: 90px;
 }
 
 /* Confirmation Modal Styles */
@@ -521,4 +555,41 @@
 .btn-confirm:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+}
+
+/* Skeleton loading styles */
+.skeleton-loading table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.skeleton-loading td {
+  padding: 16px;
+  vertical-align: middle;
+}
+
+.skeleton-loading .ant-skeleton {
+  display: block;
+}
+
+.skeleton-loading .ant-skeleton-title {
+  height: 20px;
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+}
+
+.skeleton-container {
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.skeleton-container h2 {
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+.skeleton-container .ant-row {
+  margin-bottom: 24px;
 }

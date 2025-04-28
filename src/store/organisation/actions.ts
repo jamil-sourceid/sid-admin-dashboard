@@ -34,6 +34,30 @@ import {
   CreateOrganizationPayload,
   UpdateOrganizationPayload,
   ToggleOrganizationMfaPayload,
+  // Staff-related imports
+  FETCH_ORGANISATION_STAFF_REQUEST,
+  FETCH_ORGANISATION_STAFF_SUCCESS,
+  FETCH_ORGANISATION_STAFF_FAILURE,
+  DELETE_STAFF_REQUEST,
+  DELETE_STAFF_SUCCESS,
+  DELETE_STAFF_FAILURE,
+  CREATE_STAFF_REQUEST,
+  CREATE_STAFF_SUCCESS,
+  CREATE_STAFF_FAILURE,
+  RESET_CREATE_STAFF_STATE,
+  FetchOrganisationStaffRequestAction,
+  FetchOrganisationStaffSuccessAction,
+  FetchOrganisationStaffFailureAction,
+  DeleteStaffRequestAction,
+  DeleteStaffSuccessAction,
+  DeleteStaffFailureAction,
+  CreateStaffRequestAction,
+  CreateStaffSuccessAction,
+  CreateStaffFailureAction,
+  ResetCreateStaffStateAction,
+  OrganizationStaffResponse,
+  CreateStaffPayload,
+  CreateStaffResponse,
 } from './types';
 
 export const fetchOrganisationsRequest = (params?: {
@@ -126,4 +150,72 @@ export const toggleOrganisationMfaFailure = (
 ): ToggleOrganisationMfaFailureAction => ({
   type: TOGGLE_ORGANISATION_MFA_FAILURE,
   payload: { error },
+});
+
+// Staff-related action creators
+export const fetchOrganisationStaffRequest = (params: {
+  organizationId: string;
+  page?: number;
+  limit?: number;
+  search?: string;
+}): FetchOrganisationStaffRequestAction => ({
+  type: FETCH_ORGANISATION_STAFF_REQUEST,
+  payload: params,
+});
+
+export const fetchOrganisationStaffSuccess = (
+  data: OrganizationStaffResponse
+): FetchOrganisationStaffSuccessAction => ({
+  type: FETCH_ORGANISATION_STAFF_SUCCESS,
+  payload: data,
+});
+
+export const fetchOrganisationStaffFailure = (error: string): FetchOrganisationStaffFailureAction => ({
+  type: FETCH_ORGANISATION_STAFF_FAILURE,
+  payload: { error },
+});
+
+export const deleteStaffRequest = (
+  staffId: string, 
+  organizationId: string
+): DeleteStaffRequestAction => ({
+  type: DELETE_STAFF_REQUEST,
+  payload: { staffId, organizationId },
+});
+
+export const deleteStaffSuccess = (
+  staffId: string,
+  message: string
+): DeleteStaffSuccessAction => ({
+  type: DELETE_STAFF_SUCCESS,
+  payload: { staffId, message },
+});
+
+export const deleteStaffFailure = (error: string): DeleteStaffFailureAction => ({
+  type: DELETE_STAFF_FAILURE,
+  payload: { error },
+});
+
+// Staff creation action creators
+export const createStaffRequest = (
+  payload: CreateStaffPayload
+): CreateStaffRequestAction => ({
+  type: CREATE_STAFF_REQUEST,
+  payload,
+});
+
+export const createStaffSuccess = (
+  data: CreateStaffResponse
+): CreateStaffSuccessAction => ({
+  type: CREATE_STAFF_SUCCESS,
+  payload: data,
+});
+
+export const createStaffFailure = (error: string): CreateStaffFailureAction => ({
+  type: CREATE_STAFF_FAILURE,
+  payload: { error },
+});
+
+export const resetCreateStaffState = (): ResetCreateStaffStateAction => ({
+  type: RESET_CREATE_STAFF_STATE,
 });

@@ -14,7 +14,6 @@ import {
   Divider,
   Upload,
   message,
-  Switch,
 } from "antd";
 import { LoadingOutlined, PlusOutlined } from "@ant-design/icons";
 import {
@@ -68,7 +67,6 @@ const AddOrganisation: React.FC = () => {
   const [form] = Form.useForm();
   const [imageUrl, setImageUrl] = useState<string>("");
   const [uploadLoading, setUploadLoading] = useState<boolean>(false);
-  const [mfaEnabled, setMfaEnabled] = useState<boolean>(false);
   const dispatch = useDispatch();
   const router = useRouter();
 
@@ -92,8 +90,6 @@ const AddOrganisation: React.FC = () => {
     const formattedValues = {
       ...values,
       img: imageUrl || "https://via.placeholder.com/150", // Default image if none provided
-      // Remove mfaIsEnabled from API payload as it's causing errors
-      // mfaIsEnabled: mfaEnabled,
       address: {
         addressLineOne: values.addressLineOne,
         addressLineTwo: values.addressLineTwo,
@@ -149,15 +145,6 @@ const AddOrganisation: React.FC = () => {
 
   const handleBack = (): void => {
     router.push("/dashboard/organisation");
-  };
-
-  // Update handleMfaToggle function
-  const handleMfaToggle = (checked: boolean): void => {
-    // Still update state to keep the UI toggle working
-    setMfaEnabled(checked);
-
-    // Silently accept the toggle without notifying about API limitations
-    // We're keeping the UI but not sending to the API since it's not supported yet
   };
 
   return (
@@ -292,23 +279,6 @@ const AddOrganisation: React.FC = () => {
                         uploadButton
                       )}
                     </Upload>
-                  </Form.Item>
-                </div>
-              </div>
-            </div>
-
-            <Divider />
-
-            <div className="form-section">
-              <h3 className="section-title">Security Settings</h3>
-              <div className="form-grid">
-                <div className="input-container">
-                  <Form.Item label="Enable Multi-Factor Authentication (MFA)">
-                    <Switch checked={mfaEnabled} onChange={handleMfaToggle} />
-                    <p className="mfa-description">
-                      Multi-Factor Authentication provides an additional layer
-                      of security for organization users.
-                    </p>
                   </Form.Item>
                 </div>
               </div>
