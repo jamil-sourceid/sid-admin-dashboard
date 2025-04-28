@@ -57,7 +57,7 @@ const AuthLayout: React.FC<Layoutprops> = ({
   return (
     <div className="auth-layout">
       {/* <ZendeskWidget /> */}
-      
+
       <div className="auth-layout__form_container">
         <div className="header">
           <Link href="/">

@@ -1,0 +1,40 @@
+.view-invoice-module {
+  p,
+  h6,
+  td {
+    color: #535862;
+    font-size: 15px;
+  }
+
+  .back-button {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    color: #6b7280;
+    font-size: 14px;
+    cursor: pointer;
+    width: fit-content;
+    transition: color 0.3s ease;
+  }
+
+  &.back-button:hover {
+    color: #1f2937;
+  }
+  .title {
+    font-family: var(--lato-black);
+    font-size: 20px;
+    color: rgba(24, 29, 39, 1);
+  }
+  .description {
+    font-size: clamp(0.75rem, 1.5vw, 0.85rem);
+    color: rgba(83, 88, 98, 1);
+    font-weight: 500;
+    margin-top: 5px;
+  }
+  img {
+    &.icon {
+      width: 18px;
+      height: 18px;
+    }
+  }
+}
