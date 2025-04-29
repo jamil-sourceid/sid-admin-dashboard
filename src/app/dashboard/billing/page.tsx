@@ -10,14 +10,14 @@ import "./style.css";
 const FilterIcon = "/assets/icons/filter.svg";
 const SearchIcon = "/assets/icons/search.svg";
 
-interface CustomerPillProps {
+interface BillingPillProps {
   state: string;
   amount: string;
   pending?: string;
   pillKey: string;
 }
 
-const CustomerPill: React.FC<CustomerPillProps> = ({
+const BillingPill: React.FC<BillingPillProps> = ({
   state,
   amount,
   pending,
@@ -147,7 +147,7 @@ const Billing: React.FC = () => {
     overdueInvoices.length > 0 && { label: "Overdue Invoices", key: "3" },
   ].filter(Boolean) as { label: string; key: string }[];
 
-  const customerPillData = [
+  const BillingPillData = [
     { state: "Total Revenue", pillKey: "totalRevenue", amount: "24,500" },
     {
       state: "Pending Payment",
@@ -236,8 +236,8 @@ const Billing: React.FC = () => {
       pageDesc="Measure your advertising ROI and track and report website traffic."
     >
       <div className="billing-pills">
-        {customerPillData.map((data) => (
-          <CustomerPill
+        {BillingPillData.map((data) => (
+          <BillingPill
             key={data.pillKey}
             state={data.state}
             amount={data.amount}

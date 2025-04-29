@@ -66,6 +66,26 @@ export const menuItems = [
     permissions: [],
   },
   {
+    title: "Logs",
+    icon: "/assets/icons/logs-icon.svg",
+    type: "dropdown",
+    key: "logs",
+    items: [
+      {
+        title: "Audit Log",
+        path: "/dashboard/logs/audit-log",
+        permissions: [],
+      },
+      {
+        title: "API Log",
+        path: "/dashboard/logs/api-log",
+        permissions: [],
+      },
+    ],
+    hidden: false,
+    permissions: [],
+  },
+  {
     title: "Billing",
     icon: "/assets/icons/billing-icon.svg",
     path: "/dashboard/billing",
@@ -103,6 +123,9 @@ const SideBar: React.FC<SideBarprops> = ({ toggleSidebar, isCollapsed }) => {
 
   // Function to check if user has required permissions
   const hasPermission = (requiredPermissions: string[]) => {
+    if (requiredPermissions.length === 0) {
+      return true;
+    }
     return requiredPermissions.some((perm) => userPermissions.includes(perm));
   };
 
