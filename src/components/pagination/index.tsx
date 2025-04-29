@@ -1,11 +1,11 @@
 /* eslint-disable @next/next/no-img-element */
 "use client";
 
-import React from 'react';
-import './style.css';
+import React from "react";
+import "./style.css";
 
-import { Pagination } from 'antd';
-import type { PaginationProps } from 'antd';
+import { Pagination } from "antd";
+import type { PaginationProps } from "antd";
 
 interface SourceIdPaginationProps {
   defaultCurrent?: number;
@@ -20,12 +20,12 @@ const SourceIdPagination: React.FC<SourceIdPaginationProps> = ({
   pageSize = 10,
   onChange,
 }) => {
-  const itemRender: PaginationProps['itemRender'] = (
+  const itemRender: PaginationProps["itemRender"] = (
     _,
     type,
     originalElement
   ) => {
-    if (type === 'prev') {
+    if (type === "prev") {
       return (
         <div className="previous">
           <img src="/assets/icons/back.svg" alt="" />
@@ -33,7 +33,7 @@ const SourceIdPagination: React.FC<SourceIdPaginationProps> = ({
         </div>
       );
     }
-    if (type === 'next') {
+    if (type === "next") {
       return (
         <div className="next">
           Next

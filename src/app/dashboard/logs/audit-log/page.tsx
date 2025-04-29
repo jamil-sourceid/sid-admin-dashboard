@@ -235,14 +235,12 @@ const AuditLog: React.FC = () => {
             </div>
 
             <div className="table-footer">
-              <div className="pagination-container">
-                <SourceIdPagination
-                  defaultCurrent={currentPage}
-                  total={meta.count}
-                  pageSize={pageSize}
-                  onChange={handlePageChange}
-                />
-              </div>
+              <SourceIdPagination
+                defaultCurrent={currentPage}
+                total={meta.count}
+                pageSize={pageSize}
+                onChange={handlePageChange}
+              />
             </div>
           </div>
         </div>
