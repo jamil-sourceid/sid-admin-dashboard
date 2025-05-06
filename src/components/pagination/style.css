@@ -1,4 +1,5 @@
 .sourceid-pagination {
+  width: 100%;
   li {
     &:nth-child(1),
     &:last-child {
