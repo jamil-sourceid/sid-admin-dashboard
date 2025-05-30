@@ -1,16 +1,16 @@
 import {
-  FETCH_AUDIT_LOGS_REQUEST,
-  FETCH_AUDIT_LOGS_SUCCESS,
-  FETCH_AUDIT_LOGS_FAILURE,
-  AuditLogsActionTypes,
-  AuditLogsState,
-  ExportAdminAuditLogsActionTypes,
-  EXPORT_ADMIN_AUDIT_LOGS_REQUEST,
-  EXPORT_ADMIN_AUDIT_LOGS_SUCCESS,
-  EXPORT_ADMIN_AUDIT_LOGS_FAILURE,
+  FETCH_API_LOGS_REQUEST,
+  FETCH_API_LOGS_SUCCESS,
+  FETCH_API_LOGS_FAILURE,
+  ApiLogsActionTypes,
+  ApiLogsState,
+  ExportAdminUserApiLogsActionTypes,
+  EXPORT_ADMINUSER_API_LOGS_REQUEST,
+  EXPORT_ADMINUSER_API_LOGS_SUCCESS,
+  EXPORT_ADMINUSER_API_LOGS_FAILURE,
 } from "./types";
 
-const initialState: AuditLogsState = {
+const initialState: ApiLogsState = {
   data: [],
   loading: false,
   error: null,
@@ -24,20 +24,22 @@ const initialState: AuditLogsState = {
   exportError: null,
 };
 
-type AuditLogsActions = AuditLogsActionTypes | ExportAdminAuditLogsActionTypes;
+type AdminApiLogsActions =
+  | ApiLogsActionTypes
+  | ExportAdminUserApiLogsActionTypes;
 
-const auditLogsReducer = (
+const apiLogsReducer = (
   state = initialState,
-  action: AuditLogsActions
-): AuditLogsState => {
+  action: AdminApiLogsActions
+): ApiLogsState => {
   switch (action.type) {
-    case FETCH_AUDIT_LOGS_REQUEST:
+    case FETCH_API_LOGS_REQUEST:
       return {
         ...state,
         loading: true,
         error: null,
       };
-    case FETCH_AUDIT_LOGS_SUCCESS:
+    case FETCH_API_LOGS_SUCCESS:
       return {
         ...state,
         loading: false,
@@ -45,26 +47,26 @@ const auditLogsReducer = (
         meta: action.payload.meta || state.meta,
         error: null,
       };
-    case FETCH_AUDIT_LOGS_FAILURE:
+    case FETCH_API_LOGS_FAILURE:
       return {
         ...state,
         loading: false,
         error: action.payload.error,
       };
-    case EXPORT_ADMIN_AUDIT_LOGS_REQUEST:
+    case EXPORT_ADMINUSER_API_LOGS_REQUEST:
       return {
         ...state,
         exportLoading: true,
         exportError: null,
       };
 
-    case EXPORT_ADMIN_AUDIT_LOGS_SUCCESS:
+    case EXPORT_ADMINUSER_API_LOGS_SUCCESS:
       return {
         ...state,
         exportLoading: false,
       };
 
-    case EXPORT_ADMIN_AUDIT_LOGS_FAILURE:
+    case EXPORT_ADMINUSER_API_LOGS_FAILURE:
       return {
         ...state,
         exportLoading: false,
@@ -78,4 +80,4 @@ const auditLogsReducer = (
   }
 };
 
-export default auditLogsReducer;
+export default apiLogsReducer;

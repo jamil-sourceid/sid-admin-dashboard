@@ -1,38 +1,33 @@
 "use client";
-/* eslint-disable @next/next/no-img-element */
 import React, { useEffect, useState } from "react";
-import DashboardLayout from "@/layouts/dashboard-layout";
-import SourceIdPagination from "@/components/pagination";
-import { DatePicker, Input, Select } from "antd";
-import "./style.css";
-import { fetchAuditLogsRequest } from "@/store/logs/audit-logs/actions";
 import { useSelector, useDispatch } from "react-redux";
+import DashboardLayout from "@/layouts/dashboard-layout";
+import {
+  exportAdminAuditLogsRequest,
+  fetchAuditLogsRequest,
+} from "@/store/logs/audit-logs/actions";
 import {
   selectAuditLogsData,
   selectAuditLogsError,
+  selectAuditLogsExportLoading,
   selectAuditLogsLoading,
   selectAuditLogsMeta,
 } from "@/store/logs/audit-logs/selectors";
 import { AppDispatch } from "@/store";
-import TableSkeleton from "@/components/table-skeleton";
-import { formatDate } from "@/helpers";
-import LogsModal from "./log-update";
-import { LogPillProps } from "./model";
-import type { AuditLog } from "@/store/logs/audit-logs/types";
-import { actionTypes } from "@/helpers/constants";
+import type { AuditLog as AuditLogType } from "@/store/logs/audit-logs/types";
 
-const { RangePicker } = DatePicker;
-
-const LogPill: React.FC<LogPillProps> = ({ state, amount }) => (
-  <div className="audit-pill">
-    <h6 className="state">{state}</h6>
-    <div className="space-y-3">
-      <h4 className="amount">{amount}</h4>
-    </div>
-  </div>
-);
+import "./style.css";
+import { AuditLogTable } from "./_components/audit-log-table";
+import { AuditLogStats } from "./_components/audit-log-stats";
 
 const AuditLog: React.FC = () => {
+  const dispatch = useDispatch<AppDispatch>();
+  const auditLogs = useSelector(selectAuditLogsData);
+  const loading = useSelector(selectAuditLogsLoading);
+  const error = useSelector(selectAuditLogsError);
+  const meta = useSelector(selectAuditLogsMeta);
+  const exportLoading = useSelector(selectAuditLogsExportLoading);
+
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [searchString, setSearchString] = useState("");
@@ -41,16 +36,18 @@ const AuditLog: React.FC = () => {
     undefined,
   ]);
   const [openJsonModal, setOpenJsonModal] = useState(false);
-  const [selectedLog, setSelectedLog] = useState<AuditLog | null>(null);
-
+  const [selectedLog, setSelectedLog] = useState<AuditLogType | null>(null);
   const [selectedActionType, setSelectedActionType] = useState<
     string | undefined
   >(undefined);
-  const dispatch = useDispatch<AppDispatch>();
-  const auditLogs = useSelector(selectAuditLogsData);
-  const loading = useSelector(selectAuditLogsLoading);
-  const error = useSelector(selectAuditLogsError);
-  const meta = useSelector(selectAuditLogsMeta);
+  const [filterModalVisible, setFilterModalVisible] = useState(false);
+  const [selectedFields, setSelectedFields] = useState({
+    actionBy: true,
+    email: true,
+    dateTime: true,
+    actionType: true,
+    comments: true,
+  });
 
   useEffect(() => {
     dispatch(
@@ -86,7 +83,44 @@ const AuditLog: React.FC = () => {
     setCurrentPage(1);
   };
 
-  const handleViewJson = (log: AuditLog): void => {
+  const handleDateRangeChange = (dates: unknown): void => {
+    const dateArray = dates as
+      | { format: (formatString: string) => string }[]
+      | undefined;
+    setDateRange([
+      dateArray?.[0]?.format("YYYY-MM-DD"),
+      dateArray?.[1]?.format("YYYY-MM-DD"),
+    ]);
+  };
+
+  const handleExport = () => {
+    const filter: Record<string, string> = {};
+
+    if (searchString) filter.search = searchString;
+    if (dateRange[0]) filter.startDate = dateRange[0];
+    if (dateRange[1]) filter.endDate = dateRange[1];
+    if (selectedActionType && selectedActionType !== "all") {
+      filter.actionType = selectedActionType;
+    }
+
+    dispatch(
+      exportAdminAuditLogsRequest({
+        filter,
+        selectFields: selectedFields,
+        fileType: "pdf",
+      })
+    );
+
+    setSelectedFields({
+      actionBy: true,
+      email: true,
+      dateTime: true,
+      actionType: true,
+      comments: true,
+    });
+  };
+
+  const handleViewJson = (log: AuditLogType): void => {
     setSelectedLog({
       ...log,
       objectBeforeUpdate:
@@ -103,59 +137,11 @@ const AuditLog: React.FC = () => {
     setOpenJsonModal(true);
   };
 
-  const LogPillData = [
-    { state: "Total Audit Actions", pillKey: "totalRevenue", amount: "145" },
-    { state: "All Audit Logs", pillKey: "payment", amount: "80" },
-    { state: "High-Priority Logs", pillKey: "overdue", amount: "27" },
-  ];
-
-  const renderTableContent = () => {
-    if (loading) {
-      return <TableSkeleton rowCount={3} columnCount={6} loading={true} />;
-    }
-    if (!auditLogs || auditLogs.length === 0 || error) {
-      return (
-        <TableSkeleton
-          columnCount={6}
-          loading={false}
-          emptyText="No logs found."
-        />
-      );
-    }
-    return (
-      <tbody>
-        {auditLogs.map((log) => (
-          <tr key={log._id}>
-            <td>{log.updatedAt ? formatDate(log.updatedAt) : "N/A"}</td>
-            <td className="capitalize">
-              {log.organization?.name ? log.organization.name : "N/A"}
-            </td>
-            <td>{log.actorType ? `Admin - ${log.actorType}` : "Admin"}</td>
-            <td>
-              <button
-                className={`text-xs status-badge ${log.actionType.toLowerCase()}`}
-              >
-                {log.actionType}
-              </button>
-            </td>
-            <td>
-              <button
-                onClick={() => handleViewJson(log)}
-                disabled={!(log?.objectAfterUpdate || log?.objectBeforeUpdate)}
-                className="flex gap-2 cursor-pointer text-nowrap disabled:opacity-50"
-              >
-                <img
-                  src="/assets/icons/view.svg"
-                  alt="View"
-                  className="view-icon"
-                />
-                <span>View in JSON</span>
-              </button>
-            </td>
-          </tr>
-        ))}
-      </tbody>
-    );
+  const handleFieldChange = (field: string, checked: boolean) => {
+    setSelectedFields((prev) => ({
+      ...prev,
+      [field]: checked,
+    }));
   };
 
   return (
@@ -166,92 +152,35 @@ const AuditLog: React.FC = () => {
       pageDesc="Activity Logs"
     >
       <div className="audit-log-container">
-        <div className="audit-pills">
-          {LogPillData.map((data) => (
-            <LogPill
-              key={data.pillKey}
-              state={data.state}
-              amount={data.amount}
-            />
-          ))}
-        </div>
+        <AuditLogStats />
 
-        <div className="user-table mt-10">
-          <div className="section-actions">
-            <div className="input-container">
-              <Input
-                placeholder="Search..."
-                prefix={<img src="/assets/icons/search.svg" alt="search" />}
-                value={searchString}
-                onChange={handleSearchChange}
-              />
-            </div>
-
-            <div className="click-actions">
-              <Select
-                placeholder="Select..."
-                allowClear
-                value={selectedActionType}
-                onChange={(value): void => setSelectedActionType(value)}
-                options={actionTypes}
-              />
-
-              <RangePicker
-                style={{ width: 150 }}
-                onChange={(dates) =>
-                  setDateRange([
-                    dates?.[0]?.format("YYYY-MM-DD"),
-                    dates?.[1]?.format("YYYY-MM-DD"),
-                  ])
-                }
-                placeholder={["Start Date", "End Date"]}
-              />
-
-              <button className="add-new-admin btn-icon">
-                <img
-                  src="/assets/icons/export.svg"
-                  alt="Export"
-                  className="view-icon"
-                />
-                Export
-              </button>
-            </div>
-          </div>
-
-          <div className="table">
-            <div className="table-body">
-              <table>
-                <thead>
-                  <tr>
-                    <th>Date & Time</th>
-                    <th>Company</th>
-                    <th>User Roles</th>
-                    <th>Action Type</th>
-                    <th></th>
-                  </tr>
-                </thead>
-                {renderTableContent()}
-              </table>
-            </div>
-
-            <div className="table-footer">
-              <SourceIdPagination
-                defaultCurrent={currentPage}
-                total={meta.count}
-                pageSize={pageSize}
-                onChange={handlePageChange}
-              />
-            </div>
-          </div>
-        </div>
+        <AuditLogTable
+          auditLogs={auditLogs}
+          loading={loading}
+          error={error}
+          meta={meta}
+          exportLoading={exportLoading}
+          currentPage={currentPage}
+          pageSize={pageSize}
+          searchString={searchString}
+          dateRange={dateRange}
+          selectedActionType={selectedActionType}
+          selectedFields={selectedFields}
+          openJsonModal={openJsonModal}
+          selectedLog={selectedLog}
+          filterModalVisible={filterModalVisible}
+          onPageChange={handlePageChange}
+          onSearchChange={handleSearchChange}
+          onActionTypeChange={setSelectedActionType}
+          onDateRangeChange={handleDateRangeChange}
+          onExport={handleExport}
+          onViewJson={handleViewJson}
+          onCloseJsonModal={() => setOpenJsonModal(false)}
+          onOpenFilterModal={() => setFilterModalVisible(true)}
+          onCloseFilterModal={() => setFilterModalVisible(false)}
+          onFieldChange={handleFieldChange}
+        />
       </div>
-
-      <LogsModal
-        open={openJsonModal}
-        closeModal={() => setOpenJsonModal(false)}
-        objectAfterUpdate={selectedLog?.objectAfterUpdate || {}}
-        objectBeforeUpdate={selectedLog?.objectBeforeUpdate || {}}
-      />
     </DashboardLayout>
   );
 };

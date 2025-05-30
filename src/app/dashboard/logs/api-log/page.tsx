@@ -1,28 +1,31 @@
 "use client";
 /* eslint-disable @next/next/no-img-element */
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import DashboardLayout from "@/layouts/dashboard-layout";
 import SourceIdPagination from "@/components/pagination";
-import { Input, Select } from "antd";
+import { DatePicker, Input, Select } from "antd";
 import "./style.css";
+import { AppDispatch } from "@/store";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  selectApiLogsData,
+  selectApiLogsError,
+  selectApiLogsExportLoading,
+  selectApiLogsLoading,
+  selectApiLogsMeta,
+} from "@/store/logs/api-logs/selectors";
+import {
+  exportAdminUserApiLogsRequest,
+  fetchApiLogsRequest,
+} from "@/store/logs/api-logs/actions";
+import { LogPillProps } from "./model";
+import ExportFieldSelectorModal from "./_components/filter-modal";
+import TableSkeleton from "@/components/table-skeleton";
 
-interface LogPillProps {
-  state: string;
-  amount: string;
-}
-
-interface Log {
-  _id: string;
-  date?: string;
-  company?: string;
-  apiType: string;
-  application: string;
-  endpoint: string;
-  status: string;
-}
+const { RangePicker } = DatePicker;
 
 const LogPill: React.FC<LogPillProps> = ({ state, amount }) => (
-  <div className="audit-api-pill">
+  <div className="api-api-pill">
     <h6 className="state">{state}</h6>
     <div className="space-y-3">
       <h4 className="amount">{amount}</h4>
@@ -31,37 +34,32 @@ const LogPill: React.FC<LogPillProps> = ({ state, amount }) => (
 );
 
 const ApiLog: React.FC = () => {
+  const dispatch = useDispatch<AppDispatch>();
+  const apiLogs = useSelector(selectApiLogsData);
+  const loading = useSelector(selectApiLogsLoading);
+  const meta = useSelector(selectApiLogsMeta);
+  const total = meta?.total ?? 0;
+  const error = useSelector(selectApiLogsError);
+  const exportLoading = useSelector(selectApiLogsExportLoading);
+
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [pageSize, setPageSize] = useState<number>(10);
-  const [showFilter, setShowFilter] = useState<boolean>(false);
   const [searchString, setSearchString] = useState<string>("");
+  const [selectedStatus, setSelectedStatus] = useState<string>("All");
+  const [dateRange, setDateRange] = useState<[string?, string?]>([
+    undefined,
+    undefined,
+  ]);
+  const [filterModalVisible, setFilterModalVisible] = useState(false);
+  const [selectedFields, setSelectedFields] = useState({
+    company: true,
+    application: true,
+    apiType: true,
+    endpoint: true,
+    status: true,
+  });
 
-  const ExportIcon = "/assets/icons/export.svg";
-  const FilterIcon = "/assets/icons/filter.svg";
   const SearchIcon = "/assets/icons/search.svg";
-
-  const apiLogs: Log[] = [
-    {
-      _id: "1",
-      date: "1/9/2025, 08:02AM",
-      company: "Providus Bank",
-      apiType: "recover user",
-      application: "Web",
-      endpoint: "prod-api-key-providus",
-      status: "Success",
-    },
-    {
-      _id: "2",
-      date: "1/9/2025, 08:02AM",
-      company: "Providus Bank",
-      apiType: "recover user",
-      application: "Mobile App",
-      endpoint: "prod-api-key-providus",
-      status: "Success",
-    },
-  ];
-
-  const total = apiLogs.length;
 
   const LogPillData = [
     { state: "Total API Actions", pillKey: "totalRevenue", amount: "145" },
@@ -69,52 +67,126 @@ const ApiLog: React.FC = () => {
     { state: "High-Priority Logs", pillKey: "overdue", amount: "27" },
   ];
 
-  const handlePageChange = (page: number, newPageSize?: number) => {
-    setCurrentPage(page);
-    if (newPageSize) setPageSize(newPageSize);
+  useEffect(() => {
+    dispatch(
+      fetchApiLogsRequest({
+        page: currentPage,
+        limit: pageSize,
+        search: searchString || undefined,
+        status: selectedStatus,
+        startDate: dateRange[0],
+        endDate: dateRange[1],
+      })
+    );
+  }, [
+    currentPage,
+    pageSize,
+    searchString,
+    selectedStatus,
+    dateRange,
+    dispatch,
+  ]);
+
+  const handlePageChange = (page: number, newPageSize: number): void => {
+    if (pageSize !== newPageSize) {
+      setPageSize(newPageSize);
+      setCurrentPage(1);
+    } else {
+      setCurrentPage(page);
+    }
   };
 
-  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     setSearchString(e.target.value);
+    setCurrentPage(1);
   };
 
-  const renderTableContent = () => (
-    <tbody>
-      {apiLogs.map((log) => (
-        <tr key={log._id}>
-          <td>{log.endpoint}</td>
-          <td>{log.date || "N/A"}</td>
-          <td className="capitalize">{log.company || "N/A"}</td>
-          <td>
-            <button
-              className={`text-xs status-badge ${log.apiType.toLowerCase()}`}
-            >
-              {log.apiType}
-            </button>
-          </td>
-          <td className="capitalize">{log.application}</td>
+  const handleExport = () => {
+    const filter: Record<string, string> = {};
 
-          <td>
-            <button
-              className={`text-xs status-badge ${log.status.toLowerCase()}`}
-            >
-              {log.status}
-            </button>
-          </td>
-        </tr>
-      ))}
-    </tbody>
-  );
+    if (searchString) {
+      filter.search = searchString;
+    }
+
+    if (dateRange[0]) {
+      filter.startDate = dateRange[0];
+    }
+
+    if (dateRange[1]) {
+      filter.endDate = dateRange[1];
+    }
+
+    if (selectedStatus && selectedStatus !== "all") {
+      filter.status = selectedStatus;
+    }
+
+    dispatch(
+      exportAdminUserApiLogsRequest({
+        filter,
+        selectFields: selectedFields,
+        fileType: "pdf",
+      })
+    );
+
+    setSelectedFields({
+      company: true,
+      application: true,
+      apiType: true,
+      endpoint: true,
+      status: true,
+    });
+  };
+
+  const renderTableContent = (): React.ReactNode => {
+    if (loading) {
+      return <TableSkeleton rowCount={3} columnCount={6} loading={true} />;
+    }
+
+    if (!apiLogs || apiLogs.length === 0 || error) {
+      return (
+        <TableSkeleton
+          columnCount={6}
+          loading={false}
+          emptyText="No logs found."
+        />
+      );
+    }
+
+    return (
+      <tbody>
+        {apiLogs.map((log) => (
+          <tr key={log._id}>
+            <td>{String(log.url) || "N/A"}</td>
+            <td>{log.method || "N/A"}</td>
+            <td className="capitalize">{String(log.application) || "N/A"}</td>
+            <td>
+              <div
+                className={`status-badge text-center ${
+                  log?.statusCode?.toString().startsWith("20")
+                    ? "success"
+                    : "error"
+                }`}
+              >
+                {log?.statusCode?.toString().startsWith("20")
+                  ? "Success"
+                  : "Failed"}
+              </div>
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    );
+  };
 
   return (
     <DashboardLayout
-      pageClass="audit-api-module"
+      pageClass="api-api-module"
       pageTag="Management"
       pageTitle="API Log"
       pageDesc="Activity Logs"
     >
-      <div className="audit-api-log-container">
-        <div className="audit-api-pills">
+      <div className="api-api-log-container">
+        <div className="api-api-pills">
           {LogPillData.map((data) => (
             <LogPill
               key={data.pillKey}
@@ -135,40 +207,47 @@ const ApiLog: React.FC = () => {
                 onChange={handleSearchChange}
               />
             </div>
+
             <div className="click-actions">
+              <Select
+                placeholder="Status"
+                value={selectedStatus}
+                onChange={(value): void => setSelectedStatus(value)}
+                options={[
+                  { value: "All", label: "All" },
+                  { value: "Success", label: "Success" },
+                  { value: "Failed", label: "Failed" },
+                ]}
+              />
+
+              <RangePicker
+                onChange={(dates): void =>
+                  setDateRange([
+                    dates?.[0]?.format("YYYY-MM-DD"),
+                    dates?.[1]?.format("YYYY-MM-DD"),
+                  ])
+                }
+                placeholder={["Start Date", "End Date"]}
+              />
+
               <button
-                className="filter btn-icon"
-                onClick={() => setShowFilter(!showFilter)}
+                className="btn-icon filter"
+                onClick={() => setFilterModalVisible(true)}
               >
-                <img src={FilterIcon} alt="filter" />
-                Filters
+                <img src="/assets/icons/filter.svg" alt="filter" />
+                Filter
               </button>
-              <button className="add-new-admin btn-icon">
-                <img src={ExportIcon} alt="View" className="view-icon" />
-                Export
+
+              <button
+                className="btn-icon filter"
+                onClick={handleExport}
+                disabled={exportLoading}
+              >
+                <img src="/assets/icons/export.svg" alt="export" />
+                {exportLoading ? "Exporting..." : "Export"}
               </button>
             </div>
           </div>
-
-          {showFilter && (
-            <div className="filter-section">
-              <div className="filter-options">
-                <Select
-                  placeholder="Verification Status"
-                  allowClear
-                  style={{ width: 200 }}
-                  onChange={() => setCurrentPage(1)}
-                  options={[
-                    { value: "verified", label: "Verified" },
-                    { value: "not-verified", label: "Not Verified" },
-                  ]}
-                />
-                <button className="btn-clear" onClick={() => setCurrentPage(1)}>
-                  Clear Filters
-                </button>
-              </div>
-            </div>
-          )}
 
           <div className="table">
             <div className="table-body">
@@ -176,9 +255,6 @@ const ApiLog: React.FC = () => {
                 <thead>
                   <tr>
                     <th>End Point</th>
-
-                    <th>Create Date & Time</th>
-                    <th>Company</th>
                     <th>API Type</th>
                     <th>Application</th>
                     <th>Status</th>
@@ -201,6 +277,13 @@ const ApiLog: React.FC = () => {
           </div>
         </div>
       </div>
+
+      <ExportFieldSelectorModal
+        visible={filterModalVisible}
+        onClose={() => setFilterModalVisible(false)}
+        selectedFields={selectedFields}
+        onFieldChange={setSelectedFields}
+      />
     </DashboardLayout>
   );
 };

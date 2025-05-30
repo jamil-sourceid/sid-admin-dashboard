@@ -2,6 +2,13 @@ export const FETCH_AUDIT_LOGS_REQUEST = "FETCH_AUDIT_LOGS_REQUEST";
 export const FETCH_AUDIT_LOGS_SUCCESS = "FETCH_AUDIT_LOGS_SUCCESS";
 export const FETCH_AUDIT_LOGS_FAILURE = "FETCH_AUDIT_LOGS_FAILURE";
 
+export const EXPORT_ADMIN_AUDIT_LOGS_REQUEST =
+  "EXPORT_ADMIN_AUDIT_LOGS_REQUEST";
+export const EXPORT_ADMIN_AUDIT_LOGS_SUCCESS =
+  "EXPORT_ADMIN_AUDIT_LOGS_SUCCESS";
+export const EXPORT_ADMIN_AUDIT_LOGS_FAILURE =
+  "EXPORT_ADMIN_AUDIT_LOGS_FAILURE";
+
 interface Organization {
   name?: string;
   [key: string]: unknown;
@@ -37,6 +44,8 @@ export interface AuditLogsState {
   loading: boolean;
   error: string | null;
   meta: AuditLogMeta;
+  exportLoading: boolean;
+  exportError: string | null;
 }
 
 export interface FetchAuditLogsRequestAction {
@@ -64,6 +73,41 @@ export interface FetchAuditLogsFailureAction {
     error: string;
   };
 }
+
+export interface ExportAdminAuditLogsRequestAction {
+  type: typeof EXPORT_ADMIN_AUDIT_LOGS_REQUEST;
+  payload: {
+    filter?: {
+      startDate?: string;
+      endDate?: string;
+      search?: string;
+      actionType?: string;
+    };
+    selectFields: {
+      actionBy: boolean;
+      email: boolean;
+      dateTime: boolean;
+      actionType: boolean;
+      comments: boolean;
+    };
+    fileType: "pdf" | "csv" | "xlsx";
+  };
+}
+
+export interface ExportAdminAuditLogsSuccessAction {
+  type: typeof EXPORT_ADMIN_AUDIT_LOGS_SUCCESS;
+  payload?: unknown;
+}
+
+export interface ExportAdminAuditLogsFailureAction {
+  type: typeof EXPORT_ADMIN_AUDIT_LOGS_FAILURE;
+  payload: { error: unknown };
+}
+
+export type ExportAdminAuditLogsActionTypes =
+  | ExportAdminAuditLogsRequestAction
+  | ExportAdminAuditLogsSuccessAction
+  | ExportAdminAuditLogsFailureAction;
 
 export type AuditLogsActionTypes =
   | FetchAuditLogsRequestAction
