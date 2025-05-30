@@ -5,6 +5,7 @@ import { CustomersSaga } from "./customers/sagas";
 import { OverviewSaga } from "./dashboard/overview/sagas";
 import staffSaga from "./staff/sagas";
 import { auditLogsSaga } from "./logs/audit-logs/sagas";
+import { apiLogsSaga } from "./logs/api-logs/sagas";
 
 export default function* rootSaga(): Generator {
   yield all([
@@ -14,5 +15,6 @@ export default function* rootSaga(): Generator {
     OverviewSaga(),
     staffSaga(),
     auditLogsSaga(),
+    apiLogsSaga(),
   ]);
 }

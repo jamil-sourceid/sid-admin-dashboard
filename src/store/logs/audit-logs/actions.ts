@@ -7,6 +7,10 @@ import {
   FetchAuditLogsFailureAction,
   AuditLog,
   AuditLogMeta,
+  ExportAdminAuditLogsActionTypes,
+  EXPORT_ADMIN_AUDIT_LOGS_REQUEST,
+  EXPORT_ADMIN_AUDIT_LOGS_SUCCESS,
+  EXPORT_ADMIN_AUDIT_LOGS_FAILURE,
 } from "./types";
 
 export const fetchAuditLogsRequest = (params?: {
@@ -34,4 +38,42 @@ export const fetchAuditLogsFailure = (
 ): FetchAuditLogsFailureAction => ({
   type: FETCH_AUDIT_LOGS_FAILURE,
   payload: { error: typeof error === "string" ? error : error.message },
+});
+
+interface ExportAdminAuditLogsRequestPayload {
+  filter?: {
+    startDate?: string;
+    endDate?: string;
+    search?: string;
+    actionType?: string;
+  };
+  selectFields: {
+    actionBy: boolean;
+    email: boolean;
+    dateTime: boolean;
+    actionType: boolean;
+    comments: boolean;
+  };
+  fileType: "pdf" | "csv" | "xlsx";
+}
+
+export const exportAdminAuditLogsRequest = (
+  payload: ExportAdminAuditLogsRequestPayload
+): ExportAdminAuditLogsActionTypes => ({
+  type: EXPORT_ADMIN_AUDIT_LOGS_REQUEST,
+  payload,
+});
+
+export const exportAdminAuditLogsSuccess = (
+  result?: unknown
+): ExportAdminAuditLogsActionTypes => ({
+  type: EXPORT_ADMIN_AUDIT_LOGS_SUCCESS,
+  payload: result,
+});
+
+export const exportAdminAuditLogsFailure = (
+  error: unknown
+): ExportAdminAuditLogsActionTypes => ({
+  type: EXPORT_ADMIN_AUDIT_LOGS_FAILURE,
+  payload: { error: error instanceof Error ? error.message : String(error) },
 });

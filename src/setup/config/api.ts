@@ -47,7 +47,7 @@ api.interceptors.response.use(
   (error) => {
     console.error("API Error:", error);
 
-    if (error && typeof error === 'object' && 'response' in error) {
+    if (error && typeof error === "object" && "response" in error) {
       interface AxiosErrorResponse {
         response: {
           status: number;
@@ -57,7 +57,7 @@ api.interceptors.response.use(
         };
         message?: string;
       }
-      
+
       const axiosError = error as AxiosErrorResponse;
       switch (axiosError.response?.status) {
         case 401:
@@ -71,7 +71,11 @@ api.interceptors.response.use(
           break;
         default:
           // For other status codes, log a simple message
-          console.warn(`API Error: ${axiosError.response?.status} - ${axiosError.response?.data?.message || 'No additional message'}`);
+          console.warn(
+            `API Error: ${axiosError.response?.status} - ${
+              axiosError.response?.data?.message || "No additional message"
+            }`
+          );
       }
     }
 
@@ -89,9 +93,15 @@ export const getData = async <T>(
     return response;
   } catch (error: unknown) {
     // Only log detailed errors for non-404 status codes
-    if (error && typeof error === 'object' && 'response' in error && 
-        error.response && typeof error.response === 'object' && 'status' in error.response && 
-        error.response.status !== 404) {
+    if (
+      error &&
+      typeof error === "object" &&
+      "response" in error &&
+      error.response &&
+      typeof error.response === "object" &&
+      "status" in error.response &&
+      error.response.status !== 404
+    ) {
       console.error(`GET ${endpoint} failed:`, error);
     } else {
       // For 404, just log a simple message
@@ -104,10 +114,11 @@ export const getData = async <T>(
 // Generic function for POST requests
 export const postData = async <T, D = Record<string, unknown>>(
   endpoint: string,
-  data: D
+  data: D,
+  config?: AxiosRequestConfig
 ): Promise<AxiosResponse<T>> => {
   try {
-    const response = await api.post<T>(endpoint, data);
+    const response = await api.post<T>(endpoint, data, config);
     return response;
   } catch (error) {
     console.error(`POST ${endpoint} failed:`, error);

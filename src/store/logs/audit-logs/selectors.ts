@@ -14,3 +14,9 @@ export const selectAuditLogsMeta = (
   state: RootState
 ): { page: number; limit: number; total: number; count: number } =>
   state.auditLogs?.meta ?? { page: 1, limit: 50, total: 0, count: 0 };
+
+export const selectAuditLogsExportLoading = (state: RootState): boolean =>
+  state.auditLogs?.exportLoading ?? false;
+
+export const selectAuditLogsExportError = (state: RootState): string | null =>
+  state.auditLogs?.exportError ?? null;
