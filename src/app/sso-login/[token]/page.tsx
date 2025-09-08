@@ -23,6 +23,13 @@ const SsoLoginPage: React.FC = () => {
     if (token) {
       // Dispatch the SSO login action with the token from the URL
       console.log('SSO Login Page: Dispatching SSO login request');
+
+      if (typeof window !== 'undefined') {
+        sessionStorage.setItem("authToken", `Bearer ${token}`)
+        router.push("/dashboard");
+      } else {
+        console.log('useEffect is running during server-side rendering (or in a non-browser environment).');
+      }
       dispatch(ssoLoginRequest({ token }));
     } else {
       console.log('SSO Login Page: No token found, redirecting to sign-in');

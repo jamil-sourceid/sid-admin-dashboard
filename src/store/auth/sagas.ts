@@ -48,7 +48,7 @@ function* handleLogin(action: LoginRequestAction): Generator {
     }
 
     if (token) {
-      sessionStorage.setItem('authToken', token);
+      sessionStorage.setItem('authToken', `Bearer ${token}`);
     }
 
     if (!isMfaLogin) {
@@ -100,7 +100,7 @@ function* handleTwoFaLogin(action: TwoFaRequestAction): Generator {
     const token = response.headers['x-access-token'];
 
     if (token) {
-      sessionStorage.setItem('authToken', token);
+      sessionStorage.setItem('authToken', `Bearer ${token}`);
     } else {
       throw new Error();
     }
@@ -153,7 +153,7 @@ function* handleSsoLogin(action: SsoLoginRequestAction): Generator {
 
     // For SSO, the JWT token from the URL is the auth token
     // Store it directly as the authentication token
-    sessionStorage.setItem('authToken', token);
+    sessionStorage.setItem('authToken', `Bearer ${token}`);
 
     console.log('SSO Login: Token stored in sessionStorage');
 
