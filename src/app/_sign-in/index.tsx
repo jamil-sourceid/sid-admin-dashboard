@@ -4,7 +4,6 @@ import React from "react";
 import "./style.css";
 import SourceIdButton from "@/components/button";
 
-// Commented out imports for future reference if regular sign-in form is needed
 /*
 import React, { useState } from "react";
 import Link from "next/link";
