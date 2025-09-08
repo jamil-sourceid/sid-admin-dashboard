@@ -1,4 +1,3 @@
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from "axios";
 import API_CONFIG from "./apiConfig";
 
@@ -140,7 +139,6 @@ export const deleteData = async <T>(
 };
 
 // Generic function for PUT requests
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const putData = async <T, D = Record<string, unknown>>(
   endpoint: string,
   data: D
@@ -155,7 +153,6 @@ export const putData = async <T, D = Record<string, unknown>>(
 };
 
 // Generic function for PATCH requests
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const patchData = async <T, D = Record<string, unknown>>(
   endpoint: string,
   data: D
