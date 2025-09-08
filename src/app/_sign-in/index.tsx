@@ -55,23 +55,20 @@ const SignIn: React.FC = () => {
 
   return (
     <div className="sign-in-form-container">
-      <h2>{twoFaRequired ? "Enter OTP" : "Sign In"}</h2>
-      <p>
-        {twoFaRequired
-          ? qrCode
-            ? "Scan this QR Code with your authenticator app and enter OTP"
-            : "A one-time password has been sent to your email."
-          : "Provide the necessary details to login"}
-      </p>
-      {twoFaRequired && qrCode && (
-        <div className="qr-code-container">
-          <img
-            src={qrCode}
-            alt="QR Code for authentication"
-            className="qr-code"
-          />
-        </div>
-      )}
+      <h2>Sign In</h2>
+      <p>Sign in using your Authentik account</p>
+
+      {/* Sign in with Authentik button */}
+      <SourceIdButton
+        btnType="button"
+        btnTxt="Sign in with Authentik"
+        btnClass="mt-6"
+        btnClick={() => {
+          window.location.href = "https://instrumental-dans-adaptation-dawn.trycloudflare.com/v1/api/auth/admin/authentik";
+        }}
+      />
+
+      {/*
       <form onSubmit={formik.handleSubmit} className="mt-2">
         {twoFaRequired ? (
           <>
@@ -156,6 +153,7 @@ const SignIn: React.FC = () => {
           />
         )}
       </form>
+      */}
     </div>
   );
 };
