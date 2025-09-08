@@ -6,6 +6,9 @@ import {
   TWO_FA_REQUEST,
   TWO_FA_SUCCESS,
   TWO_FA_FAILURE,
+  SSO_LOGIN_REQUEST,
+  SSO_LOGIN_SUCCESS,
+  SSO_LOGIN_FAILURE,
   LoginRequestAction,
   LoginSuccessAction,
   LoginFailureAction,
@@ -13,6 +16,9 @@ import {
   TwoFaRequestAction,
   TwoFaSuccessAction,
   TwoFaFailureAction,
+  SsoLoginRequestAction,
+  SsoLoginSuccessAction,
+  SsoLoginFailureAction,
   SetMfaDataAction,
   SET_MFA_DATA,
 } from './types';
@@ -25,6 +31,10 @@ export interface LoginRequestPayload {
 export interface TwoFaRequestPayload {
   email: string;
   mfaCode: string;
+}
+
+export interface SsoLoginRequestPayload {
+  token: string;
 }
 
 export const loginRequest = (payload: LoginRequestPayload): LoginRequestAction => ({
@@ -65,4 +75,18 @@ export const setMfaData = (payload: {
 }): SetMfaDataAction => ({
   type: SET_MFA_DATA,
   payload,
+});
+
+export const ssoLoginRequest = (payload: SsoLoginRequestPayload): SsoLoginRequestAction => ({
+  type: SSO_LOGIN_REQUEST,
+  payload,
+});
+
+export const ssoLoginSuccess = (): SsoLoginSuccessAction => ({
+  type: SSO_LOGIN_SUCCESS,
+});
+
+export const ssoLoginFailure = (error: string): SsoLoginFailureAction => ({
+  type: SSO_LOGIN_FAILURE,
+  payload: { error },
 });

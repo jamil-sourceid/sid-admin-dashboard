@@ -1,8 +1,11 @@
-/* eslint-disable @next/next/no-img-element */
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import "./style.css";
+import SourceIdButton from "@/components/button";
+
+/*
+import React, { useState } from "react";
 import Link from "next/link";
 import { Input } from "antd";
 import { useFormik } from "formik";
@@ -16,10 +19,11 @@ import {
 } from "@/store/auth/selectors";
 import { loginRequest, twoFaRequest } from "@/store/auth/actions";
 import { AppDispatch } from "@/store";
-import SourceIdButton from "@/components/button";
+*/
 
 const SignIn: React.FC = () => {
-
+  // Commented out state and logic for future reference
+  /*
   const dispatch = useDispatch<AppDispatch>();
   const loading = useSelector(selectAuthLoading);
   const twoFaRequired = useSelector(selectIsMfaLogin);
@@ -52,18 +56,24 @@ const SignIn: React.FC = () => {
       }
     },
   });
+  */
 
   return (
     <div className="sign-in-form-container">
-      <h2>{twoFaRequired ? "Enter OTP" : "Sign In"}</h2>
+      {/* Dynamic title and description for future reference */}
+      {/* <h2>{twoFaRequired ? "Enter OTP" : "Sign In"}</h2>
       <p>
         {twoFaRequired
           ? qrCode
             ? "Scan this QR Code with your authenticator app and enter OTP"
             : "A one-time password has been sent to your email."
           : "Provide the necessary details to login"}
-      </p>
-      {twoFaRequired && qrCode && (
+      </p> */}
+      <h2>Sign In</h2>
+      <p>Sign in using your Authentik account</p>
+
+      {/* QR Code display for future reference */}
+      {/* {twoFaRequired && qrCode && (
         <div className="qr-code-container">
           <img
             src={qrCode}
@@ -71,7 +81,20 @@ const SignIn: React.FC = () => {
             className="qr-code"
           />
         </div>
-      )}
+      )} */}
+
+      {/* Sign in with Authentik button */}
+      <SourceIdButton
+        btnType="button"
+        btnTxt="Sign in with Authentik"
+        btnClass="mt-6"
+        btnClick={() => {
+          window.location.href = "https://instrumental-dans-adaptation-dawn.trycloudflare.com/v1/api/auth/admin/authentik";
+        }}
+      />
+
+      {/* Commented out form for future reference if regular sign-in is needed */}
+      {/*
       <form onSubmit={formik.handleSubmit} className="mt-2">
         {twoFaRequired ? (
           <>
@@ -144,7 +167,19 @@ const SignIn: React.FC = () => {
           btnClass="mt-6"
           loading={loading}
         />
+
+        {!twoFaRequired && (
+          <SourceIdButton
+            btnType="button"
+            btnTxt="Sign in with Authentik"
+            btnClass="mt-4"
+            btnClick={() => {
+              window.location.href = "https://instrumental-dans-adaptation-dawn.trycloudflare.com/v1/api/auth/admin/authentik";
+            }}
+          />
+        )}
       </form>
+      */}
     </div>
   );
 };
