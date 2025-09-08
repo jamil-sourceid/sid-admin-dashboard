@@ -3,11 +3,15 @@ import {
   LOGIN_REQUEST,
   LOGIN_SUCCESS,
   LOGIN_FAILURE,
+  SSO_LOGIN_REQUEST,
+  SSO_LOGIN_SUCCESS,
+  SSO_LOGIN_FAILURE,
   LoginRequestAction,
   TWO_FA_REQUEST,
   TWO_FA_FAILURE,
   TWO_FA_SUCCESS,
   TwoFaRequestAction,
+  SsoLoginRequestAction,
   SET_MFA_DATA,
 } from './types';
 import { postData } from '@/setup/config/api';
@@ -141,7 +145,69 @@ function* handleTwoFaLogin(action: TwoFaRequestAction): Generator {
   }
 }
 
+function* handleSsoLogin(action: SsoLoginRequestAction): Generator {
+  try {
+    const { token } = action.payload;
+
+    console.log('SSO Login: Processing token:', token);
+
+    // For SSO, the JWT token from the URL is the auth token
+    // Store it directly as the authentication token
+    sessionStorage.setItem('authToken', token);
+
+    console.log('SSO Login: Token stored in sessionStorage');
+
+    // Verify token was stored
+    const storedToken = sessionStorage.getItem('authToken');
+    console.log('SSO Login: Verifying stored token:', storedToken ? 'Present' : 'Missing');
+
+    yield put({ type: SSO_LOGIN_SUCCESS });
+
+    notify(
+      {
+        title: 'Login Successful',
+        text: 'Welcome back!',
+      },
+      'success'
+    );
+
+    // Redirect to dashboard after successful login
+    // Use window.location.reload to ensure useAuthRedirect hook re-checks the token
+    setTimeout(() => {
+      console.log('SSO Login: Redirecting to dashboard');
+      window.location.href = '/dashboard';
+    }, 1000);
+
+  } catch (error: unknown) {
+    console.error('SSO Login: Error occurred:', error);
+
+    const errMessage =
+      error instanceof Error
+        ? error.message
+        : 'An unknown error occurred during SSO login';
+
+    notify(
+      {
+        title: 'SSO Login Failed',
+        text: errMessage,
+      },
+      'error'
+    );
+
+    yield put({ type: SSO_LOGIN_FAILURE, payload: { error: errMessage } });
+
+    // Clear any partial auth data
+    sessionStorage.removeItem('authToken');
+
+    // Redirect back to sign-in page on failure
+    setTimeout(() => {
+      window.location.href = '/';
+    }, 2000);
+  }
+}
+
 export default function* authSaga(): Generator {
   yield takeLatest(LOGIN_REQUEST, handleLogin);
   yield takeLatest(TWO_FA_REQUEST, handleTwoFaLogin);
+  yield takeLatest(SSO_LOGIN_REQUEST, handleSsoLogin);
 }
