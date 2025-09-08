@@ -1,57 +1,10 @@
-/* eslint-disable @next/next/no-img-element */
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import "./style.css";
-import Link from "next/link";
-import { Input } from "antd";
-import { useFormik } from "formik";
-import * as Yup from "yup";
-import { useDispatch, useSelector } from "react-redux";
-import {
-  selectAuthLoading,
-  selectIsMfaLogin,
-  selectQrCode,
-  selectUserEmail,
-} from "@/store/auth/selectors";
-import { loginRequest, twoFaRequest } from "@/store/auth/actions";
-import { AppDispatch } from "@/store";
 import SourceIdButton from "@/components/button";
 
 const SignIn: React.FC = () => {
-
-  const dispatch = useDispatch<AppDispatch>();
-  const loading = useSelector(selectAuthLoading);
-  const twoFaRequired = useSelector(selectIsMfaLogin);
-  const qrCode = useSelector(selectQrCode);
-  const userEmail = useSelector(selectUserEmail);
-
-  const [otp, setOtp] = useState(["", "", "", "", "", ""]);
-
-  const formik = useFormik({
-    initialValues: {
-      email: '',
-      password: '',
-      otp: '',
-    },
-    validationSchema: twoFaRequired
-      ? Yup.object({
-          otp: Yup.string().length(6, 'OTP must be 6 digits').required('OTP is required'),
-        })
-      : Yup.object({
-          email: Yup.string()
-            .matches(/^\S+@\S+\.\S+$|^\d{10,15}$/, 'Enter a valid email address')
-            .required('Email is required'),
-          password: Yup.string().required('Password is required'),
-        }),
-    onSubmit: (values) => {
-      if (twoFaRequired) {
-        dispatch(twoFaRequest({ email: userEmail, mfaCode: otp.join('') }));
-      } else {
-        dispatch(loginRequest({ email: values.email, password: values.password }));
-      }
-    },
-  });
 
   return (
     <div className="sign-in-form-container">

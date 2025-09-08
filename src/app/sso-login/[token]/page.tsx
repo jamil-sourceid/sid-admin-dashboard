@@ -16,6 +16,12 @@ const SsoLoginPage: React.FC = () => {
   const loading = useSelector(selectAuthLoading);
 
   useEffect(() => {
+    if (!params || !params.token) {
+      console.log('SSO Login Page: No token found, redirecting to sign-in');
+      router.push("/");
+      return;
+    }
+
     const token = params.token as string;
 
     console.log('SSO Login Page: Token from URL:', token);
@@ -36,7 +42,7 @@ const SsoLoginPage: React.FC = () => {
       // If no token, redirect to sign-in
       router.push("/");
     }
-  }, [dispatch, params.token, router]);
+  }, [dispatch, params?.token, router]);
 
   return (
     <div className="sso-login-container">
