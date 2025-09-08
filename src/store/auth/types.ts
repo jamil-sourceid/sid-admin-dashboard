@@ -7,6 +7,9 @@ export const TWO_FA_REQUEST = 'TWO_FA_REQUEST';
 export const TWO_FA_SUCCESS = 'TWO_FA_SUCCESS';
 export const TWO_FA_FAILURE = 'TWO_FA_FAILURE';
 export const SET_MFA_DATA = 'auth/SET_MFA_DATA';
+export const SSO_LOGIN_REQUEST = 'SSO_LOGIN_REQUEST';
+export const SSO_LOGIN_SUCCESS = 'SSO_LOGIN_SUCCESS';
+export const SSO_LOGIN_FAILURE = 'SSO_LOGIN_FAILURE';
 
 export interface AuthState {
   isAuthenticated: boolean;
@@ -73,6 +76,24 @@ export interface SetMfaDataAction {
   };
 }
 
+export interface SsoLoginRequestAction {
+  type: typeof SSO_LOGIN_REQUEST;
+  payload: {
+    token: string;
+  };
+}
+
+export interface SsoLoginSuccessAction {
+  type: typeof SSO_LOGIN_SUCCESS;
+}
+
+export interface SsoLoginFailureAction {
+  type: typeof SSO_LOGIN_FAILURE;
+  payload: {
+    error: string;
+  };
+}
+
 export type AuthActions =
   | LoginRequestAction
   | LoginSuccessAction
@@ -81,4 +102,7 @@ export type AuthActions =
   | TwoFaRequestAction
   | TwoFaSuccessAction
   | TwoFaFailureAction
-  | SetMfaDataAction;
+  | SetMfaDataAction
+  | SsoLoginRequestAction
+  | SsoLoginSuccessAction
+  | SsoLoginFailureAction;

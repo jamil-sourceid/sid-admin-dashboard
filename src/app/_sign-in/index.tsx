@@ -144,6 +144,17 @@ const SignIn: React.FC = () => {
           btnClass="mt-6"
           loading={loading}
         />
+
+        {!twoFaRequired && (
+          <SourceIdButton
+            btnType="button"
+            btnTxt="Sign in with Authentik"
+            btnClass="mt-4"
+            btnClick={() => {
+              window.location.href = "https://instrumental-dans-adaptation-dawn.trycloudflare.com/v1/api/auth/admin/authentik";
+            }}
+          />
+        )}
       </form>
     </div>
   );

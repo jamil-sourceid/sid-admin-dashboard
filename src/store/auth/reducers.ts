@@ -8,6 +8,9 @@ import {
   TWO_FA_REQUEST,
   TWO_FA_SUCCESS,
   TWO_FA_FAILURE,
+  SSO_LOGIN_REQUEST,
+  SSO_LOGIN_SUCCESS,
+  SSO_LOGIN_FAILURE,
   SET_MFA_DATA,
 } from './types';
 
@@ -74,6 +77,25 @@ const authReducer = (state = initialState, action: AuthActions): AuthState => {
         loading: false,
         error: action.payload.error,
         isTwoFaRequired: true,
+      };
+    case SSO_LOGIN_REQUEST:
+      return {
+        ...state,
+        loading: true,
+        error: null,
+      };
+    case SSO_LOGIN_SUCCESS:
+      return {
+        ...state,
+        isAuthenticated: true,
+        loading: false,
+        error: null,
+      };
+    case SSO_LOGIN_FAILURE:
+      return {
+        ...state,
+        loading: false,
+        error: action.payload.error,
       };
     case LOGOUT:
       return {
