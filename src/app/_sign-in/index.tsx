@@ -3,6 +3,7 @@
 import React from "react";
 import "./style.css";
 import SourceIdButton from "@/components/button";
+import { config } from "@/setup/config/apiConfig";
 
 /*
 import React, { useState } from "react";
@@ -89,7 +90,7 @@ const SignIn: React.FC = () => {
         btnTxt="Sign in with Authentik"
         btnClass="mt-6"
         btnClick={() => {
-          window.location.href = "https://instrumental-dans-adaptation-dawn.trycloudflare.com/v1/api/auth/admin/authentik";
+          window.location.href = `${config.BASE_URL}/auth/admin/authentik`;
         }}
       />
 
