@@ -90,7 +90,7 @@ const SignIn: React.FC = () => {
         btnTxt="Sign in with Authentik"
         btnClass="mt-6"
         btnClick={() => {
-          window.location.href = `${config.BASE_URL}/auth/admin/authentik`;
+          window.location.href = `${config.BASE_URL}/auth/admin/authentik/callback`;
         }}
       />
 
