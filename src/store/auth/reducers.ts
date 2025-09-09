@@ -12,6 +12,7 @@ import {
   SSO_LOGIN_SUCCESS,
   SSO_LOGIN_FAILURE,
   SET_MFA_DATA,
+  SET_USER_PROFILE,
 } from './types';
 
 const initialState: AuthState = {
@@ -23,6 +24,8 @@ const initialState: AuthState = {
   qrCode: '',
   requiresMfa: false,
   userEmail: '',
+  userName: '',
+  userId: '',
 };
 
 const authReducer = (state = initialState, action: AuthActions): AuthState => {
@@ -71,6 +74,14 @@ const authReducer = (state = initialState, action: AuthActions): AuthState => {
         userEmail: action.payload.userEmail,
       };
 
+    case SET_USER_PROFILE:
+      return {
+        ...state,
+        userId: action.payload.userId,
+        userName: action.payload.userName,
+        userEmail: action.payload.userEmail,
+      };
+
     case TWO_FA_FAILURE:
       return {
         ...state,
@@ -102,6 +113,9 @@ const authReducer = (state = initialState, action: AuthActions): AuthState => {
         ...state,
         isAuthenticated: false,
         isTwoFaRequired: false,
+        userEmail: '',
+        userName: '',
+        userId: '',
       };
     default:
       return state;

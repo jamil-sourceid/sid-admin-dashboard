@@ -7,6 +7,7 @@ export const TWO_FA_REQUEST = 'TWO_FA_REQUEST';
 export const TWO_FA_SUCCESS = 'TWO_FA_SUCCESS';
 export const TWO_FA_FAILURE = 'TWO_FA_FAILURE';
 export const SET_MFA_DATA = 'auth/SET_MFA_DATA';
+export const SET_USER_PROFILE = 'auth/SET_USER_PROFILE';
 export const SSO_LOGIN_REQUEST = 'SSO_LOGIN_REQUEST';
 export const SSO_LOGIN_SUCCESS = 'SSO_LOGIN_SUCCESS';
 export const SSO_LOGIN_FAILURE = 'SSO_LOGIN_FAILURE';
@@ -20,6 +21,8 @@ export interface AuthState {
   qrCode: string | null;
   requiresMfa: boolean;
   userEmail: string;
+  userName: string;
+  userId: string;
 }
 
 export interface LoginRequestAction {
@@ -76,6 +79,15 @@ export interface SetMfaDataAction {
   };
 }
 
+export interface SetUserProfileAction {
+  type: typeof SET_USER_PROFILE;
+  payload: {
+    userId: string;
+    userName: string;
+    userEmail: string;
+  };
+}
+
 export interface SsoLoginRequestAction {
   type: typeof SSO_LOGIN_REQUEST;
   payload: {
@@ -103,6 +115,7 @@ export type AuthActions =
   | TwoFaSuccessAction
   | TwoFaFailureAction
   | SetMfaDataAction
+  | SetUserProfileAction
   | SsoLoginRequestAction
   | SsoLoginSuccessAction
   | SsoLoginFailureAction;

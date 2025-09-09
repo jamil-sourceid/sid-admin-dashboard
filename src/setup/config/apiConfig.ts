@@ -32,5 +32,7 @@ export const ENV: string =
     : "prod"; // Default to "prod" if running in SSR (server-side rendering)
 
 export const CLOUDFRONT_URL = (API_CONFIG[ENV] || API_CONFIG.rd).CLOUDFRONT_URL;
+export const config =
+  API_CONFIG[ENV as keyof typeof API_CONFIG] || API_CONFIG.rd;
 
 export default API_CONFIG[ENV] || API_CONFIG.rd;

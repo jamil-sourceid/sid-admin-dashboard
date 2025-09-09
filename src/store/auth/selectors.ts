@@ -10,3 +10,5 @@ export const selectIsMfaLogin = (state: RootState): boolean => state.auth.isMfaL
 export const selectQrCode = (state: RootState): string | null => state.auth.qrCode;
 export const selectRequiresMfa = (state: RootState): boolean => state.auth.requiresMfa;
 export const selectUserEmail = (state: RootState): string => state.auth.userEmail;
+export const selectUserName = (state: RootState): string => state.auth.userName;
+export const selectUserId = (state: RootState): string => state.auth.userId;

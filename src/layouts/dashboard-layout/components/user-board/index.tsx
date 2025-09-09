@@ -2,9 +2,14 @@
 "use client";
 
 import React from "react";
+import { useSelector } from "react-redux";
+import { selectUserName, selectUserEmail } from "@/store/auth/selectors";
 import "./style.css";
 
 const UserBoard: React.FC = () => {
+  const userName = useSelector(selectUserName);
+  const userEmail = useSelector(selectUserEmail);
+
   return (
     <div className="user-board">
       <div className="user-image">
@@ -18,8 +23,8 @@ const UserBoard: React.FC = () => {
       </div>
 
       <div className="user-info">
-        <h3 className="capitalize">Jamil Huddin</h3>
-        <p>Jamil@sourceid.tech</p>
+        <h3 className="capitalize">{userName || 'User'}</h3>
+        <p>{userEmail || 'user@example.com'}</p>
       </div>
     </div>
   );

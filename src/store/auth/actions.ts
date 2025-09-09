@@ -20,7 +20,9 @@ import {
   SsoLoginSuccessAction,
   SsoLoginFailureAction,
   SetMfaDataAction,
+  SetUserProfileAction,
   SET_MFA_DATA,
+  SET_USER_PROFILE,
 } from './types';
 
 export interface LoginRequestPayload {
@@ -74,6 +76,15 @@ export const setMfaData = (payload: {
   userEmail: string;
 }): SetMfaDataAction => ({
   type: SET_MFA_DATA,
+  payload,
+});
+
+export const setUserProfile = (payload: {
+  userId: string;
+  userName: string;
+  userEmail: string;
+}): SetUserProfileAction => ({
+  type: SET_USER_PROFILE,
   payload,
 });
 

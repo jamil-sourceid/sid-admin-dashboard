@@ -18,6 +18,8 @@ import { postData } from '@/setup/config/api';
 import { LoginResponse, TwoFALoginResponse } from './model';
 import { notify } from '@/components/toast/utils';
 import { AxiosError } from 'axios';
+import { getUserFromToken } from '@/helpers/jwtDecode';
+import { setUserProfile } from './actions';
 
 function* handleLogin(action: LoginRequestAction): Generator {
   try {
@@ -48,7 +50,18 @@ function* handleLogin(action: LoginRequestAction): Generator {
     }
 
     if (token) {
-      sessionStorage.setItem('authToken', `Bearer ${token}`);
+      const fullToken = `Bearer ${token}`;
+      sessionStorage.setItem('authToken', fullToken);
+
+      // Decode token and store user profile
+      const userInfo = getUserFromToken(fullToken);
+      if (userInfo) {
+        yield put(setUserProfile({
+          userId: '', // We'll get this from the token if available
+          userName: userInfo.name,
+          userEmail: userInfo.email,
+        }));
+      }
     }
 
     if (!isMfaLogin) {
@@ -100,7 +113,18 @@ function* handleTwoFaLogin(action: TwoFaRequestAction): Generator {
     const token = response.headers['x-access-token'];
 
     if (token) {
-      sessionStorage.setItem('authToken', `Bearer ${token}`);
+      const fullToken = `Bearer ${token}`;
+      sessionStorage.setItem('authToken', fullToken);
+
+      // Decode token and store user profile
+      const userInfo = getUserFromToken(fullToken);
+      if (userInfo) {
+        yield put(setUserProfile({
+          userId: '', // We'll get this from the token if available
+          userName: userInfo.name,
+          userEmail: userInfo.email,
+        }));
+      }
     } else {
       throw new Error();
     }
@@ -153,9 +177,21 @@ function* handleSsoLogin(action: SsoLoginRequestAction): Generator {
 
     // For SSO, the JWT token from the URL is the auth token
     // Store it directly as the authentication token
-    sessionStorage.setItem('authToken', `Bearer ${token}`);
+    const fullToken = `Bearer ${token}`;
+    sessionStorage.setItem('authToken', fullToken);
 
     console.log('SSO Login: Token stored in sessionStorage');
+
+    // Decode token and store user profile
+    const userInfo = getUserFromToken(fullToken);
+    if (userInfo) {
+      yield put(setUserProfile({
+        userId: '', // We'll get this from the token if available
+        userName: userInfo.name,
+        userEmail: userInfo.email,
+      }));
+      console.log('SSO Login: User profile stored:', userInfo);
+    }
 
     // Verify token was stored
     const storedToken = sessionStorage.getItem('authToken');
