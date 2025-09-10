@@ -1,5 +1,3 @@
-import jwt from 'jsonwebtoken';
-
 export interface DecodedToken {
   userId?: string;
   email?: string;
@@ -12,13 +10,33 @@ export interface DecodedToken {
   [key: string]: any;
 }
 
+// Browser-compatible JWT decoder
+const decodeJwtPayload = (token: string): any => {
+  try {
+    const parts = token.split('.');
+    if (parts.length !== 3) {
+      throw new Error('Invalid JWT format');
+    }
+
+    const payload = parts[1];
+    // Add padding if needed
+    const paddedPayload = payload.padEnd(payload.length + (4 - payload.length % 4) % 4, '=');
+    const decodedPayload = atob(paddedPayload);
+
+    return JSON.parse(decodedPayload);
+  } catch (error) {
+    console.error('Error decoding JWT payload:', error);
+    return null;
+  }
+};
+
 export const decodeToken = (token: string): DecodedToken | null => {
   try {
     // Remove 'Bearer ' prefix if present
     const cleanToken = token.replace('Bearer ', '');
 
-    // Decode the token without verification (since we don't have the secret)
-    const decoded = jwt.decode(cleanToken) as DecodedToken;
+    // Decode the token payload (we only need the payload, not header/signature verification)
+    const decoded = decodeJwtPayload(cleanToken) as DecodedToken;
 
     if (!decoded) {
       console.warn('Failed to decode JWT token');
