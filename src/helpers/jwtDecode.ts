@@ -7,11 +7,11 @@ export interface DecodedToken {
   role?: string;
   exp?: number;
   iat?: number;
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 // Browser-compatible JWT decoder
-const decodeJwtPayload = (token: string): any => {
+const decodeJwtPayload = (token: string): Record<string, unknown> | null => {
   try {
     const parts = token.split('.');
     if (parts.length !== 3) {
