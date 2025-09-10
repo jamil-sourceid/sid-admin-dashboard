@@ -87,7 +87,6 @@ export const setUserProfile = (payload: {
   type: SET_USER_PROFILE,
   payload,
 });
-
 export const ssoLoginRequest = (payload: SsoLoginRequestPayload): SsoLoginRequestAction => ({
   type: SSO_LOGIN_REQUEST,
   payload,

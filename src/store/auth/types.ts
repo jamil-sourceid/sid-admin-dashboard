@@ -87,7 +87,6 @@ export interface SetUserProfileAction {
     userEmail: string;
   };
 }
-
 export interface SsoLoginRequestAction {
   type: typeof SSO_LOGIN_REQUEST;
   payload: {

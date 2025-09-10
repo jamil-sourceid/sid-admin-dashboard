@@ -192,7 +192,6 @@ function* handleSsoLogin(action: SsoLoginRequestAction): Generator {
       }));
       console.log('SSO Login: User profile stored:', userInfo);
     }
-
     // Verify token was stored
     const storedToken = sessionStorage.getItem('authToken');
     console.log('SSO Login: Verifying stored token:', storedToken ? 'Present' : 'Missing');
